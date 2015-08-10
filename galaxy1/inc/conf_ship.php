@@ -22,7 +22,8 @@ function get_config_ships($id, $var_spieler_stufe) {
 			"Stufe_Werft" => 3,
 			"Typ" => "ATT",
 			"Kuerzel" => "lJ",
-			"Max_Hold" => "-1"
+			"Max_Hold" => "-1",
+			"Reichweite" => 50
 				);
 			break;	
 		case 2:			
@@ -43,7 +44,8 @@ function get_config_ships($id, $var_spieler_stufe) {
 			"Stufe_Werft" => 5,
 			"Typ" => "ATT",
 			"Kuerzel" => "sJ",
-			"Max_Hold" => "-1"
+			"Max_Hold" => "-1",
+			"Reichweite" => 50
 				);
 			break;
 		
@@ -66,7 +68,8 @@ function get_config_ships($id, $var_spieler_stufe) {
 			"Stufe_Werft" => 7,
 			"Typ" => "ATT",
 			"Kuerzel" => "SK",
-			"Max_Hold" => "-1"
+			"Max_Hold" => "-1",
+			"Reichweite" => 50
 			);
 			break;
 			
@@ -89,7 +92,8 @@ function get_config_ships($id, $var_spieler_stufe) {
 			"Stufe_Werft" => 9,
 			"Typ" => "ATT",
 			"Kuerzel" => "Zer",
-			"Max_Hold" => "-1"
+			"Max_Hold" => "-1",
+			"Reichweite" => 50
 			);
 		break;
 		
@@ -112,7 +116,8 @@ function get_config_ships($id, $var_spieler_stufe) {
 			"Stufe_Werft" => 2,
 			"Typ" => "TRAN",
 			"Kuerzel" => "kT",
-			"Max_Hold" => "-1"
+			"Max_Hold" => "-1",
+			"Reichweite" => 50
 			);
 		break;
 		
@@ -135,7 +140,8 @@ function get_config_ships($id, $var_spieler_stufe) {
 			"Stufe_Werft" => 6,
 			"Typ" => "TRAN",
 			"Kuerzel" => "gT",
-			"Max_Hold" => "-1"
+			"Max_Hold" => "-1",
+			"Reichweite" => 50
 			);
 		break;
 		
@@ -158,7 +164,8 @@ function get_config_ships($id, $var_spieler_stufe) {
 			"Stufe_Werft" => 1,
 			"Typ" => "SONDE",
 			"Kuerzel" => "AS",
-			"Max_Hold" => "-1"
+			"Max_Hold" => "-1",
+			"Reichweite" => 50
 			);
 		break;
 	
@@ -181,7 +188,8 @@ function get_config_ships($id, $var_spieler_stufe) {
 			"Stufe_Werft" => 4,
 			"Typ" => "SONDE",
 			"Kuerzel" => "Spio",
-			"Max_Hold" => "-1"
+			"Max_Hold" => "-1",
+			"Reichweite" => 50
 			);
 			break;
 
@@ -204,7 +212,8 @@ function get_config_ships($id, $var_spieler_stufe) {
 			"Stufe_Werft" => 10,
 			"Typ" => "SPEZ",
 			"Kuerzel" => "Kolo",
-			"Max_Hold" => "-1"
+			"Max_Hold" => "-1",
+			"Reichweite" => 50
 			);
 			break;
 			
@@ -227,7 +236,8 @@ function get_config_ships($id, $var_spieler_stufe) {
 			"Stufe_Werft" => 10,
 			"Typ" => "SPEZ",
 			"Kuerzel" => "BS",
-			"Max_Hold" => "-1"
+			"Max_Hold" => "-1",
+			"Reichweite" => 50
 			);
 			break;
 
@@ -250,7 +260,8 @@ function get_config_ships($id, $var_spieler_stufe) {
 			"Stufe_Werft" => 10,
 			"Typ" => "SPEZ",
 			"Kuerzel" => "STS",
-			"Max_Hold" => "-1"
+			"Max_Hold" => "-1",
+			"Reichweite" => 50
 			);
 			break;
 		case 12:
@@ -271,7 +282,8 @@ function get_config_ships($id, $var_spieler_stufe) {
 			"Stufe_Werft" => 20,
 			"Typ" => "SPEZ",
 			"Kuerzel" => "DT",
-			"Max_Hold" => "1"
+			"Max_Hold" => "1",
+			"Reichweite" => 50
 			);
 			break;
 	}

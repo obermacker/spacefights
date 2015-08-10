@@ -11,7 +11,7 @@
 $raumschiffwerft_stufe = get_gebäude_raumschiffwert($spieler_ID, 0, 7);
 
 
-//$raumschiffwerft_stufe = 20;
+$raumschiffwerft_stufe = 20;
 
 if($raumschiffwerft_stufe == 0) {
 	
@@ -83,6 +83,7 @@ if($raumschiffwerft_stufe == 0) {
 					<li><font style="font-size: x-small;">Verteidigung: </font><?php echo number_format($Ship["Verteidigung"], 0, '.', '.'); ?></li>
 					<li><font style="font-size: x-small;">Geschwindigkeit: </font><?php echo  number_format($Ship["Geschwindigkeit"], 0, '.', '.'); ?></li>
 					<li><font style="font-size: x-small;">Kapazitaet: </font><?php echo number_format($Ship["Kapazitaet"], 0, '.', '.'); ?></li>
+					<li><font style="font-size: x-small;">Reichweite: </font><?php echo number_format($Ship["Reichweite"], 0, '.', '.'); ?></li>
 				</ul>
 				</td></tr>
 				<tr><td style="text-align: right;">
