@@ -1,0 +1,397 @@
+html {
+  box-sizing: border-box;
+  overflow-y: scroll;
+  background-image: url("../bg.png"); background-attachment:fixed; 
+}
+*, *:before, *:after {
+  box-sizing: inherit;
+}
+
+body {
+	font-size: 85%;     
+    font-family: Lucida Grande,Lucida Sans Unicode,Lucida Sans,Geneva,Verdana,sans-serif;
+    margin: 0 auto;		
+	color: #FFFFFF;    
+	}
+
+page_titel { display: block; clear: both; }
+page_titel { background-color: #004578; border: 1px solid  #3a6784; padding: 1.25em; margin: .5em; }
+
+navbar { display: block; clear: both; }
+navbar { background-color: rgba(0,69,120, 0.55); border: 1px solid  #3a6784; padding: 1.25em; margin: .5em; }
+
+planetbar { display: block; clear: both; }
+planetbar  { border: 1px dashed  #3a6784; padding: .125em; padding-top: 0px; padding-bottom: 0px; margin: .5em; }
+
+passbar { display: block; clear: both; }
+passbar { background-color: rgba(0,69,120, 0.55); border: 1px solid  #3a6784; padding: 1.25em; margin: .5em; }
+
+content { display: block; clear: both; }
+content {  border: solid #004578; border-width: 0em 0em 0em 1px; padding: 1.25em; margin: .5em; }
+
+ul.ress { 
+	margin: 0;
+	padding: 0;
+	padding-left: 5em;
+	list-style-type: none;
+}
+
+.img_ress { padding-right: .225em;}
+
+table {
+	font-size: inherit;
+	border-collapse: collapse;
+	/*border: 1px solid;
+	border-color: #3a6784;*/													
+}	
+
+
+.code { font-family: Monaco,Consolas,Andale Mono,monospace; }
+.customlist { list-style-type: "» "; }
+
+footer, header { position: relative; clear: both; }
+
+.left-column, .right-column, footer, header {  border: 1px solid  #3a6784; padding: 1.25em; margin: .5em; }
+
+.right-column { display: none; }
+
+footer {  border: 1px solid  #3a6784; padding: 1.25em; text-align: left; }
+
+content .impressum {  font-size: 100%; }
+.time_elapsed {  font-size: 68%; color: #444444; }
+.nav {  
+  margin-left: 0;
+  margin-bottom: 0;
+  padding-left: 0;  
+}
+
+.nav > li,
+.nav > li > a {
+  display: inline-block;
+  *display: inline;
+  zoom: 1;
+}
+
+
+.inline-items {
+  margin-top: 0;
+}
+
+.inline-items li {
+  margin-left: 0;
+  border-left: 0px solid black;
+  padding-left: 0em;
+  padding-right: .5em;
+}
+
+.inline-items li:first-child {
+  margin-left: 0;
+  border: none;
+  padding-left: 0;
+  padding-right: .5em;
+}
+
+.inline-items li:last-child {
+  padding-right: 0;
+}
+
+/* Attribute der Schiffe */
+
+.attribute {  
+  margin-left: 0;
+  margin-bottom: 0;
+  padding-left: 0;  
+}
+
+.attribute > li,
+.attribute > li > a {
+  display: inline-block;
+  *display: inline;
+  zoom: 1;
+}
+
+
+.inline-items-attr {
+  margin-top: 0;
+}
+
+.inline-items-attr li {
+  margin-left: 0;
+  border-left: 0px solid black;
+  padding-left: 0em;
+  padding-right: .5em;
+}
+
+.inline-items-attr li:first-child {
+  margin-left: 0;
+  border: none;
+  padding-left: 0;
+  padding-right: .5em;
+}
+
+.inline-items-attr li:last-child {
+  padding-right: 0;
+}
+
+/* ENDE: Attribute der Schiffe */
+
+#default th {
+	background-color: #004578;
+	color: #FFFFFF;
+	border: 1px solid;
+	border-color: #3a6784;				
+	padding: 5px;	
+	vertical-align: top;				
+}
+
+th { font-weight: normal; }
+
+#default td {
+	background-color: rgba(0,69,120, 0.55);
+	color: #FFFFFF;
+	border: 1px solid;
+	border-color: #3a6784;				
+	padding: 5px;	
+	vertical-align: top;
+}
+
+
+#news th {
+	background-color: #004578;
+	color: #FFFFFF;
+	border: 1px solid;
+	border-color: #3a6784;				
+	padding: 5px;	
+	vertical-align: top;				
+}
+
+#news td {	
+	color: #FFFFFF;
+	border: 1px solid;
+	border-color: #3a6784;				
+	padding: 5px;	
+	vertical-align: top;
+}
+
+
+a:link, a:visited, a:active, a:hover
+{ 
+	text-decoration:none;
+	font-weight:bold;
+	color:#1e6794;  
+}
+
+a:active, a:hover
+{ 
+	text-decoration:underline; color:#DEDFD7;
+}
+
+.btn_main {
+  
+  font-family: 'Open Sans';
+  border: none;
+    font-weight: bold;
+    padding: 1em 2em 1em 2em;
+    margin: 1em;    
+    cursor: pointer;
+    position: relative;
+  background: rgba(0,69,120, 0.55);  
+    }
+
+.btn_main:hover {
+  background: #004b82;  
+  text-decoration: none;
+}			
+
+
+
+input,textarea,select, button { border-color:#000000; border-width:1px; background-color:#062636; color:#FFFFFF; }
+
+
+th, td, tr .ubersicht { padding:4px; border: 0; text-align: left;}
+
+/* MEDIA QUERIES */
+@media screen and (min-width: 80em ) {
+
+	body { width: 80em;
+	}
+	.columns-container { 
+		float: left;
+	}
+
+  .left-column { 
+    width: 51.5em;
+    margin-right: 20em;
+		float: left;
+  }
+
+ 
+	.right-column { 
+   		display: inline; 
+		margin-left: -19.3em;
+		float: left;
+  }     
+}
+			
+.flex
+   {
+      /* basic styling */
+      border: 0px solid #3a6784;
+
+      /* flexbox setup */
+		flex-direction: row;
+		 -webkit-flex-direction: row;
+
+		display: -webkit-flex; /* Safari */
+		-webkit-flex-wrap: wrap; /* Safari 6.1+ */
+		display: flex;  
+		flex-wrap: wrap;
+		 flex-basis: auto;
+
+   }
+
+   .flex > div
+   {
+      -webkit-flex: 1 1 auto;
+      flex: 1 1 auto;
+
+      width: 300px; /* To make the transition work nicely.  (Transitions to/from
+                      "width:auto" are buggy in Gecko and Webkit, at least.
+                      See http://bugzil.la/731886 for more info.) */
+      padding-top: 2em;
+      padding-bottom: 2em;
+      text-align: center;
+
+      -webkit-transition: width 0.7s ease-out;
+      transition: width 0.7s ease-out;
+      		 flex: auto;
+      
+   }
+
+.flex_planet
+   {
+      /* basic styling */
+      border: 0px solid #3a6784;
+
+      /* flexbox setup */
+		flex-direction: row;
+		 -webkit-flex-direction: row;
+
+		display: -webkit-flex; /* Safari */
+		-webkit-flex-wrap: wrap; /* Safari 6.1+ */
+		display: flex;  
+		flex-wrap: wrap;
+		 flex-basis: auto;
+
+   }
+
+   .flex_planet > div
+   {
+      -webkit-flex: 1 1 auto;
+      flex: 1 1 auto;
+
+      width: 100px; /* To make the transition work nicely.  (Transitions to/from
+                      "width:auto" are buggy in Gecko and Webkit, at least.
+                      See http://bugzil.la/731886 for more info.) */
+      padding-top: 2em;
+      padding-bottom: 2em;
+      text-align: center;
+
+      -webkit-transition: width 0.7s ease-out;
+      transition: width 0.7s ease-out;
+      		 flex: auto;
+      
+   }
+
+.flex_uebersicht
+   {
+      /* basic styling */
+      border: 0px solid #3a6784;
+
+      /* flexbox setup */
+		flex-direction: row;
+		 -webkit-flex-direction: row;
+
+		display: -webkit-flex; /* Safari */
+		-webkit-flex-wrap: wrap; /* Safari 6.1+ */
+		display: flex;  
+		flex-wrap: wrap;
+		 flex-basis: auto;
+
+   }
+
+   .flex_uebersicht > div
+   {
+      -webkit-flex: 1 1 auto;
+      flex: 1 1 auto;
+
+      width: auto; /* To make the transition work nicely.  (Transitions to/from
+                      "width:auto" are buggy in Gecko and Webkit, at least.
+                      See http://bugzil.la/731886 for more info.) */
+      padding-top: 2em;
+      padding-bottom: 2em;
+      text-align: center;
+
+      -webkit-transition: width 0.7s ease-out;
+      transition: width 0.7s ease-out;
+      		 flex: auto;
+      
+   }
+
+.flex_gebaeude_info
+   {
+      /* basic styling */
+      border: 0px solid #3a6784;
+
+      /* flexbox setup */
+		flex-direction: row;
+		 -webkit-flex-direction: row;
+
+		display: -webkit-flex; /* Safari */
+		-webkit-flex-wrap: wrap; /* Safari 6.1+ */
+		display: flex;  
+		flex-wrap: wrap;
+		 flex-basis: auto;
+		  align-items: flex-end;
+
+   }
+
+
+   .flex_gebaeude_info > div
+   {
+      -webkit-flex: 1 1 auto;
+      flex: 1 1 auto;
+
+      width: 100%; /* To make the transition work nicely.  (Transitions to/from
+                      "width:auto" are buggy in Gecko and Webkit, at least.
+                      See http://bugzil.la/731886 for more info.) */
+      padding-top: 2em;
+      padding-bottom: 2em;
+      padding-right: 5px;
+      text-align: center;
+
+      -webkit-transition: width 0.7s ease-out;
+      transition: width 0.7s ease-out;
+      		 flex: auto;
+      
+   }
+
+   /* colors */
+   .flex > div:nth-child(1){  }
+   .flex > div:nth-child(2){  }
+   .flex > div:nth-child(3){  }
+
+   .flex > div:hover
+   {
+        background : rgba(13,23,39, 0.55);
+   }
+   
+   @supports not (flex-wrap: wrap) {
+	.view-start {
+		flex-direction: column;
+	}
+ 
+	.pageflex {
+		width: 50%;
+	}
+}
