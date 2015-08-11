@@ -16,7 +16,17 @@ function get_ship($ship_id) {
 	
 }
 
-function get_gebäude_raumschiffwert($spieler_id, $planet_id, $gebäude_id) {
+function get_def($def_id) {
+
+	$row_def = get_config_def($def_id, 0);
+
+	$row_def["Bauzeit"] = get_timestamp_in_was_sinnvolles($row_def["Bauzeit"]);
+
+	return $row_def;
+
+}
+
+function get_gebäude_aktuelle_stufe($spieler_id, $planet_id, $gebäude_id) {
 
 	require 'inc/connect_galaxy_1.php';
 	$link->set_charset("utf8");
@@ -34,7 +44,6 @@ function get_gebäude_raumschiffwert($spieler_id, $planet_id, $gebäude_id) {
 	
 
 }
-
 
 function random_float ($min,$max) {
 	return ($min+lcg_value()*(abs($max-$min)));

@@ -8,6 +8,7 @@ require (dirname(__FILE__) . '/inc/func_galaxy.php');
 require (dirname(__FILE__) . '/inc/conf_structure.php');
 require (dirname(__FILE__) . '/inc/conf_tech.php');
 include (dirname(__FILE__) . '/inc/conf_ship.php');
+include (dirname(__FILE__) . '/inc/conf_def.php');
 
 $spieler_ID = ""; $session_id = "";
 
@@ -67,6 +68,12 @@ switch ($select) {
 		$bar_planet_info = true;
 		break;
 	case "Raumschiffe":
+		$nav_page_title = "display: none;";
+		$nav_startseite = "display: none;";
+		$nav_bar_planet = "";
+		$bar_planet_info = true;
+		break;
+	case "Verteidigung":
 		$nav_page_title = "display: none;";
 		$nav_startseite = "display: none;";
 		$nav_bar_planet = "";
@@ -202,6 +209,7 @@ if (tl>=0){
     <li><a class="menu" href="index.php?s=Gebäude">Gebäude</a></li>
     <li><a class="menu" href="index.php?s=Forschung">Forschung</a></li>
     <li><a class="menu" href="index.php?s=Raumschiffe">Raumschiffe</a></li>
+    <li><a class="menu" href="index.php?s=Verteidigung">Verteidigung</a></li>
     <li><a class="menu" href="">Flotte</a> </li>
     <li><a class="menu" href="">Sonnensystem</a></li>
     <li>
@@ -256,6 +264,9 @@ switch ($select) {
 		break;
 	case "Raumschiffe":
 		require 'inc/raumschiffe.php';
+		break;
+	case "Verteidigung":
+		require 'inc/verteidigung.php';
 		break;
 	default:
 		require 'inc/home.php';
