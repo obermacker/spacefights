@@ -6,9 +6,9 @@
 
 for($i = 1; $i <= 10; $i++) {
 
-	$baut_gerade = check_bauschleife_activ($spieler_ID, 0);	
+	$baut_gerade = check_bauschleife_activ($spieler_id, 0, "Structure");	
 	
-	$Gebäude = get_gebäude_nächste_stufe($spieler_ID, 0, $i, 1);
+	$Gebäude = get_gebäude_nächste_stufe($spieler_id, 0, $i, 1);
 
 	$kann_gebaut_werden = true;
 	$farbeE = ""; if($ressource["Eisen"] < $Gebäude["Kosten_Eisen"]) { $farbeE = "#FF0000"; $kann_gebaut_werden = false; }
@@ -49,13 +49,13 @@ for($i = 1; $i <= 10; $i++) {
 		<tr><td>
 		<?php echo $Gebäude["Wirkung"]; ?>
 		</td></tr>
-		<tr><td align="right">
+		<tr><td style="text-align: right;">
 		
 		<?php 				
 		if($kann_gebaut_werden == true && $baut_gerade["ID"] == 0) {
 
 			
-				echo $Gebäude["Bauzeit"]; ?> <button type="submit" name="action-gebaeude-bauen" value="<?php echo $i; ?>">Bauen</button><?php				
+				echo get_timestamp_in_was_sinnvolles($Gebäude["Bauzeit"]); ?> <button type="submit" name="action-gebaeude-bauen" value="<?php echo $i; ?>">Bauen</button><?php				
 			 
 			
 		} else {
@@ -64,14 +64,14 @@ for($i = 1; $i <= 10; $i++) {
 					
 					
 				?><span id="gebaeude<?php echo $i; ?>"><script type="text/javascript"><!--
-						countdown(<?php echo $baut_gerade["Bis"]; ?>, "gebaeude<?php echo $i; ?>");
+						countdown(<?php echo $baut_gerade["Countdown"]; ?>, "gebaeude<?php echo $i; ?>");
 						</script></span>
 						<button type="submit" name="action-gebaeude-abbrechen" value="<?php echo $i; ?>">Abbrechen</button><?php
 					} else {
 						
 						
 			
-			echo $Gebäude["Bauzeit"]; ?> <button disabled style="visibility: hidden;">Bauen</button><?php
+			echo get_timestamp_in_was_sinnvolles($Gebäude["Bauzeit"]); ?> <button disabled style="visibility: hidden;">Bauen</button><?php
 					}
 		}
 		

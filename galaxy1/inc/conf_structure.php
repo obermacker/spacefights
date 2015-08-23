@@ -187,6 +187,7 @@ function get_config_structure($id) {
 			break;
 		}
 	
+		$Gebäude["Kosten_Karma"] = 0;
 
 	return $Gebäude;
 	

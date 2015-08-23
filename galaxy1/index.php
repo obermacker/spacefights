@@ -10,13 +10,13 @@ require (dirname(__FILE__) . '/inc/conf_tech.php');
 include (dirname(__FILE__) . '/inc/conf_ship.php');
 include (dirname(__FILE__) . '/inc/conf_def.php');
 
-$spieler_ID = ""; $session_id = "";
+$spieler_id = ""; $session_id = "";
 
-if (isset($_SESSION["spieler_ID"])) { $spieler_ID = $_SESSION["spieler_ID"]; } 
+if (isset($_SESSION["spieler_ID"])) { $spieler_id = $_SESSION["spieler_ID"]; } 
 if (isset($_SESSION["session_id"])) { $session_id = $_SESSION["session_id"]; }
 
 
-if (check_auth($spieler_ID, $session_id) == "nein"){
+if (check_auth($spieler_id, $session_id) == "nein"){
 	    //session_unset(); session_destroy(); $_SESSION = array(); header('Location: ../index.html'); exit();
 	    exit();	
 }
@@ -87,46 +87,211 @@ switch ($select) {
 		break;
 }
 
+//---- ToDo: C
 
+//---- Abgelaufene Bauschleifen fertigstellen
 
+	//--- Gebäude
+	$bauschleife = check_bauschleife_activ($spieler_id, 0, "Structure");
+	if ($bauschleife["ID"] > 0 and $bauschleife["Bis"] <= time()) {
+		
+		$gebäude_id = $bauschleife["ID"];		
+		set_bauschleife_struckture_fertig($spieler_id, 0, $gebäude_id);
+		
+	}
+
+	//--- Forschung
+	$bauschleife = check_bauschleife_activ($spieler_id, 0, "Tech");
+	if ($bauschleife["ID"] > 0 and $bauschleife["Bis"] <= time()) {
+	
+		$tech_id = $bauschleife["ID"];
+		set_bauschleife_tech_fertig($spieler_id, 0, $tech_id);
+	
+	}
+	
+	//--- Schiffe
+	
+	$bauschleife = check_bauschleife_activ($spieler_id, 0, "Ship");
+	if ($bauschleife["ID"] > 0) {
+		
+		set_bauschleife_ship_fertig($spieler_id, 0);
+		
+	
+	}
+	
+	
+	
+//---- ENDE: Abgelaufene Bauschleifen fertigstellen
+
+//---- Bauschleife abbrechen
+
+	//--- Gebäude
+	if(isset($_POST["action-gebaeude-abbrechen"])) {
+	
+		if (is_numeric($_POST["action-gebaeude-abbrechen"])) {
+	
+			$bauschleife = check_bauschleife_activ($spieler_id, 0, "Structure");
+			
+			if ($bauschleife["ID"] > 0) { 
+				
+				$gebäude_id = $_POST["action-gebaeude-abbrechen"];				
+
+				set_bauschleife_structure_abbruch($spieler_id, 0, $gebäude_id);			
+			}
+		}
+	}
+
+	//--- Tech
+	if(isset($_POST["action-forschung-abbrechen"])) {
+	
+		if (is_numeric($_POST["action-forschung-abbrechen"])) {
+	
+			$bauschleife = check_bauschleife_activ($spieler_id, 0, "Tech");
+				
+			if ($bauschleife["ID"] > 0) {
+	
+				$tech_id = $_POST["action-forschung-abbrechen"];
+	
+				set_bauschleife_tech_abbruch($spieler_id, 0, $tech_id);
+			}
+		}	
+	}
+	
+	if (isset($_POST["action-schiffe-abbrechen"])) {
+		if (is_numeric($_POST["action-schiffe-abbrechen"])) {
+			
+			set_bauschleife_ship_abbruch($spieler_id, 0, $_POST["action-schiffe-abbrechen"]);
+			
+		}
+	}
+	
+	
+//---- Ende: Bauschleife abbrechen 
+	
 //---- Gebäude bauen
 
-	if(isset($_POST["action-bauen"])) {
+	if(isset($_POST["action-gebaeude-bauen"])) {
 	
-		if (is_numeric($_POST["action-bauen"])) {
+		if (is_numeric($_POST["action-gebaeude-bauen"])) {
 
 			
 			$kann_gebaut_werden = true;
+
+			$bauschleife = check_bauschleife_activ($spieler_id, 0, "Structure");
 				
-			if (check_bauschleife_activ($spieler_ID, 0) > 0) { $kann_gebaut_werden = false; } else {
+			if ($bauschleife["ID"] > 0) { $kann_gebaut_werden = false; } else {
 				
-				$gebäude_id = $_POST["action-bauen"];
-				$ressource = get_ressource($spieler_ID, 0);
-				$Gebäude = get_gebäude_nächste_stufe($spieler_ID, 0, $gebäude_id);
+				$gebäude_id = $_POST["action-gebaeude-bauen"];
+				$ressource = get_ressource($spieler_id, 0);
+				$Gebäude = get_gebäude_nächste_stufe($spieler_id, 0, $gebäude_id, 1);
 		
 				if($ressource["Eisen"] < $Gebäude["Kosten_Eisen"]) { $kann_gebaut_werden = false; }
 				if($ressource["Silizium"] < $Gebäude["Kosten_Silizium"]) { $kann_gebaut_werden = false; }
 				if($ressource["Wasser"] < $Gebäude["Kosten_Wasser"]) { $kann_gebaut_werden = false; }
 				if($ressource["Energie"] < $Gebäude["Kosten_Energie"]) { $kann_gebaut_werden = false; }
+				if($ressource["Karma"] < $Gebäude["Kosten_Karma"]) { $kann_gebaut_werden = false; }
 				
 				if ($kann_gebaut_werden == true) {
 					
-					echo "wird gebaut";
+					$bauzeit = time() + $Gebäude["Bauzeit"];
+					
+					set_bauschleife_struckture($spieler_id, 0, $gebäude_id, $Gebäude["Name"], $bauzeit, $ressource["Eisen"], $ressource["Silizium"], $ressource["Wasser"], $ressource["Energie"], $ressource["Karma"], $Gebäude["Kosten_Eisen"], $Gebäude["Kosten_Silizium"], $Gebäude["Kosten_Wasser"], $Gebäude["Kosten_Energie"], $Gebäude["Kosten_Karma"]);
+					
+				} else {
+					
+					die("nope;"); //ToDo: Fehlermeldung einbauen
 					
 				}
-			
-			
 			}
-			
-	
-	
 		}
-	
 	}
 
 
-//---
+//---ENDE: Gebäude bauen
 
+//--- Froschung einreihen
+	
+	
+	if(isset($_POST["action-forschung-bauen"])) {
+	
+		if (is_numeric($_POST["action-forschung-bauen"])) {
+	
+				
+			$kann_gebaut_werden = true;
+	
+			$bauschleife = check_bauschleife_activ($spieler_id, 0, "Tech");
+	
+			if ($bauschleife["ID"] > 0) { $kann_gebaut_werden = false; } else {
+	
+				$tech_id = $_POST["action-forschung-bauen"];
+				$ressource = get_ressource($spieler_id, 0);
+				$Tech = get_tech_nächste_stufe($spieler_id, 0, $tech_id, 1);
+	
+				if($ressource["Eisen"] < $Tech["Kosten_Eisen"]) { $kann_gebaut_werden = false; }
+				if($ressource["Silizium"] < $Tech["Kosten_Silizium"]) { $kann_gebaut_werden = false; }
+				if($ressource["Wasser"] < $Tech["Kosten_Wasser"]) { $kann_gebaut_werden = false; }				
+				if($ressource["Karma"] < $Tech["Kosten_Karma"]) { $kann_gebaut_werden = false; }
+	
+				if ($kann_gebaut_werden == true) {
+						
+					$bauzeit = time() + $Tech["Bauzeit"];
+						
+					//set_bauschleife_struckture($spieler_id, 0, $gebäude_id, $Gebäude["Name"], $bauzeit, $ressource["Eisen"], $ressource["Silizium"], $ressource["Wasser"], $ressource["Energie"], $ressource["Karma"], $Tech["Kosten_Eisen"], $Tech["Kosten_Silizium"], $Tech["Kosten_Wasser"], $Tech["Kosten_Energie"], $Tech["Kosten_Karma"]);
+
+					set_bauschleife_tech($spieler_id, 0, $tech_id, $Tech["Name"], $bauzeit, $ressource["Eisen"], $ressource["Silizium"], $ressource["Wasser"], $ressource["Karma"], $Tech["Kosten_Eisen"], $Tech["Kosten_Silizium"], $Tech["Kosten_Wasser"], $Tech["Kosten_Karma"]);
+					
+				} else {
+						
+					die("nope;"); //ToDo: Fehlermeldung einbauen
+						
+				}
+			}
+		}
+	}
+	
+//--- ENDE: Froschung einreihen
+	
+//--- Schiffe einreihen
+
+
+	if(isset($_POST["action-schiffe-bauen"])) {
+	
+		if (is_numeric($_POST["action-schiffe-bauen"])) {
+	
+	
+			$kann_gebaut_werden = true;
+	
+			
+				$ship_id = $_POST["action-schiffe-bauen"];
+				$ressource = get_ressource($spieler_id, 0);
+				$Ship = get_ship($_POST["action-schiffe-bauen"]);
+				$anzahl = usereingabe_cleaner ($_POST["vanzahl" . $_POST["action-schiffe-bauen"]]);
+				
+				if($anzahl <= 0 OR empty($anzahl) OR !is_numeric($anzahl)) { $kann_gebaut_werden = false; }
+	
+				if($ressource["Eisen"] < ($Ship["Kosten_Eisen"] * $anzahl)) { $kann_gebaut_werden = false; }
+				if($ressource["Silizium"] < ($Ship["Kosten_Silizium"] * $anzahl)) { $kann_gebaut_werden = false; }
+				if($ressource["Wasser"] < ($Ship["Kosten_Wasser"] * $anzahl)) { $kann_gebaut_werden = false; }
+				if($ressource["Karma"] < ($Ship["Kosten_Karma"] * $anzahl)) { $kann_gebaut_werden = false; }
+				if($ressource["Bot"] < ($Ship["Bots"] * $anzahl)) { $kann_gebaut_werden = false; }
+				
+				if ($kann_gebaut_werden == true) {
+					
+					$bauzeit = $Ship["Bauzeit"];
+	
+					set_bauschleife_ship($spieler_id, 0, $ship_id, $Ship["Name"], $anzahl, $bauzeit, $ressource["Eisen"], $ressource["Silizium"], $ressource["Wasser"], $ressource["Bot"], $ressource["Karma"], $Ship["Kosten_Eisen"], $Ship["Kosten_Silizium"], $Ship["Kosten_Wasser"], $Ship["Bots"], $Ship["Kosten_Karma"]);					
+						
+				} else {
+	
+					echo("nope;"); //ToDo: Fehlermeldung einbauen
+	
+				}
+			
+		}
+	}
+	
+
+//--- ENDE: Schiffe einreihen
 ?>
 <!DOCTYPE HTML>
 <html lang="de">
@@ -139,9 +304,8 @@ switch ($select) {
     </head>
      
 
-    <body>
-
-    <script type="text/javascript"><!--
+<body>
+<script type="text/javascript"><!--
 var ts = new Date();
 function countdown(sec, name){
 var e = document.getElementById(name);
@@ -189,8 +353,10 @@ if (tl>=0){
     <div style="width: 100%;">
 
 
-    <page_titel style="<?php echo $nav_page_title; ?>"><div id="title" style="text-align: right;">spacefights.org</div></page_titel>
+    <page_titel style="<?php echo $nav_page_title; ?>"><div id="title" style="text-align: right;">$seitentitel</div></page_titel>
 
+    
+    
     <header style="<?php echo $nav_startseite; ?>">
     <nav>
     <ul class="nav inline-items">
@@ -214,16 +380,16 @@ if (tl>=0){
     <li><a class="menu" href="">Sonnensystem</a></li>
     <li>
     	<select name="planet" size="1" style="width: 150px;" onchange="this.form.submit()">
-    	<?php echo get_list_of_all_planets($spieler_ID, 0); ?>
+    	<?php echo get_list_of_all_planets($spieler_id, 0); ?>
     	</select>    	
     </li>
     		</ul>
     		</nav>
 </navbar>
-
+    
 <?php if($bar_planet_info == true) { 
 
- $ressource = get_ressource($spieler_ID, 0);
+ $ressource = get_ressource($spieler_id, 0);
 	
 	?>
 	<planetbar>

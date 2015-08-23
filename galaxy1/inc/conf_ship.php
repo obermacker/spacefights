@@ -7,14 +7,15 @@ function get_config_ships($id, $var_spieler_stufe) {
 		case 1:
 			$Ship = array(
 			"Schiff_ID" => 1,
-			"Raumschiff_Name" => "Leichter Jäger",
-			"Raumschiff_Name_Plural" => "Leichte Jäger",
+			"Name" => "Leichter Jäger",
+			"Name_Plural" => "Leichte Jäger",
 			"Beschreibung" => "lorem ipsum",
 			"Kosten_Eisen" => 500,
 			"Kosten_Silizium" => 250,
 			"Kosten_Wasser" => 0,
+			"Kosten_Karma" => 0,
 			"Bots" => 1,
-			"Bauzeit" => 800,
+			"Bauzeit" => 10,
 			"Kapazitaet" => 50,
 			"Geschwindigkeit" => 1500,
 			"Angriff" => 5,
@@ -29,12 +30,13 @@ function get_config_ships($id, $var_spieler_stufe) {
 		case 2:			
 			$Ship = array(
 			"Schiff_ID" => 2,
-			"Raumschiff_Name" => "Schwerer Jäger",
-			"Raumschiff_Name_Plural" => "Schwere Jäger",
+			"Name" => "Schwerer Jäger",
+			"Name_Plural" => "Schwere Jäger",
 			"Beschreibung" => "lorem ipsum",
 			"Kosten_Eisen" => 1150,
 			"Kosten_Silizium" => 525,
 			"Kosten_Wasser" => 100,
+			"Kosten_Karma" => 0,
 			"Bots" => 2,
 			"Bauzeit" => 800,
 			"Kapazitaet" => 100,
@@ -52,13 +54,14 @@ function get_config_ships($id, $var_spieler_stufe) {
 		case 3:
 			$Ship = array(
 			"Schiff_ID" => 3,
-			"Raumschiff_Name" => "Sternenkreuzer",
-			"Raumschiff_Name_Plural" => "Sternenkreuzer",
+			"Name" => "Sternenkreuzer",
+			"Name_Plural" => "Sternenkreuzer",
 			"Beschreibung" => "lorem ipsum",
 			
 			"Kosten_Eisen" => 2850,
 			"Kosten_Silizium" => 1150,
 			"Kosten_Wasser" => 375,
+			"Kosten_Karma" => 0,
 			"Bots" => 5,
 			"Bauzeit" => 800,
 			"Kapazitaet" => 800,
@@ -76,13 +79,14 @@ function get_config_ships($id, $var_spieler_stufe) {
 		case 4:
 			$Ship = array(
 			"Schiff_ID" => 4,
-			"Raumschiff_Name" => "Zerstörer",
-			"Raumschiff_Name_Plural" => "Zerstörer",
+			"Name" => "Zerstörer",
+			"Name_Plural" => "Zerstörer",
 			"Beschreibung" => "lorem ipsum",
 			
 			"Kosten_Eisen" => 7875,
 			"Kosten_Silizium" => 2675,
 			"Kosten_Wasser" => 950,
+			"Kosten_Karma" => 0,
 			"Bots" => 13,
 			"Bauzeit" => 800,
 			"Kapazitaet" => 1500,
@@ -100,13 +104,14 @@ function get_config_ships($id, $var_spieler_stufe) {
 		case 5:
 			$Ship = array(
 			"Schiff_ID" => 5,
-			"Raumschiff_Name" => "Kleiner Transporter",
-			"Raumschiff_Name_Plural" => "Kleine Transporter",
+			"Name" => "Kleiner Transporter",
+			"Name_Plural" => "Kleine Transporter",
 			"Beschreibung" => "lorem ipsum",
 			
 			"Kosten_Eisen" => 425,
 			"Kosten_Silizium" => 300,
 			"Kosten_Wasser" => 25,
+			"Kosten_Karma" => 0,
 			"Bots" => 1,
 			"Bauzeit" => 800,
 			"Kapazitaet" => 5000,
@@ -124,13 +129,14 @@ function get_config_ships($id, $var_spieler_stufe) {
 		case 6:
 			$Ship = array(
 			"Schiff_ID" => 6,
-			"Raumschiff_Name" => "Großer Transporter",
-			"Raumschiff_Name_Plural" => "Große Transporter",
+			"Name" => "Großer Transporter",
+			"Name_Plural" => "Große Transporter",
 			"Beschreibung" => "lorem ipsum",
 			
 			"Kosten_Eisen" => 1500,
 			"Kosten_Silizium" => 1100,
 			"Kosten_Wasser" => 125,
+			"Kosten_Karma" => 0,
 			"Bots" => 3,
 			"Bauzeit" => 800,
 			"Kapazitaet" => 25000,
@@ -148,13 +154,14 @@ function get_config_ships($id, $var_spieler_stufe) {
 		case 7:
 			$Ship = array(
 			"Schiff_ID" => 7,
-			"Raumschiff_Name" => "Aufklärungssonde",
-			"Raumschiff_Name_Plural" => "Aufklärungssonden",
+			"Name" => "Aufklärungssonde",
+			"Name_Plural" => "Aufklärungssonden",
 			"Beschreibung" => "lorem ipsum",
 			
 			"Kosten_Eisen" => 160,
 			"Kosten_Silizium" => 90,
 			"Kosten_Wasser" => 0,
+			"Kosten_Karma" => 0,
 			"Bots" => 1,
 			"Bauzeit" => 800,
 			"Kapazitaet" => 0,
@@ -172,13 +179,14 @@ function get_config_ships($id, $var_spieler_stufe) {
 		case 8:
 			$Ship = array(
 			"Schiff_ID" => 8,
-			"Raumschiff_Name" => "Spionagesonde",
-			"Raumschiff_Name_Plural" => "Spionagesonden",
+			"Name" => "Spionagesonde",
+			"Name_Plural" => "Spionagesonden",
 			"Beschreibung" => "lorem ipsum",
 			
 			"Kosten_Eisen" => 60,
 			"Kosten_Silizium" => 125,
 			"Kosten_Wasser" => 15,
+			"Kosten_Karma" => 0,
 			"Bots" => 1,
 			"Bauzeit" => 800,
 			"Kapazitaet" => 0,
@@ -196,13 +204,14 @@ function get_config_ships($id, $var_spieler_stufe) {
 		case 9:
 			$Ship = array(
 			"Schiff_ID" => 9,
-			"Raumschiff_Name" => "Kolonisierungsschiff",
-			"Raumschiff_Name_Plural" => "Kolonisierungsschiffe",
+			"Name" => "Kolonisierungsschiff",
+			"Name_Plural" => "Kolonisierungsschiffe",
 			"Beschreibung" => "lorem ipsum",
 			
 			"Kosten_Eisen" => 3750,
 			"Kosten_Silizium" => 4500,
 			"Kosten_Wasser" => 1880,
+			"Kosten_Karma" => 0,
 			"Bots" => 12,
 			"Bauzeit" => 800,
 			"Kapazitaet" => 7500,
@@ -220,13 +229,14 @@ function get_config_ships($id, $var_spieler_stufe) {
 		case 10:
 			$Ship = array(
 			"Schiff_ID" => 10,
-			"Raumschiff_Name" => "Bergungsschiff",
-			"Raumschiff_Name_Plural" => "Bergungsschiffe",
+			"Name" => "Bergungsschiff",
+			"Name_Plural" => "Bergungsschiffe",
 			"Beschreibung" => "lorem ipsum",
 			
 			"Kosten_Eisen" => 1750,
 			"Kosten_Silizium" => 750,
 			"Kosten_Wasser" => 500,
+			"Kosten_Karma" => 0,
 			"Bots" => 1,
 			"Bauzeit" => 800,
 			"Kapazitaet" => 25,
@@ -244,13 +254,14 @@ function get_config_ships($id, $var_spieler_stufe) {
 		case 11:
 			$Ship = array(
 			"Schiff_ID" => 11,
-			"Raumschiff_Name" => "Shuttle",
-			"Raumschiff_Name_Plural" => "Shuttles",
+			"Name" => "Shuttle",
+			"Name_Plural" => "Shuttles",
 			"Beschreibung" => "lorem ipsum",
 			
 			"Kosten_Eisen" => 2000,
 			"Kosten_Silizium" => 2000,
 			"Kosten_Wasser" => 2000,
+			"Kosten_Karma" => 0,
 			"Bots" => 1,
 			"Bauzeit" => 800,
 			"Kapazitaet" => 0,
@@ -267,12 +278,13 @@ function get_config_ships($id, $var_spieler_stufe) {
 		case 12:
 			$Ship = array(
 			"Schiff_ID" => 12,
-			"Raumschiff_Name" => "Dimension Tide",
-			"Raumschiff_Name_Plural" => "Dimension Tides",
+			"Name" => "Dimension Tide",
+			"Name_Plural" => "Dimension Tides",
 			"Beschreibung" => "Satellite that fires a temporary black hole",				
 			"Kosten_Eisen" => 20000000,
 			"Kosten_Silizium" => 20000000,
 			"Kosten_Wasser" => 20000000,
+			"Kosten_Karma" => 1000,
 			"Bots" => 150,
 			"Bauzeit" => 800,
 			"Kapazitaet" => 0,

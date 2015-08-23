@@ -8,7 +8,7 @@ html {
 }
 
 body {
-	font-size: 85%;     
+	font-size: 80%;     
     font-family: Lucida Grande,Lucida Sans Unicode,Lucida Sans,Geneva,Verdana,sans-serif;
     margin: 0 auto;		
 	color: #FFFFFF;    
@@ -39,7 +39,7 @@ ul.ress {
 .img_ress { padding-right: .225em;}
 
 table {
-	font-size: inherit;
+	
 	border-collapse: collapse;
 	/*border: 1px solid;
 	border-color: #3a6784;*/													

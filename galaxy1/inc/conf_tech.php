@@ -4,6 +4,8 @@ function get_config_tech($id, $var_spieler_stufe) {
 	
 	$Tech["Beschreibung"] = "/lost_id/";
 	$Tech["Wirkung"] = "/lost_id/";
+	$Tech["Kosten_Karma"] = "";
+	$Tech["Kosten_Energie"] = 0;
 	
 	//print_r ($var_spieler_stufe);
 	

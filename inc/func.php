@@ -61,7 +61,7 @@ function get_in_galaxy_name($spieler_id, $galaxy_number){
 function check_username_cleaner($value, $spieler_id){
 	require 'inc/connect_spieler.php';
 	
-	$badword = "admin administrator error fehler gast unbekannt unknown";
+	$badword = "admin administrator error fehler gast unbekannt unknown test";
 	
 	$newVal = substr($value, 0, 30);
 	if (strlen($newVal) < 3) { return ""; }
@@ -80,7 +80,7 @@ function check_username_cleaner($value, $spieler_id){
 	
 	if($spieler_id == 0) { return $newVal;}
 	
-	mysql_select_db("spieler");
+	mysqli_select_db($link, "spieler");
 	mysql_query("SET NAMES 'utf8'");
 	$abfrage = "FROM `spieler` WHERE `spieler_ID` <> '$spieler_id' AND (`spieler_name` = '$newVal' OR `name_galaxy_1` =  '$newVal' OR `name_galaxy_2` =  '$newVal' OR `name_galaxy_3` = '$newVal')";
 	
@@ -217,7 +217,7 @@ function check_auth($spieler_id, $session_id) {
 	if(!$spieler_id || !$session_id) { return "nein"; }
 	
 	require 'inc/connect_spieler.php'; 
-	mysql_select_db("spieler");
+	mysqli_select_db($link, "spieler");
 	
 	$query = "SELECT `ID`, `spieler_ID`, `session_id`, `HTTP_USER_AGENT` FROM `spieler` WHERE `spieler_ID` = '".$spieler_id."' AND `session_id` = '".$session_id."' LIMIT 1" or die("Error: #0009 " . mysqli_error($link));
 	$result = mysqli_query($link, $query);

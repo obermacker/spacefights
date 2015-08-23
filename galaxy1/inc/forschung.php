@@ -9,9 +9,9 @@
 
 for($i = 1; $i <= 10; $i++) {
 
-	$baut_gerade = check_bauschleife_activ($spieler_ID, 0);	
+	$baut_gerade = check_bauschleife_activ($spieler_id, 0, "Tech");	
 	
-	$Tech = get_tech_nächste_stufe($spieler_ID, 0, $i, 1);
+	$Tech = get_tech_nächste_stufe($spieler_id, 0, $i, 1);
 	
 	if ($Tech["Forschung"] == "OK") {
 
@@ -45,13 +45,13 @@ for($i = 1; $i <= 10; $i++) {
 			<tr><td>
 			<?php echo $Tech["Wirkung"]; ?>
 			</td></tr>
-			<tr><td align="right">
+			<tr><td style="text-align: right;">
 			
 			<?php 				
 			if($kann_geforscht_werden == true && $baut_gerade["ID"] == 0) {
 	
 				
-					echo $Tech["Bauzeit"]; ?> <button type="submit" name="action-forschung-bauen" value="<?php echo $i; ?>">Bauen</button><?php				
+					echo get_timestamp_in_was_sinnvolles($Tech["Bauzeit"]); ?> <button type="submit" name="action-forschung-bauen" value="<?php echo $i; ?>">Bauen</button><?php				
 				 
 				
 			} else {
@@ -60,14 +60,14 @@ for($i = 1; $i <= 10; $i++) {
 						
 						
 					?><span id="forschung<?php echo $i; ?>"><script type="text/javascript"><!--
-							countdown(<?php echo $baut_gerade["Bis"]; ?>, "forschung<?php echo $i; ?>");
+							countdown(<?php echo $baut_gerade["Countdown"]; ?>, "forschung<?php echo $i; ?>");
 							</script></span>
 							<button type="submit" name="action-forschung-abbrechen" value="<?php echo $i; ?>">Abbrechen</button><?php
 						} else {
 							
 							
 				
-				echo $Tech["Bauzeit"]; ?> <button disabled style="visibility: hidden;">Bauen</button><?php
+				echo get_timestamp_in_was_sinnvolles($Tech["Bauzeit"]); ?> <button disabled style="visibility: hidden;">Bauen</button><?php
 						}
 			}
 			

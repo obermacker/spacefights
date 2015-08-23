@@ -1,6 +1,6 @@
-<form action="index.php" method="post" autocomplete="off">
+<form action="index.php" name="myform" method="post" autocomplete="off">
 <input type="hidden" name="s" value="Raumschiffe">
-
+<input type="hidden" name="ship_id" id="ship_id" value="">
 <div class="flex_gebaeude_info">
 
 
@@ -8,7 +8,7 @@
 <?php
 
 
-$raumschiffwerft_stufe = get_gebäude_raumschiffwert($spieler_ID, 0, 7);
+$raumschiffwerft_stufe = get_gebäude_aktuelle_stufe($spieler_id, 0, 7);
 
 
 $raumschiffwerft_stufe = 20;
@@ -37,7 +37,7 @@ if($raumschiffwerft_stufe == 0) {
 				
 				?>
 						<div><table id="default" class="ubersicht" width=100%>
-							<th><h3 style="display: inline;"><?php echo $Ship["Raumschiff_Name"]; ?></h3> <span class="code">[<?php echo $Ship["Kuerzel"]; ?>] MAX</span></th>
+							<th><h3 style="display: inline;"><?php echo $Ship["Name"]; ?></h3> <span class="code">[<?php echo $Ship["Kuerzel"]; ?>] MAX</span></th>
 							<tr>
 								<td><?php echo $Ship["Beschreibung"]; ?></td>
 							</tr>
@@ -59,26 +59,30 @@ if($raumschiffwerft_stufe == 0) {
 			$farbeE = ""; if($ressource["Eisen"] < $Ship["Kosten_Eisen"]) { $farbeE = "#FF0000"; $kann_gebaut_werden = false; }
 			$farbeS = ""; if($ressource["Silizium"] < $Ship["Kosten_Silizium"]) { $farbeS = "#FF0000"; $kann_gebaut_werden = false; }
 			$farbeW = ""; if($ressource["Wasser"] < $Ship["Kosten_Wasser"]) { $farbeW = "#FF0000"; $kann_gebaut_werden = false; }
+			$farbeB = ""; if($ressource["Bot"] < $Ship["Bots"]) { $farbeB = "#FF0000"; $kann_gebaut_werden = false; }
+			$farbeK = ""; if($ressource["Karma"] < $Ship["Kosten_Karma"]) { $farbeK = "#FF0000"; $kann_gebaut_werden = false; }
 		
 			?>
 			<div>
 			
 			<table id="default" class="ubersicht" width=100%>
-				<th><h3 style="display: inline;"><?php echo $Ship["Raumschiff_Name"]; ?></h3> <span class="code">[<?php echo $Ship["Kuerzel"]; ?>]</span></th>
+				<th><h3 style="display: inline;"><?php echo $Ship["Name"]; ?></h3> <span class="code">[<?php echo $Ship["Kuerzel"]; ?>]</span></th>
 				<tr>
 					<td><?php echo $Ship["Beschreibung"]; ?></td>
 				</tr>
 				<tr>
 					<td>
 						<ul class="ress">
+							<li><img src="img/bot.png" class="img_ress"> <?php echo "<font color='$farbeB'>" . number_format($Ship["Bots"], 0, '.', '.') . "</font>"; ?></li>
 							<li><img src="img/eisen.png" class="img_ress"> <?php echo "<font color='$farbeE'>" . number_format($Ship["Kosten_Eisen"], 0, '.', '.') . "</font>"; ?></li>
 							<li><img src="img/silizium.png" class="img_ress"> <?php echo "<font color='$farbeS'>" . number_format($Ship["Kosten_Silizium"], 0, '.', '.') . "</font>"; ?></li>
 							<li><img src="img/wasser.png" class="img_ress"> <?php echo "<font color='$farbeW'>" . number_format($Ship["Kosten_Wasser"], 0, '.', '.') . "</font>"; ?></li>
+							<li><img src="img/karma.png" class="img_ress"> <?php echo "<font color='$farbeK'>" . number_format($Ship["Kosten_Karma"], 0, '.', '.') . "</font>"; ?></li>
 					</ul>
 					</td></tr>
 				<tr><td>
 				
-				<ul class="nav inline-items-attr">
+				<ul class="nav inline-items-attr">					
 					<li><font style="font-size: x-small;">Angriff: </font><?php echo number_format($Ship["Angriff"], 0, '.', '.'); ?></li>
 					<li><font style="font-size: x-small;">Verteidigung: </font><?php echo number_format($Ship["Verteidigung"], 0, '.', '.'); ?></li>
 					<li><font style="font-size: x-small;">Geschwindigkeit: </font><?php echo  number_format($Ship["Geschwindigkeit"], 0, '.', '.'); ?></li>
@@ -92,12 +96,12 @@ if($raumschiffwerft_stufe == 0) {
 				if($kann_gebaut_werden == true) {
 		
 					
-						echo $Ship["Bauzeit"]; ?> <button type="submit" name="action-forschung-bauen" value="<?php echo $i; ?>">Bauen</button><?php				
-					 
+						echo get_timestamp_in_was_sinnvolles($Ship["Bauzeit"]); ?> <input type="text" size=2 maxlength=2 name="vanzahl<?php echo $i; ?>" onkeydown="if (event.keyCode == 13) document.getElementById('action-schiffe-bauen_<?php echo $i; ?>').click()"> <button type="submit" name="action-schiffe-bauen" id="action-schiffe-bauen_<?php echo $i; ?>" value="<?php echo $i; ?>">Bauen</button><?php				
+						 
 					
 				} else {
 					
-					echo $Ship["Bauzeit"]; ?> <button disabled style="visibility: hidden;">Bauen</button><?php
+					echo get_timestamp_in_was_sinnvolles($Ship["Bauzeit"]); ?> <button disabled style="visibility: hidden;">Bauen</button><?php
 							
 				}
 				
@@ -129,3 +133,11 @@ if($raumschiffwerft_stufe == 0) {
 	
 	</div>
 </form>
+<script type="text/javascript">
+function submitform(p)
+{
+	document.getElementById("ship_id").value = p;
+	alert(document.getElementById("ship_id").value);
+	document.myform.submit();
+}
+</script>
