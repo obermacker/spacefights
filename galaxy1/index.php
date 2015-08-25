@@ -274,7 +274,7 @@ switch ($select) {
 				if($ressource["Wasser"] < ($Ship["Kosten_Wasser"] * $anzahl)) { $kann_gebaut_werden = false; }
 				if($ressource["Karma"] < ($Ship["Kosten_Karma"] * $anzahl)) { $kann_gebaut_werden = false; }
 				if($ressource["Bot"] < ($Ship["Bots"] * $anzahl)) { $kann_gebaut_werden = false; }
-				
+				echo $Ship["Bots"] * $anzahl;
 				if ($kann_gebaut_werden == true) {
 					
 					$bauzeit = $Ship["Bauzeit"];

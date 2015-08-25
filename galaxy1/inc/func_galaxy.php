@@ -181,11 +181,11 @@ function set_bauschleife_ship($spieler_id, $planet_id, $ship_id, $ship_name, $an
 		// Ress aufn Planni aktualisiseren
 		
 		
-		$ressource_eisen = $ressource_eisen - $kosten_eisen;
-		$ressource_silizium  = $ressource_silizium - $kosten_silizium;
-		$ressource_wasser = $ressource_wasser - $kosten_wasser;
-		$ressource_karma = $ressource_karma  - $kosten_karma;
-		$ressource_bot = $ressource_bot - $kosten_bot;
+		$ressource_eisen = $ressource_eisen - ($kosten_eisen * $anzahl);
+		$ressource_silizium  = $ressource_silizium - ($kosten_silizium * $anzahl);
+		$ressource_wasser = $ressource_wasser - ($kosten_wasser * $anzahl);
+		$ressource_karma = $ressource_karma  - ($kosten_karma * $anzahl);
+		$ressource_bot = $ressource_bot - ($kosten_bot * $anzahl);
 		$bauzeit = $bauzeit;
 		
 		//$abfrage = "UPDATE `planet` SET `Bauschleife_Gebaeude_ID` = $gebäude_id, SET `Bauschleife_Gebaeude_Bis` = " . $time() + $bauzeit . " FROM  WHERE `Spieler_ID` = '$spieler_id' AND `Planet_ID` = $planet_id";
