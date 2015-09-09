@@ -10,9 +10,6 @@
 
 $raumschiffwerft_stufe = get_gebäude_aktuelle_stufe($spieler_id, 0, 7);
 
-
-$raumschiffwerft_stufe = 20;
-
 if($raumschiffwerft_stufe == 0) {
 	
 	echo "Baue erst eine Raumschiffwerft.";
@@ -133,11 +130,3 @@ if($raumschiffwerft_stufe == 0) {
 	
 	</div>
 </form>
-<script type="text/javascript">
-function submitform(p)
-{
-	document.getElementById("ship_id").value = p;
-	alert(document.getElementById("ship_id").value);
-	document.myform.submit();
-}
-</script>

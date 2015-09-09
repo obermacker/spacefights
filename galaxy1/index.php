@@ -21,11 +21,18 @@ if (check_auth($spieler_id, $session_id) == "nein"){
 	    exit();	
 }
 
+//var_dump($_POST);
+
 if(!isset($_POST["s"])){ 
 	if(!isset($_GET["s"])){ $select = "index";} else { $select = $_GET["s"]; }
 } else { $select = $_POST["s"]; }
 
 
+//prüf mal ob der Spieler überhaupt einen Planeten in der Gala hat
+
+if (get_anzahl_planeten($spieler_id, 1) == 0) { session_unset(); session_destroy(); $_SESSION = array(); header('Location: ../index.html'); exit(); }
+
+//ENDE: prüf mal ob der Spieler überhaupt einen Planten in der Gala hat ;)
 
 switch ($select) {
 	case "hypersprung": //hypersprung.php
@@ -79,6 +86,12 @@ switch ($select) {
 		$nav_bar_planet = "";
 		$bar_planet_info = true;
 		break;
+	case "Sonnensystem":
+		$nav_page_title = "display: none;";
+		$nav_startseite = "display: none;";
+		$nav_bar_planet = "";
+		$bar_planet_info = true;
+		break;
 	default:
 		$nav_page_title = "display: none;";
 		$nav_startseite = "display: none;";
@@ -119,6 +132,12 @@ switch ($select) {
 	
 	}
 	
+	//--- Deff
+	
+	$bauschleife = check_bauschleife_activ($spieler_id, 0, "Deff");
+	if ($bauschleife["ID"] > 0) {
+		set_bauschleife_deff_fertig($spieler_id, 0);
+	}
 	
 	
 //---- ENDE: Abgelaufene Bauschleifen fertigstellen
@@ -156,7 +175,7 @@ switch ($select) {
 			}
 		}	
 	}
-	
+	//--- Schiffe
 	if (isset($_POST["action-schiffe-abbrechen"])) {
 		if (is_numeric($_POST["action-schiffe-abbrechen"])) {
 			
@@ -164,6 +183,16 @@ switch ($select) {
 			
 		}
 	}
+	
+	//--- Deff
+	if (isset($_POST["action-deff-abbrechen"])) {
+		if (is_numeric($_POST["action-deff-abbrechen"])) {
+				
+			set_bauschleife_deff_abbruch($spieler_id, 0, $_POST["action-deff-abbrechen"]);
+				
+		}
+	}
+	
 	
 	
 //---- Ende: Bauschleife abbrechen 
@@ -292,6 +321,50 @@ switch ($select) {
 	
 
 //--- ENDE: Schiffe einreihen
+
+//--- Verteidigung einreihen
+
+
+	if(isset($_POST["action-deff-bauen"])) {
+	
+		if (is_numeric($_POST["action-deff-bauen"])) {
+	
+	
+			$kann_gebaut_werden = true;
+	
+			
+				$ship_id = $_POST["action-deff-bauen"];
+				$ressource = get_ressource($spieler_id, 0);
+				$Deff = get_def($_POST["action-deff-bauen"]);
+				$anzahl = usereingabe_cleaner ($_POST["vanzahl" . $_POST["action-deff-bauen"]]);
+				echo "$ship_id - $anzahl ";
+				if($anzahl <= 0 OR empty($anzahl) OR !is_numeric($anzahl)) { $kann_gebaut_werden = false; }
+	
+				if($ressource["Eisen"] < ($Deff["Kosten_Eisen"] * $anzahl)) { $kann_gebaut_werden = false; }
+				if($ressource["Silizium"] < ($Deff["Kosten_Silizium"] * $anzahl)) { $kann_gebaut_werden = false; }
+				if($ressource["Wasser"] < ($Deff["Kosten_Wasser"] * $anzahl)) { $kann_gebaut_werden = false; }
+				if($ressource["Karma"] < ($Deff["Kosten_Karma"] * $anzahl)) { $kann_gebaut_werden = false; }
+				if($ressource["Bot"] < ($Deff["Bots"] * $anzahl)) { $kann_gebaut_werden = false; }
+				echo $Deff["Bots"] * $anzahl;
+				if ($kann_gebaut_werden == true) {
+					
+					$bauzeit = $Deff["Bauzeit"];
+					
+					echo "<br> $bauzeit <br>";
+	
+					set_bauschleife_deff($spieler_id, 0, $ship_id, $Deff["Name"], $anzahl, $bauzeit, $ressource["Eisen"], $ressource["Silizium"], $ressource["Wasser"], $ressource["Bot"], $ressource["Karma"], $Deff["Kosten_Eisen"], $Deff["Kosten_Silizium"], $Deff["Kosten_Wasser"], $Deff["Bots"], $Deff["Kosten_Karma"]);					
+						
+				} else {
+	
+					echo("$kann_gebaut_werden"); //ToDo: Fehlermeldung einbauen
+	
+				}
+			
+		}
+	}
+	
+
+//--- ENDE: Verteidigung einreihen
 ?>
 <!DOCTYPE HTML>
 <html lang="de">
@@ -377,7 +450,7 @@ if (tl>=0){
     <li><a class="menu" href="index.php?s=Raumschiffe">Raumschiffe</a></li>
     <li><a class="menu" href="index.php?s=Verteidigung">Verteidigung</a></li>
     <li><a class="menu" href="">Flotte</a> </li>
-    <li><a class="menu" href="">Sonnensystem</a></li>
+    <li><a class="menu" href="index.php?s=Sonnensystem">Sonnensystem</a></li>
     <li>
     	<select name="planet" size="1" style="width: 150px;" onchange="this.form.submit()">
     	<?php echo get_list_of_all_planets($spieler_id, 0); ?>
@@ -433,6 +506,9 @@ switch ($select) {
 		break;
 	case "Verteidigung":
 		require 'inc/verteidigung.php';
+		break;
+	case "Sonnensystem":
+		require 'inc/sonnensystem.php';
 		break;
 	default:
 		require 'inc/home.php';

@@ -1,11 +1,14 @@
 <?php 
 $activity = get_activity_planet_spieler_schiffe($spieler_id, 0);
 $flotte = get_activity_schiffe_Liste($spieler_id, 0);
+$deff_schleife = get_activity_deff_Liste($spieler_id, 0);
 $schiffe = get_Schiffe_stationiert($spieler_id, 0);
+$deff = get_Deff_stationiert($spieler_id, 0);
 ?>
 <div class="flex_uebersicht">
 	<div><?php echo get_koordinaten_planet($spieler_id, 0); ?><br>
-		<img src="img/planet.png" style="border-style: #555555 solid 1px;">
+		<img src="img/planet.png" style="border-style: #555555 solid 1px;">		
+		<div><?php echo number_format(sprintf('%d', get_punkte($spieler_id, 0)), 0, ',', '.'); ?> Punkte</div>
 	</div>
 	<div>
 		<table id="default" class="ubersicht">
@@ -53,8 +56,11 @@ $schiffe = get_Schiffe_stationiert($spieler_id, 0);
 			<tr><th>Verteidigung</th><td>[aktiviert]</td></tr>
 		</table>
 	</div>
-<?php if (isset($schiffe)) { ?>	
+
+<?php if (isset($schiffe) OR isset($deff)) { ?>	
 	<div>
+<?php if (isset($schiffe)) { ?>	
+	
 		<table id="default" class="ubersicht">
 			<caption>Schiffe</caption>
 			
@@ -67,12 +73,38 @@ $schiffe = get_Schiffe_stationiert($spieler_id, 0);
 
 ?>
 			
-			<tr><th><?php echo $name; ?></th><td><?php echo str_replace(' ', '&nbsp;&nbsp;', str_pad($anzahl, 4 ," ", STR_PAD_LEFT)); ?></td></tr>
+			<tr><th style="width: 10.5em;"><?php echo $name; ?></th><td><?php echo str_replace(' ', '&nbsp;&nbsp;', str_pad($anzahl, 4 ," ", STR_PAD_LEFT)); ?></td></tr>
 
 <?php } ?>
 		</table>
-	</div>
+	
 <?php } ?>
+
+<?php if (isset($deff)) { ?>	
+	
+		<table id="default" class="ubersicht">
+			<caption>Deff</caption>
+			
+	<?php 
+		$i = 0;
+	
+		foreach($deff as $key => $value) {
+			$anzahl = $deff[$key]["Anzahl"];
+			$name = $deff[$key]["Name"];
+
+?>
+			
+			<tr><th style="width: 10.5em;"><?php echo $name; ?></th><td><?php echo str_replace(' ', '&nbsp;&nbsp;', str_pad($anzahl, 4 ," ", STR_PAD_LEFT)); ?></td></tr>
+
+<?php } ?>
+		</table>
+
+<?php } ?>
+
+	</div>
+
+<?php } ?>
+	
 	<div>
 <?php  if (isset($flotte)) { ?>
 	
@@ -108,5 +140,40 @@ $schiffe = get_Schiffe_stationiert($spieler_id, 0);
 		</table>
 	</div>
 <?php } ?>
+<?php  if (isset($deff_schleife)) { ?>
+	
+	<div>
+		<table id="default" class="ubersicht">
+						<caption>Deff Bauschleife</caption>
+<?php
+
+
+	$i = 0;
+	foreach($deff_schleife as $key => $value) {
+		$ID = $deff_schleife[$key]["ID"];
+		$anzahl = $deff_schleife[$key]["Anzahl"];
+		$name = $deff_schleife[$key]["Name"];
+		$zeit_bis = $deff_schleife[$key]["Zeit-Bis"];
+		
+		?> 
+		<tr><th><?php echo "$name"; ?></th><td><?php echo str_replace(' ', '&nbsp;&nbsp;', str_pad($anzahl, 2 ," ", STR_PAD_LEFT)) . "x "; ?>
+										<span id="deff<?php echo $i; ?>"><script type="text/javascript"><!--
+										countdown(<?php echo $zeit_bis; ?>, "deff<?php echo $i; ?>");
+										</script></span>
+		</td><td><form style="display: inline;" action="index.php" method="post" autocomplete="off"><button type="submit" name="action-deff-abbrechen" id="action-deff-abbrechen_<?php echo $i; ?>" value="<?php echo $ID; ?>">x</button></form></td></tr>
+		<?php 
+		$i++;
+	}
+	
+	
+
+		
+	
+			//<tr><th>Verteidigung</th><td>dd</td></tr>
+?>		
+		</table>
+	</div>
+<?php } ?>
+
 </div>
 </div>

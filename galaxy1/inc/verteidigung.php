@@ -1,6 +1,6 @@
 <form action="index.php" method="post" autocomplete="off">
 <input type="hidden" name="s" value="Verteidigung">
-
+<input type="hidden" name="ship_id" id="ship_id" value="">
 <div class="flex_gebaeude_info">
 
 
@@ -8,7 +8,7 @@
 <?php
 
 
-$waffenfabrik_stufe = get_gebäude_aktuelle_stufe($spieler_ID, 0, 8);
+$waffenfabrik_stufe = get_gebäude_aktuelle_stufe($spieler_id, 0, 8);
 
 
 $waffenfabrik_stufe = 20;
@@ -37,7 +37,7 @@ if($waffenfabrik_stufe == 0) {
 				
 				?>
 						<div><table id="default" class="ubersicht" width=100%>
-							<th><h3 style="display: inline;"><?php echo $Def["Def_Name"]; ?></h3> <span class="code">[<?php echo $Def["Kuerzel"]; ?>] MAX</span></th>
+							<th><h3 style="display: inline;"><?php echo $Def["Name"]; ?></h3> <span class="code">[<?php echo $Def["Kuerzel"]; ?>] MAX</span></th>
 							<tr>
 								<td><?php echo $Def["Beschreibung"]; ?></td>
 							</tr>
@@ -64,7 +64,7 @@ if($waffenfabrik_stufe == 0) {
 			<div>
 			
 			<table id="default" class="ubersicht" width=100%>
-				<th><h3 style="display: inline;"><?php echo $Def["Def_Name"]; ?></h3> <span class="code">[<?php echo $Def["Kuerzel"]; ?>]</span></th>
+				<th><h3 style="display: inline;"><?php echo $Def["Name"]; ?></h3> <span class="code">[<?php echo $Def["Kuerzel"]; ?>]</span></th>
 				<tr>
 					<td><?php echo $Def["Beschreibung"]; ?></td>
 				</tr>
@@ -92,12 +92,12 @@ if($waffenfabrik_stufe == 0) {
 				if($kann_gebaut_werden == true) {
 		
 					
-						echo $Def["Bauzeit"]; ?> <button type="submit" name="action-forschung-bauen" value="<?php echo $i; ?>">Bauen</button><?php				
+						echo get_timestamp_in_was_sinnvolles($Def["Bauzeit"]); ?> <input type="text" size=2 maxlength=2 name="vanzahl<?php echo $i; ?>" onkeydown="if (event.keyCode == 13) document.getElementById('action-deff-bauen_<?php echo $i; ?>').click()"> <button type="submit" name="action-deff-bauen" id="action-deff-bauen_<?php echo $i; ?>" value="<?php echo $i; ?>">Bauen</button><?php				
 					 
 					
 				} else {
 					
-					echo $Def["Bauzeit"]; ?> <button disabled style="visibility: hidden;">Bauen</button><?php
+					echo get_timestamp_in_was_sinnvolles($Def["Bauzeit"]); ?> <button disabled style="visibility: hidden;">Bauen</button><?php
 							
 				}
 				

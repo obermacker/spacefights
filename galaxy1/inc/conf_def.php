@@ -6,16 +6,17 @@ function get_config_def($id, $var_spieler_stufe) {
 
 	switch ($id) {
 		case 1:
-			$Def = array(
+			$Deff = array(
 			"Schiff_ID" => 1,
-			"Def_Name" => "Raketenwerfer",
-			"Def_Name_Plural" => "Raketenwerfer",
+			"Name" => "Raketänwerfer",
+			"Name_Plural" => "Raketenwerfer",
 			"Beschreibung" => "lorem ipsum",
 			"Kosten_Eisen" => 500,
 			"Kosten_Silizium" => 250,
 			"Kosten_Wasser" => 0,
+			"Kosten_Karma" => 0,
 			"Bots" => 1,
-			"Bauzeit" => 800,
+			"Bauzeit" => 80,
 			"Kapazitaet" => 50,
 			"Geschwindigkeit" => 1500,
 			"Angriff" => 5,
@@ -29,14 +30,15 @@ function get_config_def($id, $var_spieler_stufe) {
 				);
 			break;	
 		case 2:			
-			$Def = array(
+			$Deff = array(
 			"Schiff_ID" => 2,
-			"Def_Name" => "Laserkanone",
-			"Def_Name_Plural" => "Laserkanonen",
+			"Name" => "Laserkanone",
+			"Name_Plural" => "Laserkanonen",
 			"Beschreibung" => "lorem ipsum",
 			"Kosten_Eisen" => 1150,
 			"Kosten_Silizium" => 525,
 			"Kosten_Wasser" => 100,
+			"Kosten_Karma" => 0,
 			"Bots" => 2,
 			"Bauzeit" => 800,
 			"Kapazitaet" => 100,
@@ -53,16 +55,17 @@ function get_config_def($id, $var_spieler_stufe) {
 			break;
 		
 		case 3:
-			$Def = array(
+			$Deff = array(
 			"Schiff_ID" => 3,
-			"Def_Name" => "Ionenkanone",
-			"Def_Name_Plural" => "Ionenkanonen",
+			"Name" => "Ionenkanone",
+			"Name_Plural" => "Ionenkanonen",
 			"Beschreibung" => "lorem ipsum",			
 			"Kosten_Eisen" => 2850,
 			"Kosten_Silizium" => 1150,
 			"Kosten_Wasser" => 375,
+			"Kosten_Karma" => 0,
 			"Bots" => 5,
-			"Bauzeit" => 800,
+			"Bauzeit" => 80,
 			"Kapazitaet" => 800,
 			"Geschwindigkeit" => 1250,
 			"Angriff" => 40,
@@ -77,15 +80,16 @@ function get_config_def($id, $var_spieler_stufe) {
 			break;
 			
 		case 4:
-			$Def = array(
+			$Deff = array(
 			"Schiff_ID" => 4,
-			"Def_Name" => "Kleiner Schild",
-			"Def_Name_Plural" => "Kleiner Schild",
+			"Name" => "Kleiner Schild",
+			"Name_Plural" => "Kleiner Schild",
 			"Beschreibung" => "lorem ipsum",
 			
 			"Kosten_Eisen" => 7875,
 			"Kosten_Silizium" => 2675,
 			"Kosten_Wasser" => 950,
+			"Kosten_Karma" => 0,
 			"Bots" => 13,
 			"Bauzeit" => 800,
 			"Kapazitaet" => 1500,
@@ -102,15 +106,16 @@ function get_config_def($id, $var_spieler_stufe) {
 		break;
 		
 		case 5:
-			$Def = array(
+			$Deff = array(
 			"Schiff_ID" => 5,
-			"Def_Name" => "Großer Schild",
-			"Def_Name_Plural" => "Großer Schild",
+			"Name" => "Großer Schild",
+			"Name_Plural" => "Großer Schild",
 			"Beschreibung" => "lorem ipsum",
 			
 			"Kosten_Eisen" => 425,
 			"Kosten_Silizium" => 300,
 			"Kosten_Wasser" => 25,
+			"Kosten_Karma" => 0,
 			"Bots" => 1,
 			"Bauzeit" => 800,
 			"Kapazitaet" => 5000,
@@ -128,14 +133,15 @@ function get_config_def($id, $var_spieler_stufe) {
 		
 		
 		case 6:
-			$Def = array(
+			$Deff = array(
 			"Schiff_ID" => 6,
-			"Def_Name" => "Dimension Tide",
-			"Def_Name_Plural" => "Dimension Tides",
+			"Name" => "Dimension Tide",
+			"Name_Plural" => "Dimension Tides",
 			"Beschreibung" => "Satellite that fires a temporary black hole",				
 			"Kosten_Eisen" => 20000000,
 			"Kosten_Silizium" => 20000000,
 			"Kosten_Wasser" => 20000000,
+			"Kosten_Karma" => 0,
 			"Bots" => 150,
 			"Bauzeit" => 800,
 			"Kapazitaet" => 0,
@@ -153,7 +159,7 @@ function get_config_def($id, $var_spieler_stufe) {
 	}
 	
 
-	return $Def;
+	return $Deff;
 	
 }
 

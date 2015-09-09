@@ -124,21 +124,18 @@ function check_valid_url() {
 }
 
 function check_koordinaten_cleaner($value) {
-	$regex ='/[1-9]\:[1-9]/';
-	
-	if(preg_match($regex, $value)){ 
 		
-		$regex ='/[^0-9\:]/';
-		$newVal = preg_replace($regex,"", $value);		
-		
-		$koords = explode(":", $newVal);
+		$koords = explode(":", $value);
 
 		if(!isset($koords[0])) { return "nicht gültig"; }  
 		if(!isset($koords[1])) { return "nicht gültig"; }
 		
-		return $newVal;
+		if(!is_numeric($koords[0])) { return "nicht gültig"; }  
+		if(!is_numeric($koords[1])) { return "nicht gültig"; }
 		
-	}else {	return "nicht gültig";	}
+		return $value;
+		
+
 
 }
 

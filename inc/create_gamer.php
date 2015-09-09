@@ -17,7 +17,7 @@ foreach($_POST as $key => $value) {
 }
 
 foreach($_POST as $key => $value) {
-	// echo "$key ->  $value <br>";
+	//echo "$key ->  $value <br>";
 
 }
 
@@ -63,12 +63,14 @@ if ($spieler_name != "" && $spieler_name != "fehler") {
 					
 					$ziel = check_koordinaten_besetzt($x, $y, $z, $_POST["galaxy"]);
 					
+					
 				}
 				
-				//echo "$x & $y & $z <br>";				
+								
 				
 			} while ($ziel = false);
 			
+			echo "$x & $y & $z <br>";
 			
 			if (get_anzahl_planeten($spieler_ID, $_POST["galaxy"]) == 0) {
 				
