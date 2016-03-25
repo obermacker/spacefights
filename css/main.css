@@ -17,6 +17,9 @@ body {
 page_titel { display: block; clear: both; }
 page_titel { background-color: #004578; border: 1px solid  #3a6784; padding: 1.25em; margin: .5em; }
 
+page_error { display: block; clear: both; }
+page_error { background-color: #a10017; border: 1px solid  #510102; padding: 1.25em; margin: .5em; }
+
 navbar { display: block; clear: both; }
 navbar { background-color: rgba(0,69,120, 0.55); border: 1px solid  #3a6784; padding: 1.25em; margin: .5em; }
 
@@ -210,7 +213,31 @@ input,textarea,select, button { border-color:#000000; border-width:1px; backgrou
 
 th, td, tr .ubersicht { padding:4px; border: 0; text-align: left;}
 
+  .ubersicht_gross {  
+  	display: none;
+  	padding-right: 15px;
+	padding-bottom: 5px;  	  
+  }
+
+  .ubersicht_klein {    	
+	   display: inline;
+  }
+
 /* MEDIA QUERIES */
+
+@media screen and (min-width: 37.5em ) {
+  .ubersicht_gross {
+  
+  	display: inline;
+  
+  }
+  
+  .ubersicht_klein {  
+  	display: none;
+	}  
+}
+
+
 @media screen and (min-width: 80em ) {
 
 	body { width: 80em;
@@ -231,7 +258,11 @@ th, td, tr .ubersicht { padding:4px; border: 0; text-align: left;}
 		margin-left: -19.3em;
 		float: left;
   }     
+  
 }
+
+
+
 			
 .flex
    {
@@ -316,8 +347,7 @@ th, td, tr .ubersicht { padding:4px; border: 0; text-align: left;}
 		-webkit-flex-wrap: wrap; /* Safari 6.1+ */
 		display: flex;  
 		flex-wrap: wrap;
-		 flex-basis: auto;
-
+		 flex-basis: auto; 
    }
 
    .flex_uebersicht > div
@@ -335,8 +365,70 @@ th, td, tr .ubersicht { padding:4px; border: 0; text-align: left;}
       -webkit-transition: width 0.7s ease-out;
       transition: width 0.7s ease-out;
       		 flex: auto;
+      		 
+       	justify-content: flex-start;
+	align-content: flex-start;
+	
+		padding-right: 15px;
+	padding-bottom: 5px;
+	
       
    }
+
+
+.flexcontainer { // <- das hier wird der neue flex 20.03.2016
+   display: -webkit-flex;
+   display: flex;
+   -webkit-align-items: flex-start;
+   align-items: flex-start;
+   -webkit-justify-content: center;
+   justify-content: left;
+   /* You can set flex-wrap and flex-direction individually */
+   -webkit-flex-direction: row;
+   flex-direction: row;
+   -webkit-flex-wrap: wrap;
+   flex-wrap: wrap;
+   /* Or do it all in one line with flex flow */
+   -webkit-flex-flow: row wrap;
+   flex-flow: row wrap;
+   /* tweak the where items line up on the row */
+   /* valid values are: flex-start, flex-end, space-between, space-around, stretch */
+   -webkit-align-content: flex-start;
+   align-content: flex-start;
+}
+
+.flexcontainer > div{
+	padding-right: 15px;
+	padding-bottom: 5px;
+	
+}
+
+.flexcontainer-center { // <- das hier wird der neue flex 20.03.2016
+display: -webkit-flex;
+   display: flex;
+   -webkit-align-items: center;
+   align-items: center;
+   -webkit-justify-content: center;
+   justify-content: center;
+   /* You can set flex-wrap and flex-direction individually */
+   -webkit-flex-direction: row;
+   flex-direction: row;
+   -webkit-flex-wrap: wrap;
+   flex-wrap: wrap;
+   /* Or do it all in one line with flex flow */
+   -webkit-flex-flow: row wrap;
+   flex-flow: row wrap;
+   /* tweak the where items line up on the row */
+   /* valid values are: flex-start, flex-end, space-between, space-around, stretch */
+   -webkit-align-content: center;
+   align-content: center;
+}
+.flexcontainer-center > div{
+	
+	padding-bottom: 25px;
+	
+}
+
 
 .flex_gebaeude_info
    {

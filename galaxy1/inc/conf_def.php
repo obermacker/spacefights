@@ -8,7 +8,7 @@ function get_config_def($id, $var_spieler_stufe) {
 		case 1:
 			$Deff = array(
 			"Schiff_ID" => 1,
-			"Name" => "Raketänwerfer",
+			"Name" => "Raketenwerfer",
 			"Name_Plural" => "Raketenwerfer",
 			"Beschreibung" => "lorem ipsum",
 			"Kosten_Eisen" => 500,

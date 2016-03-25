@@ -3,17 +3,27 @@ session_start();
 // ini_set( 'display_errors', true );
 //error_reporting( 0 );
 require 'inc/func.php';
-require 'inc/connect_spieler.php'; 
- 
-$fehler = "";
-if (login(check_username_cleaner ($_POST["sf_username"], 0), $_POST["sf_password"]) == "ok"){
-    header('Location: galaxy.php');    
-    }
-else
-    {
-    	$fehler = "Benutzername und/oder Passwort waren falsch.";
-    }
 
+
+if (isset($_POST["regeln"])) {
+	
+	if ((registrieren($_POST["sf_reg_username"], $_POST["sf_reg_password"]) == "Yeahh!") AND $_POST["regeln"] == "verstanden" AND $_POST["sf_reg_invite"] == "SF4EVER") {
+		
+		$fehler = 0;
+		$meldung = "Herzlich Willkommen!";
+		
+		
+	} else {
+		$fehler = 1;
+		$meldung = "Fehler!";
+		
+	} 
+	
+} else {
+	$fehler = 1;
+	$meldung = "Fehler!";
+		
+}
 
 ?>
 <!DOCTYPE HTML>
@@ -30,19 +40,22 @@ else
 
 
 <page_titel><div id="title" style="text-align: right;">spacefights.org</div></page_titel>
-  <form name="loginform" method="post" action="login.php">
-    <passbar>
-				    <input type="text" name="sf_username" placeholder="Username">
-				    <input type="password" name="sf_password" placeholder="Password">
-				    <input type="submit" name="login" class="login login-submit" value="login">
-    <a href="register.html">Neu anmelden!</a>
-    </passbar>
-				  </form>
-<page_error>
-<?php echo $fehler; ?>
-</page_error>
-<content>
 
+<?php if($fehler == 1) { ?>
+<page_error>
+<?php echo $meldung ?>
+</page_error>
+<?php } ?>
+
+<?php if($fehler == 0) { ?>
+<navbar>
+<?php echo $meldung ?>
+</navbar>
+<?php } ?>
+
+<content>
+<?php if($fehler == 1) { echo "<a href='/'>Hier</a> geht es zurück."; } ?>
+<?php if($fehler == 0) { echo "Dein Account steht jetzt zur Verfügung <a href='/'>klicke hier</a>"; } ?>
 </content>
 <navbar style="">
 

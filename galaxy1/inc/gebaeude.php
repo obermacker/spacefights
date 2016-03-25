@@ -20,7 +20,7 @@ for($i = 1; $i <= 10; $i++) {
 	<div>
 	
 	<table id="default" class="ubersicht" width=100%>
-		<th><h3 style="display: inline;"><?php echo $Gebäude["Name"]; ?></h3> <span class="code">[<?php echo ($Gebäude["Stufe"] - 1) . " >> " . $Gebäude["Stufe"]; ?>]</span></th>
+		<th><h3 style="display: inline;"><?php echo $Gebäude["Name"]; ?></h3> <span class="code">(Stufe <?php echo ($Gebäude["Stufe"] - 1); ?>)</span></th>
 		<tr>
 			<td><?php echo $Gebäude["Beschreibung"]; ?></td>
 		</tr>

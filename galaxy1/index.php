@@ -17,7 +17,7 @@ if (isset($_SESSION["session_id"])) { $session_id = $_SESSION["session_id"]; }
 
 
 if (check_auth($spieler_id, $session_id) == "nein"){
-	    //session_unset(); session_destroy(); $_SESSION = array(); header('Location: ../index.html'); exit();
+	    session_unset(); session_destroy(); $_SESSION = array(); header('Location: ../index.html'); exit();
 	    exit();	
 }
 
@@ -62,7 +62,7 @@ switch ($select) {
 		$nav_bar_planet = "display: none;";
 		$bar_planet_info = false;
 		break;
-	case "Gebäude":
+	case "Gebaeude":
 		$nav_page_title = "display: none;";
 		$nav_startseite = "display: none;";
 		$nav_bar_planet = "";
@@ -238,7 +238,7 @@ switch ($select) {
 
 //---ENDE: Gebäude bauen
 
-//--- Froschung einreihen
+//--- Forschung einreihen
 	
 	
 	if(isset($_POST["action-forschung-bauen"])) {
@@ -278,7 +278,7 @@ switch ($select) {
 		}
 	}
 	
-//--- ENDE: Froschung einreihen
+//--- ENDE: Forschung einreihen
 	
 //--- Schiffe einreihen
 
@@ -365,6 +365,35 @@ switch ($select) {
 	
 
 //--- ENDE: Verteidigung einreihen
+
+
+// Robots produzieren
+
+
+	$zyklen = floor(get_produktions_zyklen_seit_letzter_aktualisierung($spieler_id));
+	
+
+	if($zyklen > 1) {
+		
+
+		$bots_vorhanden_planet = get_robots_galaxy_db($spieler_id);
+		
+		
+		
+		if (get_robots_galaxy_array($spieler_id, $bots_vorhanden_planet) < MAXIMALE_ROBOTS_GESAMT_GALAXY) {
+			for( $zyklus = 1 ; $zyklus <= $zyklen ; $zyklus++ ) {
+				$bots_vorhanden_planet = berechne_robot_zuwachs($spieler_id, $bots_vorhanden_planet);
+				if (get_robots_galaxy_array($spieler_id, $bots_vorhanden_planet) >= MAXIMALE_ROBOTS_GESAMT_GALAXY) { break; }
+			}
+		}
+		
+		set_robots_galaxy_db($spieler_id, $bots_vorhanden_planet);
+		set_produktions_zyklen_seit_letzter_aktualisierung($spieler_id);
+		
+
+	}
+// ENDE: Robots produzieren
+	
 ?>
 <!DOCTYPE HTML>
 <html lang="de">
@@ -372,6 +401,8 @@ switch ($select) {
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="icon" type="image/png" href="../favicon-32x32.png" sizes="32x32" />
+	<link rel="icon" type="image/png" href="../favicon-16x16.png" sizes="16x16" />
     <link rel="stylesheet" href="../css/main.css">    
     <title>spacefights</title>
     </head>
@@ -443,9 +474,11 @@ if (tl>=0){
     <nav>
     <ul class="nav inline-items">
     <li><a class="menu" href="index.php">Übersicht</a></li>
+    <li><a class="menu" href="index.php">Imperium</a></li>
+    <li><a class="menu" href="index.php?s=Rohstoffe">Rohstoffe</a></li>
     <li><a class="menu" href="">Taverne</a></li>
     <li><a class="menu" href="">Handel</a></li>
-    <li><a class="menu" href="index.php?s=Gebäude">Gebäude</a></li>
+    <li><a class="menu" href="index.php?s=Gebaeude">Gebäude</a></li>
     <li><a class="menu" href="index.php?s=Forschung">Forschung</a></li>
     <li><a class="menu" href="index.php?s=Raumschiffe">Raumschiffe</a></li>
     <li><a class="menu" href="index.php?s=Verteidigung">Verteidigung</a></li>
@@ -462,6 +495,8 @@ if (tl>=0){
     
 <?php if($bar_planet_info == true) { 
 
+ refresh_ressource($spieler_id, 0, time());
+
  $ressource = get_ressource($spieler_id, 0);
 	
 	?>
@@ -471,7 +506,8 @@ if (tl>=0){
 			<div><img src="img/silizium.png" class="img_ress">Silizium<br><?php  echo number_format($ressource["Silizium"], 0, '.', '.'); ?></div>
 			<div><img src="img/wasser.png" class="img_ress">Wasser<br><?php  echo number_format($ressource["Wasser"], 0, '.', '.'); ?></div>
 			<div><img src="img/energie.png" class="img_ress">Energie<br><?php  echo number_format($ressource["Energie"], 0, '.', '.'); ?></div>
-			<div><img src="img/bot.png" class="img_ress">Robots<br><?php  echo number_format($ressource["Bot"], 0, '.', '.') ."/". number_format($ressource["Bot Stationiert"], 0, '.', '.'); ?></div>
+			<div style='display: none;'><img src="img/bot.png" class="img_ress">Robots<br><?php  echo number_format($ressource["Bot"], 0, '.', '.') ."/". number_format($ressource["Bot Stationiert"], 0, '.', '.'); ?></div>
+			<div title="<?php  echo number_format($ressource["Bot"], 6, ',', '.') ."/". number_format($ressource["Bot Stationiert"], 0, '.', '.'); ?>" ><img src="img/bot.png" class="img_ress">Robots<br><?php  echo number_format($ressource["Bot"], 0, '.', '.') ."/". number_format($ressource["Bot Stationiert"], 0, '.', '.'); ?></div>
 			<div><img src="img/held.png" class="img_ress">Helden<br>0</div>
 			<div><img src="img/karma.png" class="img_ress">Karma<br><?php echo number_format($ressource["Karma"], 0, '.', '.'); ?></div>
 	</div>	    
@@ -494,7 +530,7 @@ switch ($select) {
 		require 'inc/create_gamer.php';
 		break;		
 
-	case "Gebäude":
+	case "Gebaeude":
 		require 'inc/gebaeude.php';
 		break;
 		
@@ -509,6 +545,9 @@ switch ($select) {
 		break;
 	case "Sonnensystem":
 		require 'inc/sonnensystem.php';
+		break;
+	case "Rohstoffe":
+		require 'inc/rohstoffe.php';
 		break;
 	default:
 		require 'inc/home.php';

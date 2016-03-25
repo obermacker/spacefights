@@ -19,8 +19,10 @@ function create_first_planet($spieler_id, $x, $y, $z, $username, $galaxy_number)
 	//Planet
 	
 	$planetname = $username."s Kolonie";
-
-	$abfrage = "INSERT INTO `planet`(`Spieler_ID`, `Spieler_Name`, `Planet_Name`, `x`, `y`, `z`, `Grund_Prod_Eisen`, `Grund_Prod_Silizium`, `Grund_Prod_Wasser`) VALUES ('$spieler_id', '$username','$planetname', $x, $y, $z, 20,10,5)";
+	$jetzt = time() - (48 * 60 * 60);
+	$abfrage = "INSERT INTO `planet`(`Spieler_ID`, `Spieler_Name`, `Planet_Name`, `x`, `y`, `z`, `Grund_Prod_Eisen`, `Grund_Prod_Silizium`, `Grund_Prod_Wasser`, `Produktion_Zeit`) VALUES ('$spieler_id', '$username','$planetname', $x, $y, $z, 20,10,5, $jetzt)";
+	
+	
 	
 	$query = $abfrage or die("Error in the consult.." . mysqli_error("Error: #0003b ".$link));
 	$result = mysqli_query($link, $query);
@@ -81,7 +83,7 @@ function check_username_cleaner($value, $spieler_id){
 	if($spieler_id == 0) { return $newVal;}
 	
 	mysqli_select_db($link, "spieler");
-	mysql_query("SET NAMES 'utf8'");
+	
 	$abfrage = "FROM `spieler` WHERE `spieler_ID` <> '$spieler_id' AND (`spieler_name` = '$newVal' OR `name_galaxy_1` =  '$newVal' OR `name_galaxy_2` =  '$newVal' OR `name_galaxy_3` = '$newVal')";
 	
 	
@@ -97,6 +99,48 @@ function check_username_cleaner($value, $spieler_id){
 	return $newVal;
 	
 }
+
+
+function check_username_cleaner_register($value){
+	require 'inc/connect_spieler.php';
+
+	$badword = "admin administrator error fehler gast unbekannt unknown test";
+
+	$newVal = substr($value, 0, 30);
+	if (strlen($newVal) < 3) { return "fehler"; }
+
+
+	if (strpos($badword, strtolower($value)) !== false) {
+		return "fehler"; //Badword filter
+	}
+
+	$regex ='/[^.:a-zA-ZäüöÄÜÖß0-9-\/]/';
+	$newVal = preg_replace($regex," ", $newVal);
+
+	$newVal = htmlspecialchars($newVal);
+	$newVal = stripslashes($newVal);
+	//$newVal = filter_var($newVal, FILTER_SANITIZE_SPECIAL_CHARS, FILTER_FLAG_STRIP_LOW | FILTER_FLAG_STRIP_HIGH);
+
+
+
+	mysqli_select_db($link, "spieler");
+	
+	$abfrage = "FROM `spieler` WHERE `spieler_name` = '$newVal' OR `name_galaxy_1` =  '$newVal' OR `name_galaxy_2` =  '$newVal' OR `name_galaxy_3` = '$newVal'";
+
+
+	$result = $link->query("SELECT count(*) as total $abfrage")
+	or die ("Error: #0004  " . mysql_error());
+
+	$data = mysqli_fetch_assoc($result);
+
+	$anzahl = $data['total'];
+
+	if ($anzahl > 0) { return "fehler"; }
+
+	return $newVal;
+
+}
+
 
 function check_koordinaten_besetzt($x, $y, $z, $galaxy_number) {
 	
@@ -172,7 +216,7 @@ function get_anzahl_planeten($spieler_id, $galaxy_number){
 	$data = mysqli_fetch_assoc($result);
 	
 	$anzahl = $data['total'];
-	echo "#$galaxy_number $anzahl <br>";
+	
 	return ($anzahl);
 	
 }
@@ -182,30 +226,34 @@ function session_generate () {
 }
 
 function login($username, $passwort){
+	
+	if ($username == "" OR $passwort == "") { return ""; }
+	
 	require 'inc/connect_spieler.php';
 
 	$abfrage = "SELECT `ID`, `spieler_ID`, `spieler_name`, `passwort`, `letzter_login`, `spieler_geloescht`, `name_gala_1`, `aktiv_gala_1`, `letzter_Planet`, `max_Planeten` FROM `spieler` WHERE spieler_name LIKE '$username' LIMIT 1";
 	$query = $abfrage or die("Error: #0002 " . mysqli_error($link));
 	
 	$result = mysqli_query($link, $query);
-	$row = mysqli_fetch_array($result);
-	
-	if(hash_equals($row["passwort"], crypt($passwort, $row["passwort"])))
-	{
-		$_SESSION["username"] = $username;
-		$_SESSION["spieler_ID"] = $row["spieler_ID"];
-		$_SESSION["letzter_planet"] = $row["letzter_Planet"];
-		$_SESSION["Max_Planeten"] = $row["max_Planeten"];
-	
-		$_SESSION["session_id"] = session_generate();
-		$varHTTP_USER_AGENT = md5($_SERVER['HTTP_USER_AGENT']);
+	if ($row = mysqli_fetch_array($result)) {
 		
-		$query = "UPDATE spieler SET session_id = '".$_SESSION["session_id"]."', letzter_login = ".time().", HTTP_USER_AGENT = '".$varHTTP_USER_AGENT."' WHERE spieler_ID = '".$_SESSION["spieler_ID"]."'" or die("Error: #0007 " . mysqli_error($link));
+		if(hash_equals($row["passwort"], crypt($passwort, $row["passwort"])))
+		{
+			$_SESSION["username"] = $username;
+			$_SESSION["spieler_ID"] = $row["spieler_ID"];
+			$_SESSION["letzter_planet"] = $row["letzter_Planet"];
+			$_SESSION["Max_Planeten"] = $row["max_Planeten"];
 		
-		$ergebnis =  mysqli_query($link, $query)
-		OR die("Error: #0001 <br>".mysqli_error($link));
-		
-		return "ok";
+			$_SESSION["session_id"] = session_generate();
+			$varHTTP_USER_AGENT = md5($_SERVER['HTTP_USER_AGENT']);
+			
+			$query = "UPDATE spieler SET session_id = '".$_SESSION["session_id"]."', letzter_login = ".time().", HTTP_USER_AGENT = '".$varHTTP_USER_AGENT."' WHERE spieler_ID = '".$_SESSION["spieler_ID"]."'" or die("Error: #0007 " . mysqli_error($link));
+			
+			$ergebnis =  mysqli_query($link, $query)
+			OR die("Error: #0001 <br>".mysqli_error($link));
+			
+			return "ok";
+		}
 	}
 }
 
@@ -231,9 +279,12 @@ function check_auth($spieler_id, $session_id) {
 }
 
 
-function registrieren_test($username, $password) {
-	$username = $username;
+function registrieren($username, $password) {
+	$username = check_username_cleaner_register($username);
 	$password = $password;
+	
+	
+	if ($username == "fehler") { return "fehler"; } 
 
 	$cost = 10;
 	
@@ -242,7 +293,26 @@ function registrieren_test($username, $password) {
 	$salt = sprintf("$2a$%02d$", $cost) . $salt;
 	$hash = crypt($password, $salt);
 
-	echo $hash;
+	$unique = md5( uniqid( mt_rand( ), TRUE ) );
+
+	require 'inc/connect_spieler.php';
+	
+	
+	
+	$sql = "INSERT INTO `spieler`(`spieler_ID`, `spieler_name`, `passwort`) VALUES ('$unique', '$username', '$hash')";
+	
+	$query = $sql or die("Error in the consult.." . mysqli_error("Error: zeile 298 ".$link));
+
+	if (mysqli_query($link, $query)) {
+		return "Yeahh!";
+		
+	} else {
+		
+		return "Nope.";
+		
+	}
+	
+	
 
 }
 

@@ -4,9 +4,13 @@ $flotte = get_activity_schiffe_Liste($spieler_id, 0);
 $deff_schleife = get_activity_deff_Liste($spieler_id, 0);
 $schiffe = get_Schiffe_stationiert($spieler_id, 0);
 $deff = get_Deff_stationiert($spieler_id, 0);
+
+$bunker = get_Ressbunker_Inhalt($spieler_id, 0);
+
 ?>
-<div class="flex_uebersicht">
-	<div><?php echo get_koordinaten_planet($spieler_id, 0); ?><br>
+
+<div class="flexcontainer">
+	<div align=center><?php echo get_koordinaten_planet($spieler_id, 0); ?><br>
 		<img src="img/planet.png" style="border-style: #555555 solid 1px;">		
 		<div><?php echo number_format(sprintf('%d', get_punkte($spieler_id, 0)), 0, ',', '.'); ?> Punkte</div>
 	</div>
@@ -51,7 +55,7 @@ $deff = get_Deff_stationiert($spieler_id, 0);
 					}
 			?>			
 			</td></tr>
-			<tr><th>Rohstoffbunker</th><td><?php  echo get_Ressbunker_Inhalt($spieler_id, 0); ?></td></tr>
+			<tr><th>Rohstoffbunker</th><td><?php  echo $bunker["Belegt_Prozent"] . "<font style='font-size: x-small;'>%</font>"; ?></td></tr>
 			<tr><th>Handelssposten</th><td><?php  echo get_Handelsposten_Inhalt($spieler_id, 0); ?></td></tr>
 			<tr><th>Verteidigung</th><td>[aktiviert]</td></tr>
 		</table>
