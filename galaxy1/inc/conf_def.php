@@ -24,9 +24,21 @@ function get_config_def($id, $var_spieler_stufe) {
 			"Stufe_Werft" => 3,
 			"Typ" => "ATT",
 			"Kuerzel" => "lJ",
-			"Max_Hold" => "-1",
+			"Max_Hold" => -1,
 			"Max_Hold_Planet" => -1,
-			"Reichweite" => 50
+			"Reichweite" => 50,
+			"Tech_1" => 0,
+			"Tech_2" => 2,
+			"Tech_3" => 0,
+			"Tech_4" => 0,
+			"Tech_5" => 0,
+			"Tech_6" => 0,
+			"Tech_7" => 0,
+			"Tech_8" => 0,
+			"Tech_9" => 0,
+			"Tech_10" => 0,
+			"Tech_11" => 0,
+			"Tech_12" => 0
 				);
 			break;	
 		case 2:			
@@ -48,9 +60,21 @@ function get_config_def($id, $var_spieler_stufe) {
 			"Stufe_Werft" => 5,
 			"Typ" => "ATT",
 			"Kuerzel" => "sJ",
-			"Max_Hold" => "-1",
+			"Max_Hold" => -1,
 			"Max_Hold_Planet" => -1,
-			"Reichweite" => 50
+			"Reichweite" => 50,
+			"Tech_1" => 0,
+			"Tech_2" => 0,
+			"Tech_3" => 0,
+			"Tech_4" => 0,
+			"Tech_5" => 0,
+			"Tech_6" => 0,
+			"Tech_7" => 0,
+			"Tech_8" => 4,
+			"Tech_9" => 0,
+			"Tech_10" => 0,
+			"Tech_11" => 0,
+			"Tech_12" => 0
 				);
 			break;
 		
@@ -73,9 +97,21 @@ function get_config_def($id, $var_spieler_stufe) {
 			"Stufe_Werft" => 7,
 			"Typ" => "ATT",
 			"Kuerzel" => "SK",
-			"Max_Hold" => "-1",
+			"Max_Hold" => -1,
 			"Max_Hold_Planet" => -1,
-			"Reichweite" => 50
+			"Reichweite" => 50,
+			"Tech_1" => 0,
+			"Tech_2" => 0,
+			"Tech_3" => 0,
+			"Tech_4" => 0,
+			"Tech_5" => 0,
+			"Tech_6" => 0,
+			"Tech_7" => 0,
+			"Tech_8" => 0,
+			"Tech_9" => 0,
+			"Tech_10" => 0,
+			"Tech_11" => 0,
+			"Tech_12" => 5
 			);
 			break;
 			
@@ -86,22 +122,34 @@ function get_config_def($id, $var_spieler_stufe) {
 			"Name_Plural" => "Kleiner Schild",
 			"Beschreibung" => "lorem ipsum",
 			
-			"Kosten_Eisen" => 7875,
-			"Kosten_Silizium" => 2675,
-			"Kosten_Wasser" => 950,
+			"Kosten_Eisen" => 7500,
+			"Kosten_Silizium" => 6250,
+			"Kosten_Wasser" => 1250,
 			"Kosten_Karma" => 0,
-			"Bots" => 13,
-			"Bauzeit" => 800,
+			"Bots" => 17,
+			"Bauzeit" => (7500 + 6250) * 17,
 			"Kapazitaet" => 1500,
 			"Geschwindigkeit" => 1000,
 			"Angriff" => 100,
 			"Verteidigung" => 400,
-			"Stufe_Werft" => 9,
+			"Stufe_Werft" => 1,
 			"Typ" => "ATT",
 			"Kuerzel" => "Zer",
-			"Max_Hold" => "1",
+			"Max_Hold" => -1,
 			"Max_Hold_Planet" => 1,
-			"Reichweite" => 50
+			"Reichweite" => 50,
+			"Tech_1" => 0,
+			"Tech_2" => 0,
+			"Tech_3" => 0,
+			"Tech_4" => 2,
+			"Tech_5" => 0,
+			"Tech_6" => 0,
+			"Tech_7" => 0,
+			"Tech_8" => 0,
+			"Tech_9" => 0,
+			"Tech_10" => 0,
+			"Tech_11" => 0,
+			"Tech_12" => 0
 			);
 		break;
 		
@@ -112,22 +160,34 @@ function get_config_def($id, $var_spieler_stufe) {
 			"Name_Plural" => "Großer Schild",
 			"Beschreibung" => "lorem ipsum",
 			
-			"Kosten_Eisen" => 425,
-			"Kosten_Silizium" => 300,
-			"Kosten_Wasser" => 25,
+			"Kosten_Eisen" => 35000,
+			"Kosten_Silizium" => 27500,
+			"Kosten_Wasser" => 6250,
 			"Kosten_Karma" => 0,
-			"Bots" => 1,
-			"Bauzeit" => 800,
+			"Bots" => 79,
+			"Bauzeit" => (35.000 + 27500) * 79,
 			"Kapazitaet" => 5000,
 			"Geschwindigkeit" => 1500,
 			"Angriff" => 1,
 			"Verteidigung" => 10,
-			"Stufe_Werft" => 2,
+			"Stufe_Werft" => 10,
 			"Typ" => "TRAN",
 			"Kuerzel" => "kT",
-			"Max_Hold" => "-1",
+			"Max_Hold" => -1,
 			"Max_Hold_Planet" => 1,
-			"Reichweite" => 50
+			"Reichweite" => 50,
+			"Tech_1" => 0,
+			"Tech_2" => 0,
+			"Tech_3" => 0,
+			"Tech_4" => 6,
+			"Tech_5" => 0,
+			"Tech_6" => 0,
+			"Tech_7" => 0,
+			"Tech_8" => 0,
+			"Tech_9" => 0,
+			"Tech_10" => 0,
+			"Tech_11" => 0,
+			"Tech_12" => 0
 			);
 		break;
 		
@@ -151,9 +211,21 @@ function get_config_def($id, $var_spieler_stufe) {
 			"Stufe_Werft" => 20,
 			"Typ" => "SPEZ",
 			"Kuerzel" => "DT",
-			"Max_Hold_Planet" => -1,
-			"Max_Hold" => "1",
-			"Reichweite" => 50
+			"Max_Hold_Planet" => 1,
+			"Max_Hold" => 1,
+			"Reichweite" => 50,
+			"Tech_1" => 10,
+			"Tech_2" => 10,
+			"Tech_3" => 10,
+			"Tech_4" => 10,
+			"Tech_5" => 10,
+			"Tech_6" => 10,
+			"Tech_7" => 10,
+			"Tech_8" => 10,
+			"Tech_9" => 10,
+			"Tech_10" => 10,
+			"Tech_11" => 10,
+			"Tech_12" => 10
 			);
 			break;
 	}

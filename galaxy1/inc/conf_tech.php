@@ -22,11 +22,11 @@ function get_config_tech($id, $var_spieler_stufe) {
 			$Tech["Kosten_Silizium"] = 800;
 			$Tech["Kosten_Wasser"] = 200;
 		
-			$Tech["Bauzeit"] = 1400;
+			$Tech["Bauzeit"] = ($Tech["Kosten_Eisen"] + $Tech["Kosten_Silizium"]) * 1;
 			
 			//Bedingung
 			$Tech["Lab"] = 1;			
-			
+			$Tech["Sort"] = 6;
 			break;
 				
 		case 2:
@@ -37,11 +37,11 @@ function get_config_tech($id, $var_spieler_stufe) {
 			$Tech["Kosten_Silizium"] = 200;
 			$Tech["Kosten_Wasser"] = 0;
 		
-			$Tech["Bauzeit"] = 600;
+			$Tech["Bauzeit"] = ($Tech["Kosten_Eisen"] + $Tech["Kosten_Silizium"]) * 1;
 			
 			//Bedingung
 			$Tech["Lab"] = 1;
-			
+			$Tech["Sort"] = 2;
 			break;
 				
 		case 3:
@@ -52,11 +52,11 @@ function get_config_tech($id, $var_spieler_stufe) {
 			$Tech["Kosten_Silizium"] = 200;
 			$Tech["Kosten_Wasser"] = 400;
 		
-			$Tech["Bauzeit"] = 1000;
+			$Tech["Bauzeit"] = ($Tech["Kosten_Eisen"] + $Tech["Kosten_Silizium"]) * 2;
 			
 			//Bedingung
 			$Tech["Lab"] = 2;
-			
+			$Tech["Sort"] = 1;
 			break;
 		
 		case 4:
@@ -67,11 +67,11 @@ function get_config_tech($id, $var_spieler_stufe) {
 			$Tech["Kosten_Silizium"] = 600;
 			$Tech["Kosten_Wasser"] = 200;
 		
-			$Tech["Bauzeit"] = 800;
+			$Tech["Bauzeit"] = ($Tech["Kosten_Eisen"] + $Tech["Kosten_Silizium"]) * 3;
 			
 			//Bedingung
 			$Tech["Lab"] = 3;
-			
+			$Tech["Sort"] = 5;
 			break;
 	
 		case 5:
@@ -82,11 +82,11 @@ function get_config_tech($id, $var_spieler_stufe) {
 			$Tech["Kosten_Silizium"] = 250;
 			$Tech["Kosten_Wasser"] = 150;
 		
-			$Tech["Bauzeit"] = 800;
+			$Tech["Bauzeit"] = ($Tech["Kosten_Eisen"] + $Tech["Kosten_Silizium"]) * 4;
 			
 			//Bedingung
 			$Tech["Lab"] = 4;
-			
+			$Tech["Sort"] = 8;
 			break;
 	
 		case 6:
@@ -97,11 +97,11 @@ function get_config_tech($id, $var_spieler_stufe) {
 			$Tech["Kosten_Silizium"] = 400;
 			$Tech["Kosten_Wasser"] = 600;
 		
-			$Tech["Bauzeit"] = 1000;
+			$Tech["Bauzeit"] = ($Tech["Kosten_Eisen"] + $Tech["Kosten_Silizium"]) * 5;
 			
 			//Bedingung
 			$Tech["Lab"] = 5;
-			
+			$Tech["Sort"] = 9;
 			break;
 	
 		case 7:
@@ -112,11 +112,11 @@ function get_config_tech($id, $var_spieler_stufe) {
 			$Tech["Kosten_Silizium"] = 0;
 			$Tech["Kosten_Wasser"] = 8000;
 		
-			$Tech["Bauzeit"] = 44000;
+			$Tech["Bauzeit"] = ($Tech["Kosten_Eisen"] + $Tech["Kosten_Silizium"]) * 5;
 			
 			//Bedingung
 			$Tech["Lab"] = 5;
-			
+			$Tech["Sort"] = 11;
 			break;
 	
 		case 8:
@@ -127,10 +127,11 @@ function get_config_tech($id, $var_spieler_stufe) {
 			$Tech["Kosten_Silizium"] = 0;
 			$Tech["Kosten_Wasser"] = 0;
 		
-			$Tech["Bauzeit"] = 600;
+			$Tech["Bauzeit"] = ($Tech["Kosten_Eisen"] + $Tech["Kosten_Silizium"]) * 6;
 			
 			//Bedingung
 			$Tech["Lab"] = 6;
+			$Tech["Sort"] = 3;
 
 			//Erweiterte Bedingung
 				
@@ -147,11 +148,11 @@ function get_config_tech($id, $var_spieler_stufe) {
 			$Tech["Kosten_Silizium"] = 0;
 			$Tech["Kosten_Wasser"] = 600;
 		
-			$Tech["Bauzeit"] = 800;
+			$Tech["Bauzeit"] = ($Tech["Kosten_Eisen"] + $Tech["Kosten_Silizium"]) * 7;
 			
 			//Bedingung
 			$Tech["Lab"] = 7;
-			
+			$Tech["Sort"] = 7;
 			break;
 	
 		case 10:
@@ -162,11 +163,11 @@ function get_config_tech($id, $var_spieler_stufe) {
 			$Tech["Kosten_Silizium"] = 80000;
 			$Tech["Kosten_Wasser"] = 20000;
 		
-			$Tech["Bauzeit"] = 140000;
+			$Tech["Bauzeit"] = ($Tech["Kosten_Eisen"] + $Tech["Kosten_Silizium"]) * 8;
 			
 			//Bedingung
 			$Tech["Lab"] = 8;
-			
+			$Tech["Sort"] = 10;
 			break;
 	
 		case 11:
@@ -177,11 +178,11 @@ function get_config_tech($id, $var_spieler_stufe) {
 			$Tech["Kosten_Silizium"] = 20000;
 			$Tech["Kosten_Wasser"] = 1000;
 		
-			$Tech["Bauzeit"] = 110000;
+			$Tech["Bauzeit"] = ($Tech["Kosten_Eisen"] + $Tech["Kosten_Silizium"]) * 9;
 			
 			//Bedingung
 			$Tech["Lab"] = 9;
-			
+			$Tech["Sort"] = 12;
 			break;
 
 		case 12:
@@ -192,11 +193,11 @@ function get_config_tech($id, $var_spieler_stufe) {
 			$Tech["Kosten_Silizium"] = 400;
 			$Tech["Kosten_Wasser"] = 200;
 		
-			$Tech["Bauzeit"] = 1600;
+			$Tech["Bauzeit"] = ($Tech["Kosten_Eisen"] + $Tech["Kosten_Silizium"]) * 10;
 			
 			//Bedingung
 			$Tech["Lab"] = 10;
-			
+			$Tech["Sort"] = 4;
 			break;
 	}
 	
