@@ -8,123 +8,85 @@ foreach ($produktion as &$value) {
 }
 
 ?>
-<div class="ubersicht_gross" style="width: 100%">
-<table  id="default" class="" width=100% style="">
+
+<table id="default" cellspacing="0" cellpadding="0" class="übersicht" width=100%>
 	<tr>
-		<th colspan=2>Produktion</td><th>Eisen</th><th>Silizium</th><th>Wasser</th><th>Energie</th><th><th>Robots</th>
+		<th colspan=2 class="tbtb tbtb_linksbundig">Produktion</th>
+		<th class="tbtb">Eisen</th>
+		<th class="tbtb">Silizium</th>
+		<th class="tbtb">Wasser</th>
+		<th class="tbtb">Energie</th>
+		<th class="tbtb tbtb_ohne_rechts">Robots</th>
 	</tr>
 	<tr>
-		<td colspan=2>Grundproduktion</td>
-		<td><?php echo $produktion["Eisen_Grund"]; ?></td>
-		<td><?php echo $produktion["Silizium_Grund"]; ?></td>
-		<td><?php echo $produktion["Wasser_Grund"]; ?></td>
-		<td></td>
-		<td></td>
-		<td></td>
+		<td colspan=2 class="tbc">Grundproduktion</td>
+		<td class="tbchell tbchell_rechts"><?php echo $produktion["Eisen_Grund"]; ?></td>
+		<td class="tbchell tbchell_rechts"><?php echo $produktion["Silizium_Grund"]; ?></td>
+		<td class="tbchell tbchell_rechts"><?php echo $produktion["Wasser_Grund"]; ?></td>
+		<td class="tbchell tbchell_rechts"></td>
+		<td class="tbchell tbchell_rechts"></td>
+		
 	</tr>
 	<tr>
-		<td colspan=2>Eisen-Mine</td>
-		<td><?php echo $produktion["Eisen_Produktion"]; ?></td>
-		<td>-</td>
-		<td>-</td>
-		<td></td>
-		<td></td>
-		<td></td>
+		<td colspan=2 class="tbc tbc_oben">Eisen-Mine</td>
+		<td class="tbchell tbchell_rechts"><?php echo $produktion["Eisen_Produktion"]; ?></td>
+		<td class="tbchell tbchell_rechts">-</td>
+		<td class="tbchell tbchell_rechts">-</td>
+		<td class="tbchell tbchell_rechts"></td>
+		<td class="tbchell tbchell_rechts"></td>
+		
 	</tr>
 	<tr>
-		<td colspan=2>Silizium-Mine</td>
-		<td>-</td>
-		<td><?php echo $produktion["Silizium_Produktion"]; ?></td>
-		<td>-</td>
-		<td></td>
-		<td></td>
-		<td></td>
+		<td colspan=2 class="tbc">Silizium-Mine</td>
+		<td class="tbchell tbchell_rechts">-</td>
+		<td class="tbchell tbchell_rechts"><?php echo $produktion["Silizium_Produktion"]; ?></td>
+		<td class="tbchell tbchell_rechts">-</td>
+		<td class="tbchell tbchell_rechts"></td>
+		<td class="tbchell tbchell_rechts"></td>
+		
 	</tr>
 	<tr>
-		<td colspan=2>Wasser-Mine</td>
-		<td>-</td>
-		<td>-</td>
-		<td><?php echo $produktion["Wasser_Produktion"]; ?></td>
-		<td></td>
-		<td></td>
-		<td></td>
+		<td colspan=2 class="tbc">Wasser-Mine</td>
+		<td class="tbchell tbchell_rechts">-</td>
+		<td class="tbchell tbchell_rechts">-</td>
+		<td class="tbchell tbchell_rechts"><?php echo $produktion["Wasser_Produktion"]; ?></td>
+		<td class="tbchell tbchell_rechts"></td>
+		<td class="tbchell tbchell_rechts"></td>
+		
 	</tr>
 			<tr>
-		<td colspan=2>Kraftwerk</td><td></td><td></td><td></td><td></td><td></td><td></td>
+		<td colspan=2 class="tbc">Kraftwerk</td>
+		<td class="tbchell tbchell_rechts"></td>
+		<td class="tbchell tbchell_rechts"></td>
+		<td class="tbchell tbchell_rechts"></td>
+		<td class="tbchell tbchell_rechts"></td>
+		<td class="tbchell tbchell_rechts"></td>
 	</tr>
 		<tr>
-		<td rowspan=2>Gesamtproduktion</td><td>pro Stunde</td><td></td><td></td><td></td><td></td><td></td><td></td>
+		<td rowspan=2 class="tbc tbc_oben">Gesamtproduktion</td>
+		<td class="tbc tbc_oben">pro Stunde</td>
+		<td class="tbchell tbchell_rechts"><?php echo $produktion["Eisen"]; ?></td>
+		<td class="tbchell tbchell_rechts"><?php echo $produktion["Silizium"]; ?></td>
+		<td class="tbchell tbchell_rechts"><?php echo $produktion["Wasser"]; ?></td>
+		<td class="tbchell tbchell_rechts"></td>
+		<td class="tbchell tbchell_rechts"></td>
 	</tr>
 		<tr>
-		<td>pro Tag</td><td></td><td></td><td></td><td></td><td></td><td></td>
+		<td class="tbc tbc_oben">pro Tag</td>
+		<td class="tbchell tbchell_rechts"><?php echo $produktion["Eisen_24"]; ?></td>
+		<td class="tbchell tbchell_rechts"><?php echo $produktion["Silizium_24"]; ?></td>
+		<td class="tbchell tbchell_rechts"><?php echo $produktion["Wasser_24"]; ?></td>
+		<td class="tbchell tbchell_rechts"></td>
+		<td class="tbchell tbchell_rechts"></td>
 	</tr>
 	</table>
 	</div>
 	
 
-	<div  class="ubersicht_klein">
 	
-	
-<div class="flexcontainer-center">
-
-<div style="min-width: 250px; width: 100%;">
-	<table id="default" class="ubersicht" width=100%>
-		<tr>
-			<th colspan=2>Eisen-Mine</th>			
-		</tr>
-		<tr><td>Grundprod.</td><td style="text-align: right;"><?php echo $produktion["Eisen_Grund"]; ?></td></tr>
-		<tr><td>Stufe n</td><td style="text-align: right;">+<?php echo $produktion["Eisen_Produktion"]; ?></td></tr>
-		<tr><td>Energie</td><td style="text-align: right;">-???</td></tr>
-		<tr><td colspan=2 style="text-align: center;"><lable for="robot_eisen">Robot <input id="robot_eisen" name="robot_eisen" size=4></lable> <button>-</button> <button>+</button> </td></tr>
-	</table>
-</div>
-
-<div style="min-width: 250px; width: 100%;">
-	<table id="default" class="ubersicht" width=100%>
-		<tr>
-			<th colspan=2>Slizium-Mine</th>			
-		</tr>
-		<tr><td>Grundprod.</td><td style="text-align: right;"><?php echo $produktion["Silizium_Grund"]; ?></td></tr>
-		<tr><td>Stufe n</td><td style="text-align: right;">+<?php echo $produktion["Silizium_Produktion"]; ?></td></tr>
-		<tr><td>Energie</td><td style="text-align: right;">-???</td></tr>
-		<tr><td colspan=2 style="text-align: center;"><lable for="robot_silizium">Robot <input id="robot_silizium" name="robot_silizium" size=4></lable> <button>-</button> <button>+</button> </td></tr>
-	</table>
-</div>
-
-<div style="min-width: 250px; width: 100%;">
-	<table id="default" class="ubersicht" width=100%>
-		<tr>
-			<th colspan=2>Wasserbrunnen</th>			
-		</tr>
-		<tr><td>Grundprod.</td><td style="text-align: right;"><?php echo $produktion["Wasser_Grund"]; ?></td></tr>
-		<tr><td>Stufe n</td><td style="text-align: right;">+<?php echo $produktion["Wasser_Produktion"]; ?></td></tr>
-		<tr><td>Energie</td><td style="text-align: right;">-???</td></tr>
-		<tr><td colspan=2 style="text-align: center;"><lable for="robot_wasser">Robot <input id="robot_wasser" name="robot_wasser" size=4></lable> <button>-</button> <button>+</button> </td></tr>
-	</table>
-</div>
-
-<div style="min-width: 250px; width: 100%;">
-	<table id="default" class="ubersicht" width=100%>
-		<tr>
-			<th>Gesamt+</th>
-			<th>1h</th>			
-			<th>24h</th>
-		</tr>		
-		<tr><td>Eisen</td><td style="text-align: right;"><?php echo $produktion["Eisen"]; ?></td><td style="text-align: right;"><?php echo $produktion["Eisen_24"]; ?></td></tr>
-		<tr><td>Silitium</td><td style="text-align: right;"><?php echo $produktion["Silizium"]; ?></td><td style="text-align: right;"><?php echo $produktion["Silizium_24"]; ?></td></tr>
-		<tr><td>Wasser</td><td style="text-align: right;"><?php echo $produktion["Wasser"]; ?></td><td style="text-align: right;"><?php echo $produktion["Wasser_24"]; ?></td></tr>		
-	</table>
-</div>
 
 
-</div>
 
-</div>
-
-
-<div class="flexcontainer-center">
-
-	<div style="min-width: 250px; width: 100%;">
 		<table id="default" class="ubersicht" width=100%>
 		<caption>Rohstoffbunker</caption>
 			<tr>
@@ -158,6 +120,4 @@ foreach ($produktion as &$value) {
 				<td><button>-</button> <button>+</button></td>
 			</tr>
 		</table>
-	</div>
 
-</div>

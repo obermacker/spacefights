@@ -1,23 +1,229 @@
 <?php 
 $activity = get_activity_planet_spieler_schiffe($spieler_id, 0);
-$flotte = get_activity_schiffe_Liste($spieler_id, 0);
-$deff_schleife = get_activity_deff_Liste($spieler_id, 0);
 $schiffe = get_Schiffe_stationiert($spieler_id, 0);
+$Bauschleife_naechstes_Schiff = get_activity_schiffe_einzel($spieler_id, 0);
+$Bauschleife_naechste_deff = get_activity_deff_einzel($spieler_id, 0);
+
+if(!isset($schiffe)) {
+	$schiffe[0]["Name"] = "-";
+	$schiffe[0]["Anzahl"] = "-";
+}
+
+	
 $deff = get_Deff_stationiert($spieler_id, 0);
 
+if(!isset($deff)) {
+	$deff[0]["Name"] = "-";
+	$deff[0]["Anzahl"] = "-";
+}
+
+
 $bunker = get_Ressbunker_Inhalt($spieler_id, 0);
+$koordinaten = get_koordinaten_planet($spieler_id, 0);
+
+$balken = get_flotte_in_der_luft($spieler_id, time(), false);
+
+if($balken != "leer") {
+	$flotten_timer = array();
+	?>
+	<table width="100%" id="default" border=0 cellspacing="0" cellpadding="0" class="übersicht " style="">
+		<tr>
+			<th class="tbtb tbtb_ohne_unten">Flugdauer</th>			
+			<th class="tbtb tbtb_ohne_unten" >Besitzer</th>
+			<th class="tbtb tbtb_ohne_unten">Startplanet</th>
+			<th class="tbtb tbtb_ohne_unten">Zielplanet</th>
+			<th class="tbtb tbtb_ohne_unten tbtbr">Mission</th>
+		</tr>
+	<?php
+	$countown_balken = 0;
+	foreach($balken as $key => $value) {
+		
+		switch($balken[$key]["Mission"]) {
+
+					default:
+					$flotten_timer[] = $balken[$key]["Ankunft"];
+					?>
+						<tr>
+							<td class="tbc tbc_oben">
+								<span id="balken<?php echo $key; ?>"><script type="text/javascript">countdown(<?php echo $balken[$key]["Ankunft"] - time(); ?>, "balken<?php echo $key; ?>");</script></span>
+							</td>
+							<td class="tbc tbc_oben"><?php echo $balken[$key]["Besitzer_Spieler_Name"]; ?></td>
+							<td class="tbc tbc_oben">
+								<?php echo "" . sprintf('%02d', $balken[$key]["x1"]) . ":" . sprintf('%02d', $balken[$key]["y1"]) . ":" . sprintf('%02d', $balken[$key]["z1"]) . ""; ?>
+							</td>
+							<td class="tbc tbc_oben">
+								<?php echo "" . sprintf('%02d', $balken[$key]["x2"]) . ":" . sprintf('%02d', $balken[$key]["y2"]) . ":" . sprintf('%02d', $balken[$key]["z2"])  . ""; ?>
+							</td>
+							<td class="tbc tbc_oben tbcOhneRandRechts"><a href="index.php?s=Flotte-Info&id=<?php echo $balken[$key]["ID"]; ?>"><?php echo $balken[$key]["Mission"]; ?></a></td>
+						</tr>
+						<?php 
+						break;
+		}
+		
+		$countown_balken++;
+		
+	}
+	?>
+	</table>
+	
+	<script type="text/javascript">
+<!--
+
+var ta = new Array(<?php echo implode(", ", $flotten_timer); ?>,-1);
+function countdownFlotten(){
+	for (i=0;i<ta.length;i++){
+		if(ta[i]>-1){
+				var e = document.getElementById("balkenNeu"+i);
+				var ts = Math.floor(Date.now() / 1000); 
+				var tl = (ta[i] - ts);
+				var tl_s = tl;
+			if (tl>0){
+			var t = parseInt(tl/(24*60*60));
+			tl = tl-(t*(24*60*60));		
+			var h = parseInt(tl/(60*60));
+			tl = tl-(h*(60*60));
+			var m = parseInt(tl/(60));
+			tl = tl-(m*(60));
+			var s = parseInt(tl);
+			if (h<10) h="0"+h;
+			if (m<10) m="0"+m;
+			if (s<10) s="0"+s;
+			if (t == 0) { var tstr = h+":"+m+":"+s; } else { 
+				if( t == 1 ) {
+					var tstr = t+" Tag "+h+":"+m+":"+s;
+				} else {
+					var tstr = t+" Tage "+h+":"+m+":"+s; 
+				}	
+			}	
+		e.innerHTML = tstr + " xxx " + tl_s; }
+		else{
+		e.innerHTML = '00:00:00'; }
+		}
+}
+window.setTimeout("countdownFlotten()", 500);
+}
+countdownFlotten();
+//-->
+</script>
+	
+	<?php 
+}
 
 ?>
 
-<div class="flexcontainer">
-	<div align=center><?php echo get_koordinaten_planet($spieler_id, 0); ?><br>
-		<img src="img/planet.png" style="border-style: #555555 solid 1px;">		
-		<div><?php echo number_format(sprintf('%d', get_punkte($spieler_id, 0)), 0, ',', '.'); ?> Punkte</div>
-	</div>
-	<div>
-		<table id="default" class="ubersicht">
-			<caption>Aktivität</caption>
-			<tr><th>Gebäude</th><td><?php 
+	<table width="100%" id="default" border=0 cellspacing="0" cellpadding="0" class="übersicht " style="display: none;">
+			<tr>
+				<th class="tbtb tbtb_ohne_unten">Flugdauer</th>			
+				<th class="tbtb tbtb_ohne_unten" >Besitzer</th>
+				<th class="tbtb tbtb_ohne_unten">Startplanet</th>
+				<th class="tbtb tbtb_ohne_unten">Zielplanet</th>
+				<th class="tbtb tbtb_ohne_unten tbtbr">Mission</th>
+			</tr>
+			<tr>
+				<td class="tbc tbc_oben">01:00:00</td>
+				<td class="tbc tbc_oben">monk-of-doom</td>
+				<td class="tbc tbc_oben">25:25:4</td>
+				<td class="tbc tbc_oben">01:10:6</td>
+				<td class="tbc tbc_oben tbcOhneRandRechts">Sicherung</td>
+			</tr>
+			<tr>
+				<td colspan="5" class="fleetdetail">					
+					<ul class="ress">Ladung
+					<li><img src="img/eisen.png" class="img_ress"> <?php echo "<font color=''>" . number_format(2500, 0, '.', '.') . "</font>"; ?></li>
+					<li><img src="img/silizium.png" class="img_ress"> <?php echo "<font color=''>" . number_format(1005, 0, '.', '.') . "</font>"; ?></li>
+					<li><img src="img/wasser.png" class="img_ress"> <?php echo "<font color=''>" . number_format(2, 0, '.', '.') . "</font>"; ?></li>					
+					</ul>
+				</td>
+			</tr>
+		<tr>
+		
+		</tr>			
+			<tr>
+				<td class="tbcr">04:32:00</td>
+				<td class="tbcr">Rolf</td>
+				<td class="tbcr">34:10</td>
+				<td class="tbcr"><?php echo $koordinaten["Anzeige"]; ?></td>
+				<td class="tbcr tbcr_ende">Angriff</td>
+			</tr>
+			<tr>
+				<td class="tbcr">04:32:20</td>
+				<td class="tbcr">Rolf</td>
+				<td class="tbcr">34:10</td>
+				<td class="tbcr"><?php echo $koordinaten["Anzeige"]; ?></td>
+				<td class="tbcr tbcr_ende">Angriff</td>
+			</tr>
+			
+						<tr>
+				<td class="tbc tbc_oben">06:00:00</td>
+				<td class="tbc tbc_oben">monk-of-doom</td>
+				<td class="tbc tbc_oben">25:25:4</td>
+				<td class="tbc tbc_oben">01:10:6</td>
+				<td class="tbc tbc_oben tbcOhneRandRechts">Rückkehr</td>
+			</tr>
+			<tr>
+				<td colspan="5" class="fleetdetail">					
+					<ul class="ress">Ladung
+					<li><img src="img/eisen.png" class="img_ress"> <?php echo "<font color=''>" . number_format(2500000, 0, '.', '.') . "</font>"; ?></li>
+					<li><img src="img/silizium.png" class="img_ress"> <?php echo "<font color=''>" . number_format(1005000, 0, '.', '.') . "</font>"; ?></li>
+					<li><img src="img/wasser.png" class="img_ress"> <?php echo "<font color=''>" . number_format(20000, 0, '.', '.') . "</font>"; ?></li>					
+					</ul>
+				</td>
+			</tr>
+			
+						<tr>
+				<td class="tbc tbc_oben">06:00:00</td>
+				<td class="tbc tbc_oben">monk-of-doom</td>
+				<td class="tbc tbc_oben">25:25:4</td>
+				<td class="tbc tbc_oben">01:10:6</td>
+				<td class="tbc tbc_oben tbcOhneRandRechts">Rückkehr</td>
+			</tr>
+			<tr>
+				<td colspan="5" class="fleetdetail">					
+					<ul class="ress">Ladung
+					<li><img src="img/eisen.png" class="img_ress"> <?php echo "<font color=''>" . number_format(2500000, 0, '.', '.') . "</font>"; ?></li>
+					<li><img src="img/silizium.png" class="img_ress"> <?php echo "<font color=''>" . number_format(1005000, 0, '.', '.') . "</font>"; ?></li>
+					<li><img src="img/wasser.png" class="img_ress"> <?php echo "<font color=''>" . number_format(20000, 0, '.', '.') . "</font>"; ?></li>					
+					</ul>
+				</td>
+			</tr>
+			</table>
+		
+		
+
+		<table id="default" width="100%" border=0 cellspacing="0" cellpadding="0" class="übersicht" >
+			<tr>
+				<th width="150" class="tbtb tbtbk"><center><?php echo $koordinaten["Anzeige"]; ?></center></th>			
+				<th colspan=2 width="458" class="tbtb tbtb_ohne_rechts" align="left">Aktivität</th>				
+			</tr>
+			<tr>
+				<td rowspan=8 class="tbchellk">
+				<canvas id="planet" width="150" height="150"></canvas>
+    <script>
+        var canvas = document.getElementById('planet');
+        var context = canvas.getContext('2d');
+        var centerX = 150 / 2;
+        var centerY = 150 / 2;
+        var radius = 70;
+
+    	//var startwinkel = 2.0;
+    	//var endwinkel = 1.6 * Math.PI;
+    	var startwinkel = -1.3;
+    	var endwinkel = 1.9;
+    	
+        context.beginPath();
+        context.arc(centerX, centerY, radius, startwinkel, endwinkel , false);
+        context.fillStyle = '#0e3800';
+        context.fill();
+
+
+        context.beginPath();
+        context.arc(centerX, centerY, radius, endwinkel , startwinkel, false);
+        context.fillStyle = '#5c8646';
+        context.fill();
+        
+    </script>
+				</td>
+				<td  width=100px class="tbc">Gebäude</td><td width=600 class="tbchell"><?php 
 			
 			if ($activity["Gebäude"]["Zeit-Bis"] <> "-") {
 				
@@ -36,11 +242,47 @@ $bunker = get_Ressbunker_Inhalt($spieler_id, 0);
 				
 			}
 			
-			?></td></tr>
-			<tr><th>Raumschiffe</th><td>dfdf</td></tr>
-			<tr><th>Verteidigung</th><td>n/a</td></tr>
-			<tr><th>Forschung</th><td>
-			<?php
+			?></td>
+	
+			</tr>
+			
+			<tr>
+				<td class="tbc">Raumschiffe</td><td class="tbchell">
+				<?php
+				if ($Bauschleife_naechstes_Schiff["Bauzeit"] <> "-") {
+						
+									echo $Bauschleife_naechstes_Schiff["Name"]; ?>
+														[ <span id="einzel_schiff"><script type="text/javascript"><!--
+														countdown(<?php echo $Bauschleife_naechstes_Schiff["Bauzeit"]; ?>, "einzel_schiff");
+														</script></span> ]
+							<?php 
+									} else {
+										
+										echo $Bauschleife_naechstes_Schiff["Bauzeit"];
+										
+									}  
+				?></td>
+			</tr>
+			<tr>
+				<td class="tbc">Verteidigung</td><td class="tbchell">
+				<?php
+				if ($Bauschleife_naechste_deff["Bauzeit"] <> "-") {
+						
+									echo $Bauschleife_naechste_deff["Name"]; ?>
+														[ <span id="einzel_deff"><script type="text/javascript"><!--
+														countdown(<?php echo $Bauschleife_naechste_deff["Bauzeit"]; ?>, "einzel_deff");
+														</script></span> ]
+							<?php 
+									} else {
+										
+										echo $Bauschleife_naechste_deff["Bauzeit"];
+										
+									}  
+				?>
+				</td>
+			</tr>
+			<tr>
+				<td class="tbc">Forschung</td><td class="tbchell"><?php
 				if ($activity["Forschung"]["Zeit-Bis"] <> "-") {
 					
 					echo $activity["Forschung"]["Name"]; ?>
@@ -53,66 +295,74 @@ $bunker = get_Ressbunker_Inhalt($spieler_id, 0);
 						echo $activity["Forschung"]["Zeit-Bis"];
 						
 					}
-			?>			
-			</td></tr>
-			<tr><th>Rohstoffbunker</th><td><?php  echo $bunker["Belegt_Prozent"] . "<font style='font-size: x-small;'>%</font>"; ?></td></tr>
-			<tr><th>Handelssposten</th><td><?php  echo get_Handelsposten_Inhalt($spieler_id, 0); ?></td></tr>
-			<tr><th>Verteidigung</th><td>[aktiviert]</td></tr>
-		</table>
-	</div>
-
-<?php if (isset($schiffe) OR isset($deff)) { ?>	
-	<div>
-<?php if (isset($schiffe)) { ?>	
-	
-		<table id="default" class="ubersicht">
-			<caption>Schiffe</caption>
+			?>		</td>
+			</tr>
+			<tr>
+				<td class="tbc tbc_oben">Rohstoffbunker</td><td class="tbchell"><?php  echo $bunker["Belegt_Prozent"] . "<font style='font-size: x-small;'>%</font>"; ?></td>
+			</tr>
+			<tr>
+				<td class="tbc">Handelssposten</td><td class="tbchell"><?php  echo get_Handelsposten_Inhalt($spieler_id, 0); ?></td>
+			</tr>
+			<tr>
+				<td class="tbc">Verteidigung</td><td class="tbchell">[aktiviert]</td>
+			</tr>
 			
-	<?php 
-		$i = 0;
-	
-		foreach($schiffe as $key => $value) {
-			$anzahl = $schiffe[$key]["Anzahl"];
-			$name = $schiffe[$key]["Name"];
-
-?>
 			
-			<tr><th style="width: 10.5em;"><?php echo $name; ?></th><td><?php echo str_replace(' ', '&nbsp;&nbsp;', str_pad($anzahl, 4 ," ", STR_PAD_LEFT)); ?></td></tr>
-
-<?php } ?>
-		</table>
-	
-<?php } ?>
-
-<?php if (isset($deff)) { ?>	
-	
-		<table id="default" class="ubersicht">
-			<caption>Deff</caption>
+		
 			
-	<?php 
-		$i = 0;
-	
-		foreach($deff as $key => $value) {
-			$anzahl = $deff[$key]["Anzahl"];
-			$name = $deff[$key]["Name"];
-
-?>
-			
-			<tr><th style="width: 10.5em;"><?php echo $name; ?></th><td><?php echo str_replace(' ', '&nbsp;&nbsp;', str_pad($anzahl, 4 ," ", STR_PAD_LEFT)); ?></td></tr>
-
-<?php } ?>
 		</table>
 
-<?php } ?>
+<!-- Stationierte Schiffe & Deff -->
+		<table cellspacing="0" cellpadding="0">
+			<tr>
+				<td style="padding-right: 5px;" valign="top">
+					<table id="default" cellspacing="0" cellpadding="0" class="übersicht">
+						<tr>
+							<td colspan=2 class="tbtb tbtb_ohne_rechts">Raumschiffe Stationiert</td>
+							
+						</tr>
+						
+							<?php 
+							foreach($schiffe as $key => $value) {
+								$anzahl = $schiffe[$key]["Anzahl"];
+								$name = $schiffe[$key]["Name"];
+							?>
+							<tr>
+								<td class="tbc"><?php echo $name; ?></td>
+								<td class="tbchell"><?php echo str_replace(' ', '&nbsp;&nbsp;', str_pad($anzahl, 5 ," ", STR_PAD_LEFT)); ?></td>
+							</tr>
+							<?php } ?>
+					</table>
+					
+				</td>
+				<td  valign="top">
+					<table id="default" cellspacing="0" cellpadding="0" class="übersicht">
+						<tr>
+							<td colspan=2 class="tbtb tbtb_ohne_rechts">Verteidigung Stationiert</td>
+							
+						</tr>
+							<?php 
+							foreach($deff as $key => $value) {
+								$anzahl = $deff[$key]["Anzahl"];
+								$name = $deff[$key]["Name"];
+							?>
+							<tr>
+								<td class="tbc"><?php echo $name; ?></td>
+								<td class="tbchell"><?php echo str_replace(' ', '&nbsp;&nbsp;', str_pad($anzahl, 5 ," ", STR_PAD_LEFT)); ?></td>
+							</tr>
+							<?php } ?>
+					</table>
+					
+				</td>
+			</tr>
+		</table>
+		
+<!-- ENDE: Stationierte Schiffe & Deff -->		
 
-	</div>
-
-<?php } ?>
 	
-	<div>
 <?php  if (isset($flotte)) { ?>
 	
-	<div>
+	
 		<table id="default" class="ubersicht">
 						<caption>Bauschleife</caption>
 <?php
@@ -142,11 +392,12 @@ $bunker = get_Ressbunker_Inhalt($spieler_id, 0);
 			//<tr><th>Verteidigung</th><td>dd</td></tr>
 ?>		
 		</table>
-	</div>
+	
 <?php } ?>
+
 <?php  if (isset($deff_schleife)) { ?>
 	
-	<div>
+
 		<table id="default" class="ubersicht">
 						<caption>Deff Bauschleife</caption>
 <?php
@@ -176,8 +427,11 @@ $bunker = get_Ressbunker_Inhalt($spieler_id, 0);
 			//<tr><th>Verteidigung</th><td>dd</td></tr>
 ?>		
 		</table>
-	</div>
+	
 <?php } ?>
 
-</div>
-</div>
+
+				
+			
+			
+

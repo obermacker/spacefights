@@ -1,6 +1,40 @@
 <form action="index.php" method="post" autocomplete="off">
-<input type="hidden" name="s" value="Gebäude">
-<div class="flex_gebaeude_info">
+<input type="hidden" name="s" value="Gebaeude">
+
+<?php 
+$baut_gerade = check_bauschleife_activ($spieler_id, 0, "Structure");
+
+if ($baut_gerade["ID"] != 0) {
+	$Gebäude = get_gebäude_nächste_stufe($spieler_id, 0, $baut_gerade["ID"], 1);
+	
+	
+	
+	?>
+	<table id="default" border=0 cellspacing="0" cellpadding="0" class="übersicht" width=100% style="margin-bottom: 2em;">
+		<tr>
+			<th class="tbtb tbtb_ohne_links_rechts_oben" align="left" width="255" colspan=2><?php echo $Gebäude["Name"]; ?> (Stufe <?php echo ($Gebäude["Stufe"]); ?>) wird gebaut </th>
+			<th class="tbtb tbtb_ohne_links_rechts_oben" align="right"><button type="submit" name="action-gebaeude-abbrechen" value="<?php echo $baut_gerade["ID"]; ?>">Abbrechen</button></th>
+		</tr>
+		<tr>
+			<td class="tbc" width="155" >Bau bis:</td>
+			<td class="tbchell" colspan=2><?php echo get_timestamp_in_was_lesbares($baut_gerade["Bis"]); ?></td>			
+		</tr>
+		<tr>			
+			<td class="tbc">Restliche Bauzeit:</td>
+			<td class="tbchell" colspan=2 >
+			
+			<span id="gebaeudeOben<?php echo $baut_gerade["ID"]; ?>"><script type="text/javascript"><!--
+						countdown(<?php echo $baut_gerade["Countdown"]; ?>, "gebaeudeOben<?php echo $baut_gerade["ID"]; ?>");
+						</script></span>
+			
+			</td>			
+		</tr>
+		
+	</table>
+	<?php 
+	
+}
+?>
 
 <?php 
 
@@ -17,22 +51,22 @@ for($i = 1; $i <= 10; $i++) {
 	$farbeEn = ""; if($ressource["Energie"] < $Gebäude["Kosten_Energie"]) { $farbeEn = "#FF0000"; $kann_gebaut_werden = false; }
 	
 	?>
-	<div>
 	
-	<table id="default" class="ubersicht" width=100%>
-		<th><h3 style="display: inline;"><?php echo $Gebäude["Name"]; ?></h3> <span class="code">(Stufe <?php echo ($Gebäude["Stufe"] - 1); ?>)</span></th>
+	
+	<table id="default" cellspacing="0" cellpadding="0" class="übersicht" width=100%>
+		<th class="tbtb tbtb_ohne_links_rechts_oben" align="left"><?php echo $Gebäude["Name"]; ?> <span class="code">(Stufe <?php echo ($Gebäude["Stufe"] - 1); ?>)</span></th>
 		<tr>
-			<td><?php echo $Gebäude["Beschreibung"]; ?></td>
+			<td class="tbchell"><?php echo $Gebäude["Beschreibung"]; ?></td>
 		</tr>
 		<tr>
-			<td>
+			<td class="tbchell">
 				<ul class="ress">
 					<li><img src="img/eisen.png" class="img_ress"> <?php echo "<font color='$farbeE'>" . number_format($Gebäude["Kosten_Eisen"], 0, '.', '.') . "</font>"; ?></li>
 					<li><img src="img/silizium.png" class="img_ress"> <?php echo "<font color='$farbeS'>" . number_format($Gebäude["Kosten_Silizium"], 0, '.', '.') . "</font>"; ?></li>
 					<li><img src="img/wasser.png" class="img_ress"> <?php echo "<font color='$farbeW'>" . number_format($Gebäude["Kosten_Wasser"], 0, '.', '.') . "</font>"; ?></li>
 					<li><img src="img/energie.png" class="img_ress"> <?php echo "<font color='$farbeEn'>" . number_format($Gebäude["Kosten_Energie"], 0, '.', '.') . "</font>"; ?></li>
 			</ul>
-			</td></tr><tr><td>
+			</td></tr><tr><td class="tbchell">
 			<ul class="ress"><li class="img_ress">
 			<?php 
 			if($i == 1) { echo "<img src='img/eisen.png' class='img_ress'> + " . $Gebäude["Gewinn_Ress"] . "/h"; }
@@ -46,10 +80,10 @@ for($i = 1; $i <= 10; $i++) {
 			</li></ul>
 			</td>
 		</tr>
-		<tr><td>
+		<tr><td class="tbchell">
 		<?php echo $Gebäude["Wirkung"]; ?>
 		</td></tr>
-		<tr><td style="text-align: right;">
+		<tr><td style="text-align: right;"  class="tbchell">
 		
 		<?php 				
 		if($kann_gebaut_werden == true && $baut_gerade["ID"] == 0) {
@@ -88,7 +122,7 @@ for($i = 1; $i <= 10; $i++) {
 		
 	</table>
 	
-	</div>
+	
 	
 	<?php 
 	
@@ -98,5 +132,5 @@ for($i = 1; $i <= 10; $i++) {
 	
 	
 	
-	</div>
+	
 </form>
