@@ -66,7 +66,7 @@ function check_username_cleaner($value, $spieler_id){
 	$badword = "admin administrator error fehler gast unbekannt unknown test";
 	
 	$newVal = substr($value, 0, 30);
-	if (strlen($newVal) < 3) { return ""; }
+	if (strlen($newVal) < 2) { return ""; }
 	 
 	
 	if (strpos($badword, strtolower($value)) !== false) {
@@ -107,7 +107,7 @@ function check_username_cleaner_register($value){
 	$badword = "admin administrator error fehler gast unbekannt unknown test";
 
 	$newVal = substr($value, 0, 30);
-	if (strlen($newVal) < 3) { return "fehler"; }
+	if (strlen($newVal) < 2) { return "fehler"; }
 
 
 	if (strpos($badword, strtolower($value)) !== false) {
@@ -231,19 +231,15 @@ function login($username, $passwort){
 	
 	require 'inc/connect_spieler.php';
 
-	$abfrage = "SELECT `ID`, `spieler_ID`, `spieler_name`, `passwort`, `letzter_login`, `spieler_geloescht`, `name_gala_1`, `aktiv_gala_1`, `letzter_Planet`, `max_Planeten` FROM `spieler` WHERE spieler_name LIKE '$username' LIMIT 1";
+	$abfrage = "SELECT `ID`, `spieler_ID`, `spieler_name`, `passwort`, `letzter_login`, `spieler_geloescht`, `name_gala_1`, `aktiv_gala_1`, `letzter_Planet`, `max_Planeten` FROM `spieler` WHERE spieler_name = '$username' LIMIT 1";
 	$query = $abfrage or die("Error: #0002 " . mysqli_error($link));
 	
 	$result = mysqli_query($link, $query);
 	if ($row = mysqli_fetch_array($result)) {
 		
-		if(hash_equals($row["passwort"], crypt($passwort, $row["passwort"])))
-		{
-			$_SESSION["username"] = $username;
+		if(hash_equals($row["passwort"], crypt($passwort, $row["passwort"])) AND $username == $row["spieler_name"])
+		{			
 			$_SESSION["spieler_ID"] = $row["spieler_ID"];
-			$_SESSION["letzter_planet"] = $row["letzter_Planet"];
-			$_SESSION["Max_Planeten"] = $row["max_Planeten"];
-		
 			$_SESSION["session_id"] = session_generate();
 			$varHTTP_USER_AGENT = md5($_SERVER['HTTP_USER_AGENT']);
 			

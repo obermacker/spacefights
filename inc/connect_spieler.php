@@ -1,7 +1,11 @@
 <?php
+//error_reporting(E_ALL);
+$link = mysqli_connect("localhost","root","", "spieler") or die("Fehler id-cs001 // "  . mysqli_connect_error($link));
 
-$link = mysqli_connect("localhost","root","", "spieler")
-or die("Error " . mysqli_error($link));
+if (mysqli_connect_errno($link)) {
+  echo '... '.mysqli_connect_error($mysqli);
+}
 
-mysql_query("SET NAMES 'utf8'");
+$link->set_charset("utf8") or die("Fehler id-cs002 // "  . mysqli_connect_error($link));
+
 ?>
