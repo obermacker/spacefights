@@ -1,4 +1,4 @@
-
+﻿
 .img_ress { padding-right: .225em;}
 
 html {
@@ -290,7 +290,7 @@ display: -webkit-flex;
 	
 }
 /* by ES 22.06.2016*/
-.pBar {width: 0%; position: absolute; top: 0px; height: 100%; z-index: 5; background-color: #004578; transition: background-color 5s linear 0s;}
+.pBar {width: 0%; position: absolute; top: 0px; height: 100%; z-index: 5; background-color: #004578; transition: background-color 3s linear 0s;}
 	.pBarG {Background-color: #4178a2;}
 	.BGpBar {position: relative; padding-left: 0px;}
 	.LpBar {position: relative; z-index: 10; background-color: transparent; border: none;}
