@@ -47,8 +47,10 @@ if(isset($_POST["action-flotte-starten"])) {
 						$i++;
 					}					
 				}
-				$mission_start = flotte_senden($spieler_id, 0, $flotte_schiffe, $out["x"], $out["y"], $out["z"], $out["mission"], $out["flugzeit"], $out["mitnehmen"], $out["abholen"]);
-				echo $mission_start;		
+				if($i > 0) {
+					$mission_start = flotte_senden($spieler_id, $planet_id, $flotte_schiffe, $out["x"], $out["y"], $out["z"], $out["mission"], $out["flugzeit"], $out["mitnehmen"], $out["abholen"]);
+					echo $mission_start;						
+				}
 			}
 		}		
 	}
@@ -58,12 +60,12 @@ if(isset($_POST["action-flotte-starten"])) {
 
 //ENDE: Flotte starten
 
-$schiffe = get_Schiffe_stationiert($spieler_id, 0);
+$schiffe = get_Schiffe_stationiert($spieler_id, $planet_id);
 
 if(is_null($schiffe)) { echo "keine Schiffe"; exit(); } 
 
-$koordinaten = get_koordinaten_planet($spieler_id, 0);
-$ressource = get_ressource($spieler_id, 0);
+$koordinaten = get_koordinaten_planet($spieler_id, $planet_id);
+$ressource = get_ressource($spieler_id, $planet_id);
 
 
 if(isset($_GET["x"]) AND isset($_GET["y"]) AND isset($_GET["z"])) {
@@ -91,7 +93,7 @@ if(isset($_GET["x"]) AND isset($_GET["y"]) AND isset($_GET["z"])) {
 	<tr>
 		<td class="tbchell">
 			<?php 
-			$ausgabe_planeten_flotte = get_list_of_all_planets_new($spieler_id, 0, false); 			
+			$ausgabe_planeten_flotte = get_list_of_all_planets_new($spieler_id, $planet_id, false); 			
 			?>
 		
 			<select size="1" id="Planiwahl" style="width: 15em;" onchange="Koordinaten_vorauswahl(); func_geschwindigkeit();">

@@ -15,13 +15,13 @@ if(isset($_GET["x"]) AND isset($_GET["y"])) {
 		$flotte[0]["Schiff_ID"] = 7;
 		$flotte[0]["Anzahl"] = 1;
 		$mission = array("erkunden");
-		$erkunden_start = flotte_senden($spieler_id, 0, $flotte, $px, $py, 12, $mission, 100, 0, 0);
+		$erkunden_start = flotte_senden($spieler_id, $planet_id, $flotte, $px, $py, 12, $mission, 100, 0, 0);
 		//var_dump($erkunden_start);
 	}
 	
 } else {
 
-	$koordinaten = get_koordinaten_planet($spieler_id, 0);
+	$koordinaten = get_koordinaten_planet($spieler_id, $planet_id);
 	
 	$px = $koordinaten["X"];
 	$py = $koordinaten["Y"];

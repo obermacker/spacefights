@@ -1,11 +1,11 @@
 <form action="index.php" method="post" autocomplete="off">
 <input type="hidden" name="s" value="Forschung">
 <?php
-$baut_gerade = check_bauschleife_activ($spieler_id, 0, "Tech");
+$baut_gerade = check_bauschleife_activ($spieler_id, $planet_id, "Tech");
 
 if ($baut_gerade["ID"] != 0) {
 	
-	$Tech = get_tech_nächste_stufe($spieler_id, 0, $baut_gerade["ID"], 1);
+	$Tech = get_tech_nächste_stufe($spieler_id, $planet_id, $baut_gerade["ID"], 1);
 	
 	?>
 	<table id="default" border=0 cellspacing="0" cellpadding="0" class="übersicht" width=100% style="margin-bottom: 2em;">
@@ -42,9 +42,9 @@ $Sortierung = get_tech_sortierung();
 
 foreach ($Sortierung as $key => $value) {
 	$i = $key;
-	$baut_gerade = check_bauschleife_activ($spieler_id, 0, "Tech");	
+	$baut_gerade = check_bauschleife_activ($spieler_id, $planet_id, "Tech");	
 	
-	$Tech = get_tech_nächste_stufe($spieler_id, 0, $i, 1);
+	$Tech = get_tech_nächste_stufe($spieler_id, $planet_id, $i, 1);
 	
 	if ($Tech["Forschung"] == "OK") {
 

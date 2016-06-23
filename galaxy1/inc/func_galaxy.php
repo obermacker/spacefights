@@ -4,7 +4,17 @@ function get_timestamp_in_was_sinnvolles($value) {
 	$secs = number_format($value, 0, '', '');
 	$dtF = new DateTime("@0");
 	$dtT = new DateTime("@$secs");
-	return $dtF->diff($dtT)->format('%a Tage %H:%I:%S');	
+	
+	$diff = $dtF->diff($dtT);	
+	$tage = $diff->days;
+
+	if($tage == 0) {
+		return $dtF->diff($dtT)->format('%H:%I:%S');
+	} else {
+		return $dtF->diff($dtT)->format('%a Tage %H:%I:%S');
+	}
+	
+		
 }
 
 function get_timestamp_in_was_lesbares($value) {	
@@ -156,7 +166,7 @@ function set_bauschleife_struckture($spieler_id, $planet_id, $gebäude_id, $geb�
 	
 	//$abfrage = "UPDATE `planet` SET `Bauschleife_Gebaeude_ID` = $gebäude_id, SET `Bauschleife_Gebaeude_Bis` = " . $time() + $bauzeit . " FROM  WHERE `Spieler_ID` = '$spieler_id' AND `Planet_ID` = $planet_id";
 	
-	$abfrage = "UPDATE `planet` SET `Ressource_Eisen`= '$ressource_eisen', `Ressource_Silizium`= '$ressource_silizium', `Ressource_Wasser`= '$ressource_wasser', `Ressource_Energie`= '$ressource_energie', `Ressource_Karma`= '$ressource_karma', `Bauschleife_Gebaeude_ID`= '$gebäude_id', `Bauschleife_Gebaeude_Bis`= '" . $bauzeit . "', `Bauschleife_Gebaeude_Name`= '$gebäude_name' WHERE `Spieler_ID` = '$spieler_id' AND `Planet_ID` = $planet_id";
+	$abfrage = "UPDATE `planet` SET `Bauschleife_Gebaeude_Start` = '" . time() . "', `Ressource_Eisen`= '$ressource_eisen', `Ressource_Silizium`= '$ressource_silizium', `Ressource_Wasser`= '$ressource_wasser', `Ressource_Energie`= '$ressource_energie', `Ressource_Karma`= '$ressource_karma', `Bauschleife_Gebaeude_ID`= '$gebäude_id', `Bauschleife_Gebaeude_Bis`= '" . $bauzeit . "', `Bauschleife_Gebaeude_Name`= '$gebäude_name' WHERE `Spieler_ID` = '$spieler_id' AND `Planet_ID` = $planet_id";
 	
 	$query = $abfrage or die("Error in the consult.." . mysqli_error("Error: set_bauschleife_struckture #1 ".$link));
 	
@@ -573,7 +583,7 @@ function set_bauschleife_ship_fertig($spieler_id, $planet_id) {
 			
 			$Ship = get_ship($row->Typ);
 			
-			//$punkte = get_punkte($spieler_id, $planet_id);
+			$punkte = get_punkte($spieler_id, $planet_id);
 			//$punkte = $punkte + ((($Ship["Kosten_Eisen"] + $Ship["Kosten_Silizium"] + $Ship["Kosten_Wasser"]) * $anzahl) / 1000);				
 
 			//Bots berechnen
@@ -581,7 +591,7 @@ function set_bauschleife_ship_fertig($spieler_id, $planet_id) {
 			$bots_anzahl = $row_planet->Stationiert_Bot + ($Ship["Bots"] * $anzahl);
 					
 			$abfrage_planet_update = "UPDATE `planet` SET  `$tabelle` = $schiffe_soll 
-			, `punkte` = " ."0" . ", `Stationiert_Bot` = $bots_anzahl WHERE `Spieler_ID` = '$spieler_id' AND `Planet_ID` = $planet_id";
+			, `punkte` = " . "0" . ", `Stationiert_Bot` = $bots_anzahl WHERE `Spieler_ID` = '$spieler_id' AND `Planet_ID` = $planet_id";
 			$query = $abfrage_planet_update or die("Error in the consult.." . mysqli_error("Error: set_bauschleife_struckture #1 ".$link));
 			
 			if (mysqli_query($link, $query)) {
@@ -638,7 +648,7 @@ function set_bauschleife_ship_fertig($spieler_id, $planet_id) {
 		
 			$schiffe_soll = $schiffe_ist + $fertiggestellte;
 			
-			//$punkte = get_punkte($spieler_id, $planet_id);
+			$punkte = get_punkte($spieler_id, $planet_id);
 			//$punkte = $punkte + ((($Ship["Kosten_Eisen"] + $Ship["Kosten_Silizium"] + $Ship["Kosten_Wasser"]) * $fertiggestellte) / 1000);
 
 			//Bots berechnen
@@ -723,7 +733,7 @@ function set_bauschleife_deff_fertig($spieler_id, $planet_id) {
 		
 		$Deff = get_def($row->Typ);
 		
-		//$punkte = get_punkte($spieler_id, $planet_id);
+		$punkte = get_punkte($spieler_id, $planet_id);
 		//$punkte = $punkte + ((($Deff["Kosten_Eisen"] + $Deff["Kosten_Silizium"] + $Deff["Kosten_Wasser"]) * $anzahl) / 1000);
 		
 		
@@ -788,7 +798,7 @@ function set_bauschleife_deff_fertig($spieler_id, $planet_id) {
 
 			$deff_soll = $deff_ist + $fertiggestellte;
 			
-			//$punkte = get_punkte($spieler_id, $planet_id);
+			$punkte = get_punkte($spieler_id, $planet_id);
 			//$punkte = $punkte + ((($Deff["Kosten_Eisen"] + $Deff["Kosten_Silizium"] + $Deff["Kosten_Wasser"]) * $fertiggestellte) / 1000);
 			
 
@@ -859,11 +869,11 @@ function set_bauschleife_struckture_fertig($spieler_id, $planet_id, $gebäude_id
 	
 	require 'inc/connect_galaxy_1.php';
 	
-	$produktion = get_produktion($spieler_id, 0);
+	$produktion = get_produktion($spieler_id, $planet_id);
 	
-	//$punkte = get_punkte($spieler_id, 0);
+	$punkte = get_punkte($spieler_id, $planet_id);
 
-	$Gebäude = get_gebäude_nächste_stufe($spieler_id, 0, $gebäude_id, 1);
+	$Gebäude = get_gebäude_nächste_stufe($spieler_id, $planet_id, $gebäude_id, 1);
 	
 	$tabelle = "Stufe_Gebaeude_" . $gebäude_id;
 	
@@ -877,7 +887,7 @@ function set_bauschleife_struckture_fertig($spieler_id, $planet_id, $gebäude_id
 	if ($gebäude_id == 10) { $produktion["Handel_Kapa"] = $produktion["Handel_Kapa"] + $Gebäude["Kapazitaet"]; }
 	
 	
-	//$punkte = $punkte + (($Gebäude["Kosten_Eisen"] + $Gebäude["Kosten_Silizium"] + $Gebäude["Kosten_Wasser"]) / 1000);
+	//$punkte["punkte_structur"] = $punkte + (($Gebäude["Kosten_Eisen"] + $Gebäude["Kosten_Silizium"] + $Gebäude["Kosten_Wasser"]) / 1000);
 	
 	$abfrage = "UPDATE `planet` SET
 	`$tabelle` = " . $Gebäude["Stufe"] . ",
@@ -887,8 +897,8 @@ function set_bauschleife_struckture_fertig($spieler_id, $planet_id, $gebäude_id
 	`Ressource_Energie` = " . $produktion["Energie"] . ",
 	`Bunker_Kapa` = " .  $produktion["Bunker_Kapa"] . ",
 	`Handel_Kapa` = " . $produktion["Handel_Kapa"] . ",
-	`punkte` = " . "0" . ",	
-	`Bauschleife_Gebaeude_ID` = 0, 
+	`Bauschleife_Gebaeude_ID` = 0,
+	`Bauschleife_Gebaeude_Start` = 0, 
 	`Bauschleife_Gebaeude_Bis` = 0, 
 	`Bauschleife_Gebaeude_Name` = ''
 	WHERE `Spieler_ID` = '$spieler_id' AND `Planet_ID` = $planet_id";
@@ -913,11 +923,11 @@ function set_bauschleife_struckture_fertig($spieler_id, $planet_id, $gebäude_id
 function set_bauschleife_tech_fertig($spieler_id, $planet_id, $tech_id, $username) {
 	require 'inc/connect_galaxy_1.php';
 	
-	$produktion = get_produktion($spieler_id, 0);
+	$produktion = get_produktion($spieler_id, $planet_id);
 	
-	$punkte = get_punkte($spieler_id, 0);
+	$punkte = get_punkte($spieler_id, $planet_id);
 	
-	$Tech = get_tech_nächste_stufe($spieler_id, 0, $tech_id, 1);
+	$Tech = get_tech_nächste_stufe($spieler_id, $planet_id, $tech_id, 1);
 	
 	$tabelle = "Tech_" . $tech_id;
 	
@@ -947,8 +957,8 @@ function set_bauschleife_structure_abbruch($spieler_id, $planet_id, $gebäude_id
 	
 	require 'inc/connect_galaxy_1.php';
 	
-	$Gebäude = get_gebäude_nächste_stufe($spieler_id, 0, $gebäude_id, 1);
-	$ressource = get_ressource($spieler_id, 0);
+	$Gebäude = get_gebäude_nächste_stufe($spieler_id, $planet_id, $gebäude_id, 1);
+	$ressource = get_ressource($spieler_id, $planet_id);
 	
 	//Eisen, Sili, Wasser zurück & Bauschleife löschen
 
@@ -966,6 +976,7 @@ function set_bauschleife_structure_abbruch($spieler_id, $planet_id, $gebäude_id
 	`Ressource_Wasser` = " . $ressource["Wasser"] . ", 
 	`Ressource_Energie` = ". $ressource["Energie"] .",
 	`Ressource_Karma` = ". $ressource["Karma"] .",
+	`Bauschleife_Gebaeude_Start` = 0,
 	`Bauschleife_Gebaeude_ID` = 0, 
 	`Bauschleife_Gebaeude_Bis` = 0, 
 	`Bauschleife_Gebaeude_Name` = '' 
@@ -987,8 +998,8 @@ function set_bauschleife_tech_abbruch($spieler_id, $planet_id, $tech_id, $userna
 
 	require 'inc/connect_galaxy_1.php';
 
-	$Tech = get_tech_nächste_stufe($spieler_id, 0, $tech_id, 1);
-	$ressource = get_ressource($spieler_id, 0);
+	$Tech = get_tech_nächste_stufe($spieler_id, $planet_id, $tech_id, 1);
+	$ressource = get_ressource($spieler_id, $planet_id);
 
 	//Eisen, Sili, Wasser zurück & Bauschleife löschen
 
@@ -1052,7 +1063,7 @@ function set_bauschleife_ship_abbruch($spieler_id, $planet_id, $schleife_id) {
 		
 		// update ress & bots auf dem Planeten
 		
-		$ressource = get_ressource($spieler_id, 0);
+		$ressource = get_ressource($spieler_id, $planet_id);
 		
 		//Eisen, Sili, Wasser zurück & Bauschleife löschen
 		
@@ -1180,7 +1191,7 @@ function set_bauschleife_deff_abbruch($spieler_id, $planet_id, $schleife_id) {
 
 		// update ress & bots auf dem Planeten
 
-		$ressource = get_ressource($spieler_id, 0);
+		$ressource = get_ressource($spieler_id, $planet_id);
 
 		//Eisen, Sili, Wasser zurück & Bauschleife löschen
 
@@ -1288,10 +1299,10 @@ function set_bauschleife_deff_abbruch($spieler_id, $planet_id, $schleife_id) {
 function check_bauschleife_activ($spieler_id, $planet_id, $zweig) {
 	
 	require 'inc/connect_galaxy_1.php';
-
+	$bauschleife["Start"] = 99;
 	switch ($zweig) {
 		case "Structure":
-				$abfrage = "SELECT `Bauschleife_Gebaeude_ID`, `Bauschleife_Gebaeude_Bis` FROM `planet` WHERE `Spieler_ID` = '$spieler_id' AND `Planet_ID` = $planet_id";
+				$abfrage = "SELECT `Bauschleife_Gebaeude_ID`, `Bauschleife_Gebaeude_Bis`, `Bauschleife_Gebaeude_Start` FROM `planet` WHERE `Spieler_ID` = '$spieler_id' AND `Planet_ID` = $planet_id";
 				
 				$query = $abfrage or die("Error in the consult.." . mysqli_error("Error: check_bauschleife_activ #1 ".$link));
 				$result = mysqli_query($link, $query);
@@ -1299,6 +1310,7 @@ function check_bauschleife_activ($spieler_id, $planet_id, $zweig) {
 				$row = mysqli_fetch_object($result);
 				
 				$bauschleife["ID"] = $row->Bauschleife_Gebaeude_ID;
+				$bauschleife["Start"] = $row->Bauschleife_Gebaeude_Start; //get_timestamp_in_was_sinnvolles($row->Bauschleife_Gebaeude_Bis - time());
 				$bauschleife["Bis"] = $row->Bauschleife_Gebaeude_Bis; //get_timestamp_in_was_sinnvolles($row->Bauschleife_Gebaeude_Bis - time());
 				$bauschleife["Countdown"] = $row->Bauschleife_Gebaeude_Bis - time();
 				return $bauschleife;
@@ -1487,7 +1499,7 @@ function get_tech_nächste_stufe($spieler_id, $planet_id, $tech_id, $speed_mod) 
 		$tabelle = "Tech_".$tech_id;
 		$stufe = $row_aktuelle_Stufe_Tech["Tech_".$tech_id] + 1;
 		
-		$forschungszentrum = get_gebäude_aktuelle_stufe($spieler_id, 0, 9);
+		$forschungszentrum = get_gebäude_aktuelle_stufe($spieler_id, $planet_id, 9);
 
 	//Kosten für die Forschung
 
@@ -1510,7 +1522,7 @@ function get_tech_nächste_stufe($spieler_id, $planet_id, $tech_id, $speed_mod) 
 		
 		$Tech["Lab"] = $row_kosten_nächste_Forschung["Lab"];
 		
-		if($Tech["Erw_Bedingung"] == "nicht bestanden") { $Tech["Forschung"] = "Bdingungen fail" ; return $Tech; } else { $Tech["Forschung"] = "OK"; }
+		if($Tech["Erw_Bedingung"] == "nicht bestanden") { $Tech["Forschung"] = "Bedingungen fail" ; return $Tech; } else { $Tech["Forschung"] = "OK"; }
 		if($Tech["Lab"] > $forschungszentrum) { $Tech["Forschung"] = "Labor ausbauen" ; return $Tech; } else { $Tech["Forschung"] = "OK"; }
 		
 		if($stufe > $Tech["Level_Cap"]) { $Tech["Forschung"] = "MAX" ; return $Tech; } else { $Tech["Forschung"] = "OK"; }
@@ -1543,6 +1555,33 @@ function get_tech_nächste_stufe($spieler_id, $planet_id, $tech_id, $speed_mod) 
 
 }
 
+function get_last_planet($spieler_id) {
+	require 'inc/connect_galaxy_1.php';
+	$sql = "SELECT `Letzter_Planet` FROM `spieler` WHERE `Spieler_ID` = '$spieler_id'";	
+	$result = mysqli_query($link, $sql) or die("Error in the consult.." . mysqli_error("Error: #0002302 ".$link));
+	$row = mysqli_fetch_object($result);
+	return $row->Letzter_Planet;
+}
+
+function set_last_planet($spieler_id, $planet_id) {
+	require 'inc/connect_galaxy_1.php';
+	
+	
+	$abfrage = "SELECT `Planet_ID` FROM `planet` WHERE `Spieler_ID` = '$spieler_id' AND `Planet_ID` = $planet_id";	
+	$query = $abfrage or die("Error in the consult.." . mysqli_error("Error: #0003 ".$link));
+	$result = mysqli_query($link, $query);
+	
+	$row_cnt = $result->num_rows;
+	if($row_cnt > 0) {
+		$sql = "UPDATE `spieler` SET `Letzter_Planet` = " . $planet_id . " WHERE `Spieler_ID` = '$spieler_id'";
+		$result = mysqli_query($link, $sql) or die("Error in the consult.." . mysqli_error("Error: #0002302 ".$link));
+		return true;
+	} else {
+		return false;
+	}
+}
+
+
 function get_list_of_all_planets($spieler_id, $planet_id, $vorauswahl = true) {
 	require 'inc/connect_galaxy_1.php';
 	$link->set_charset("utf8");
@@ -1552,12 +1591,10 @@ function get_list_of_all_planets($spieler_id, $planet_id, $vorauswahl = true) {
 	$query = $abfrage or die("Error in the consult.." . mysqli_error("Error: #0003 ".$link));
 	$result = mysqli_query($link, $query);
 	$ausgabe ="";
-
+	
 	while($row = mysqli_fetch_object($result)) {  
-		
 	 	if ($row->Planet_ID == $planet_id AND $vorauswahl == true) { $select = "selected"; } else { $select = "";}
-		$ausgabe = $ausgabe . "<option $select>" . $row->Planet_Name . "</option>";
-
+		$ausgabe = $ausgabe . "<option $select value='" . ($row->Planet_ID + 1) . "'>" . $row->Planet_Name . "</option>";
 	}
 	
 	return $ausgabe;
@@ -1958,8 +1995,8 @@ function get_ressource($spieler_id, $planet_id) {
 
 function refresh_ressource($spieler_id, $planet_id, $zeitpunkt) {
 	
-	$produktion = get_produktion($spieler_id, 0);	
-	$ressource = get_ressource($spieler_id, 0);
+	$produktion = get_produktion($spieler_id, $planet_id);	
+	$ressource = get_ressource($spieler_id, $planet_id);
 	
 	//echo "<pre>" . var_dump($produktion) . "</pre>";
 	//echo "<pre>" . var_dump($ressource) . "</pre>";
@@ -2106,12 +2143,9 @@ function check_username_cleaner($value, $spieler_id){
 	
 }
 
-function check_koordinaten_besetzt($x, $y, $z, $galaxy_number) {
+function check_koordinaten_besetzt($x, $y, $z) {
 	
-	if (!is_numeric($galaxy_number)) { return false; }
-	
-	if ($galaxy_number == 1) { require 'inc/connect_galaxy_1.php'; }
-	if ($galaxy_number == 2) { require 'inc/connect_galaxy_2.php'; }
+	require 'inc/connect_galaxy_1.php';
 
 	$result = $link->query("SELECT count(*) as total FROM `planet` WHERE `x` = $x AND `y` = $y AND `z` = $z")
 	or die ("Error: #0005 " . mysql_error());
@@ -2287,6 +2321,16 @@ function set_news($spieler_id, $planet_id, $typ, $text) {
 	}
 
 
+}
+
+
+function get_spieler_name($spieler_id) {
+	require 'inc/connect_galaxy_1.php';
+	$sql = "SELECT `Spieler_Name` FROM `spieler` WHERE `Spieler_ID` = '$spieler_id'";
+	$query = $sql or die("Error in the consult.." . mysqli_error("Error: #0003 ".$link));
+	$result = mysqli_query($link, $query);
+	$row = mysqli_fetch_object($result);
+	return $row->Spieler_Name;	
 }
 
 function get_spieler_image($spieler_id) {
@@ -2779,7 +2823,7 @@ function flotte_vorhanden ($spieler_id, $planet_id, $flotte) {
 		//echo $flotte[$item]["Anzahl"] ."x " . $flotte[$item]["Schiff_ID"]
 		$tabelle = "Schiff_Typ_" . $flotte[$item]["Schiff_ID"];
 		
-		if($flotte[$item]["Anzahl"] <= $row->$tabelle) {
+		if($flotte[$item]["Anzahl"] <= $row->$tabelle AND $flotte[$item]["Anzahl"] > 0) {
 			
 			
 		} else {			
@@ -3012,6 +3056,44 @@ function mission_erkunden($flotte_abarbeiten, $spieler_id) {
 	} else { return false; }
 }
 
+function mission_kolonisieren($flotte_abarbeiten, $spieler_id, $username) {
+	//- Schauen ob der Planet besetzt ist
+	//- Sonnensystem als permanent Entdeckt setzen
+	//- Planet besiedeln
+	//- Ress auspacken
+	//- 1 Koloschiff löschen 30% Ress gutschreiben
+	//- Flotte am neuen Planet stationieren
+	
+	require 'inc/connect_galaxy_1.php';
+
+	$x2 = $flotte_abarbeiten["x2"];
+	$y2 = $flotte_abarbeiten["y2"];
+	$z2 = $flotte_abarbeiten["z2"];
+	$Ankunft = $flotte_abarbeiten["Ankunft"];
+	
+	
+	$tech_spieler = get_tech_stufe_spieler($spieler_id); //Kolotech: Tech_10
+	$anzahl_planeten = get_anzahl_planeten($spieler_id, 1);
+	if($tech_spieler["Tech_10"] <= $anzahl_planeten - 1) { return false; }
+	
+	if (check_koordinaten_besetzt($x2, $y2, $z2) == true) { //Schauen ob der Planet besetzt ist
+		
+		$sql = "INSERT INTO `sonnensystem` (`ID`, `Spieler_ID`, `x`, `y`, `Entdeckt`, `locked`) VALUES (NULL, '$spieler_id', '$x2', '$y2', '" . date("Y-m-d\TH:i:s\Z", $Ankunft) . "', '0')";
+		$query = $sql or die("Error in the consult.." . mysqli_error("Error: #0002302 ".$link));
+		
+		if($result = mysqli_query($link, $query)) { //Sonnensystem als permanent Entdeckt setzen
+			
+			if(create_next_planet($spieler_id, $x2, $y2, $z2, $username) == true) {
+				
+				
+				
+			} else { return false; }			
+		} else { return false; }		
+	} else { return false; }
+
+}
+
+
 function mission_rückkehr_set($flotte_abarbeiten, $spieler_id) {
 	require 'inc/connect_galaxy_1.php';
 	
@@ -3159,4 +3241,21 @@ function mission_rückkehr_auflösen($fa, $spieler_id) {
 	} else { return false; }
 	
 }
+
+function create_next_planet($spieler_id, $x, $y, $z, $username) {
+
+	require 'inc/connect_galaxy_1.php'; 
+	$link->set_charset("utf8");
+
+	//Planet
+	$planetname = $username."s Kolonie";
+	$nächste_id = get_anzahl_planeten($spieler_id, 1);
+	$abfrage = "INSERT INTO `planet`(`Spieler_ID`, `Spieler_Name`, `Planet_Name`, `x`, `y`, `z`, `Grund_Prod_Eisen`, `Grund_Prod_Silizium`, `Grund_Prod_Wasser`, `Planet_ID`) VALUES ('$spieler_id', '$username','$planetname', $x, $y, $z, 20,10,5, " . $nächste_id . ")";
+
+	$query = $abfrage or die("Error in the consult.." . mysqli_error("Error: #0003b ".$link));
+	$result = mysqli_query($link, $query);
+
+
+}
+
 ?>

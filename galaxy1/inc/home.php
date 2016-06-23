@@ -1,8 +1,8 @@
 <?php 
-$activity = get_activity_planet_spieler_schiffe($spieler_id, 0);
-$schiffe = get_Schiffe_stationiert($spieler_id, 0);
-$Bauschleife_naechstes_Schiff = get_activity_schiffe_einzel($spieler_id, 0);
-$Bauschleife_naechste_deff = get_activity_deff_einzel($spieler_id, 0);
+$activity = get_activity_planet_spieler_schiffe($spieler_id, $planet_id);
+$schiffe = get_Schiffe_stationiert($spieler_id, $planet_id);
+$Bauschleife_naechstes_Schiff = get_activity_schiffe_einzel($spieler_id, $planet_id);
+$Bauschleife_naechste_deff = get_activity_deff_einzel($spieler_id, $planet_id);
 
 if(!isset($schiffe)) {
 	$schiffe[0]["Name"] = "-";
@@ -10,7 +10,7 @@ if(!isset($schiffe)) {
 }
 
 	
-$deff = get_Deff_stationiert($spieler_id, 0);
+$deff = get_Deff_stationiert($spieler_id, $planet_id);
 
 if(!isset($deff)) {
 	$deff[0]["Name"] = "-";
@@ -18,8 +18,8 @@ if(!isset($deff)) {
 }
 
 
-$bunker = get_Ressbunker_Inhalt($spieler_id, 0);
-$koordinaten = get_koordinaten_planet($spieler_id, 0);
+$bunker = get_Ressbunker_Inhalt($spieler_id, $planet_id);
+$koordinaten = get_koordinaten_planet($spieler_id, $planet_id);
 
 $balken = get_flotte_in_der_luft($spieler_id, time(), false);
 
@@ -301,7 +301,7 @@ countdownFlotten();
 				<td class="tbc tbc_oben">Rohstoffbunker</td><td class="tbchell"><?php  echo $bunker["Belegt_Prozent"] . "<font style='font-size: x-small;'>%</font>"; ?></td>
 			</tr>
 			<tr>
-				<td class="tbc">Handelssposten</td><td class="tbchell"><?php  echo get_Handelsposten_Inhalt($spieler_id, 0); ?></td>
+				<td class="tbc">Handelssposten</td><td class="tbchell"><?php  echo get_Handelsposten_Inhalt($spieler_id, $planet_id); ?></td>
 			</tr>
 			<tr>
 				<td class="tbc">Verteidigung</td><td class="tbchell">[aktiviert]</td>

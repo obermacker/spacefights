@@ -1,7 +1,7 @@
 <?php 
 
-$produktion = get_produktion($spieler_id, 0);
-$bunker = get_Ressbunker_Inhalt($spieler_id, 0);
+$produktion = get_produktion($spieler_id, $planet_id);
+$bunker = get_Ressbunker_Inhalt($spieler_id, $planet_id);
 
 foreach ($produktion as &$value) {
 	$value = number_format($value, 0, '.', '.');

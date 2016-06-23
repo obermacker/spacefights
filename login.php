@@ -6,15 +6,21 @@ require 'inc/func.php';
 require 'inc/connect_spieler.php'; 
  
 $fehler = "";
-if (login(check_username_cleaner ($_POST["sf_username"], 0), $_POST["sf_password"]) == "ok"){
-    header('Location: galaxy.php');    
-    }
-else
-    {
-    	$fehler = "Benutzername und/oder Passwort waren falsch.";
-    }
+if(isset($_POST["sf_username"])) {
+	if(isset($_POST["sf_password"])) {
+		
+		if (login(check_username_cleaner ($_POST["sf_username"], 0), $_POST["sf_password"]) == "ok"){
+		    header('Location: galaxy.php');    
+		    }
+		else
+		    {
+		    	$fehler = "Benutzername und/oder Passwort waren falsch.";
+		    }
 
-
+    }
+    
+}
+    
 ?>
 <!DOCTYPE HTML>
 <html lang="de">

@@ -6,7 +6,7 @@
 <?php
 
 
-$waffenfabrik_stufe = get_gebäude_aktuelle_stufe($spieler_id, 0, 8);
+$waffenfabrik_stufe = get_gebäude_aktuelle_stufe($spieler_id, $planet_id, 8);
 $tech_stufe = get_tech_stufe_spieler($spieler_id);
 
 //$waffenfabrik_stufe = 20;
@@ -28,7 +28,7 @@ if($waffenfabrik_stufe == 0) {
 		$deff_in_Besitz["Planet"] = 0;
 		$deff_in_Besitz["Galaxy"] = 0;
 		
-		$deff_in_Besitz = get_deff_in_Besitz($spieler_id, 0, $i); 
+		$deff_in_Besitz = get_deff_in_Besitz($spieler_id, $planet_id, $i); 
 		
 		$tech_probe = true;
 		for($t = 1; $t <= 12; $t++) {

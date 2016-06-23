@@ -8,7 +8,7 @@
 <?php
 
 
-$raumschiffwerft_stufe = get_gebäude_aktuelle_stufe($spieler_id, 0, 7);
+$raumschiffwerft_stufe = get_gebäude_aktuelle_stufe($spieler_id, $planet_id, 7);
 $tech_stufe = get_tech_stufe_spieler($spieler_id);
 
 if($raumschiffwerft_stufe == 0) {
@@ -40,7 +40,7 @@ if($raumschiffwerft_stufe == 0) {
 			
 			
 			
-			$schiff_in_Besitz = get_schiffe_in_Besitz($spieler_id, 0, $i);
+			$schiff_in_Besitz = get_schiffe_in_Besitz($spieler_id, $planet_id, $i);
 			$max = false;
 				
 			if($Ship["Max_Hold_Planet"] != -1) {

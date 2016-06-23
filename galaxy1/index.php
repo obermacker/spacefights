@@ -16,14 +16,13 @@ $spieler_id = ""; $session_id = ""; $username = "";
 
 if (isset($_SESSION["spieler_ID"])) { $spieler_id = $_SESSION["spieler_ID"]; } 
 if (isset($_SESSION["session_id"])) { $session_id = $_SESSION["session_id"]; }
-if (isset($_SESSION["username"])) { $username = $_SESSION["username"]; }
-
-
 
 if (check_auth($spieler_id, $session_id) == "nein"){
 	    session_unset(); session_destroy(); $_SESSION = array(); header('Location: ../index.html'); exit();
 	    exit();	
 }
+
+if (isset($_SESSION["username"])) { $username = $_SESSION["username"]; } else { $_SESSION["username"] = get_spieler_name($spieler_id); $username = $_SESSION["username"]; }
 
 //var_dump($_POST);
 
@@ -32,6 +31,19 @@ if(!isset($_POST["s"])){
 } else { $select = $_POST["s"]; }
 
 
+if(!isset($_POST["p"])){
+	if(isset($_GET["p"])){ $planet_wahl = intval($_GET["p"], 10); }
+} else { $planet_wahl = intval($_POST["p"], 10); }
+
+$planet_id = get_last_planet($spieler_id);
+
+if(isset($planet_wahl)) {		
+	if(is_numeric(usereingabe_cleaner($planet_wahl))) {
+		if(set_last_planet($spieler_id, usereingabe_cleaner($planet_wahl) - 1) == true ) {
+			$planet_id = usereingabe_cleaner($planet_wahl) - 1;
+		}		
+	}	
+}
 //prüf mal ob der Spieler überhaupt einen Planeten in der Gala hat
 
 if (get_anzahl_planeten($spieler_id, 1) == 0) { session_unset(); session_destroy(); $_SESSION = array(); header('Location: ../index.html'); exit(); }
@@ -183,8 +195,8 @@ switch ($select) {
 						}
 						break;
 					case "Kolonisierung":
-						if(mission_erkunden($flotte_abarbeiten[$key], $spieler_id) == true) {
-							if(mission_rückkehr_set($flotte_abarbeiten[$key], $spieler_id) == false) {
+						if(mission_kolonisieren($flotte_abarbeiten[$key], $spieler_id, $username) == true) {
+							if(mission_rückkehr_auflösen($flotte_abarbeiten[$key], $spieler_id) == false) {
 								echo "Fehler mission_rückkehr index.php Zeile 164";
 								echo "Wenn das hier jemand liest, sagt mal bitte bescheid.";
 								exit;
@@ -236,38 +248,38 @@ switch ($select) {
 //---- Abgelaufene Bauschleifen fertigstellen
 
 	//--- Gebäude
-	$bauschleife = check_bauschleife_activ($spieler_id, 0, "Structure");
+	$bauschleife = check_bauschleife_activ($spieler_id, $planet_id, "Structure");
 	if ($bauschleife["ID"] > 0 and $bauschleife["Bis"] <= time()) {
 		
 		$gebäude_id = $bauschleife["ID"];		
-		set_bauschleife_struckture_fertig($spieler_id, 0, $gebäude_id, $username);
+		set_bauschleife_struckture_fertig($spieler_id, $planet_id, $gebäude_id, $username);
 		
 	}
 
 	//--- Forschung
-	$bauschleife = check_bauschleife_activ($spieler_id, 0, "Tech");
+	$bauschleife = check_bauschleife_activ($spieler_id, $planet_id, "Tech");
 	if ($bauschleife["ID"] > 0 and $bauschleife["Bis"] <= time()) {
 	
 		$tech_id = $bauschleife["ID"];
-		set_bauschleife_tech_fertig($spieler_id, 0, $tech_id, $username);
+		set_bauschleife_tech_fertig($spieler_id, $planet_id, $tech_id, $username);
 	
 	}
 	
 	//--- Schiffe
 	
-	$bauschleife = check_bauschleife_activ($spieler_id, 0, "Ship");
+	$bauschleife = check_bauschleife_activ($spieler_id, $planet_id, "Ship");
 	if ($bauschleife["ID"] > 0) {
 		
-		set_bauschleife_ship_fertig($spieler_id, 0);
+		set_bauschleife_ship_fertig($spieler_id, $planet_id);
 		
 	
 	}
 	
 	//--- Deff
 	
-	$bauschleife = check_bauschleife_activ($spieler_id, 0, "Deff");
+	$bauschleife = check_bauschleife_activ($spieler_id, $planet_id, "Deff");
 	if ($bauschleife["ID"] > 0) {
-		set_bauschleife_deff_fertig($spieler_id, 0);
+		set_bauschleife_deff_fertig($spieler_id, $planet_id);
 	}
 	
 	
@@ -280,13 +292,13 @@ switch ($select) {
 	
 		if (is_numeric($_POST["action-gebaeude-abbrechen"])) {
 	
-			$bauschleife = check_bauschleife_activ($spieler_id, 0, "Structure");
+			$bauschleife = check_bauschleife_activ($spieler_id, $planet_id, "Structure");
 			
 			if ($bauschleife["ID"] > 0) { 
 				
 				$gebäude_id = $_POST["action-gebaeude-abbrechen"];				
 
-				set_bauschleife_structure_abbruch($spieler_id, 0, $gebäude_id, $username);			
+				set_bauschleife_structure_abbruch($spieler_id, $planet_id, $gebäude_id, $username);			
 			}
 		}
 	}
@@ -296,13 +308,13 @@ switch ($select) {
 	
 		if (is_numeric($_POST["action-forschung-abbrechen"])) {
 	
-			$bauschleife = check_bauschleife_activ($spieler_id, 0, "Tech");
+			$bauschleife = check_bauschleife_activ($spieler_id, $planet_id, "Tech");
 				
 			if ($bauschleife["ID"] > 0) {
 	
 				$tech_id = $_POST["action-forschung-abbrechen"];
 	
-				set_bauschleife_tech_abbruch($spieler_id, 0, $tech_id, $username);
+				set_bauschleife_tech_abbruch($spieler_id, $planet_id, $tech_id, $username);
 			}
 		}	
 	}
@@ -310,7 +322,7 @@ switch ($select) {
 	if (isset($_POST["action-schiffe-abbrechen"])) {
 		if (is_numeric($_POST["action-schiffe-abbrechen"])) {
 			
-			set_bauschleife_ship_abbruch($spieler_id, 0, $_POST["action-schiffe-abbrechen"]);
+			set_bauschleife_ship_abbruch($spieler_id, $planet_id, $_POST["action-schiffe-abbrechen"]);
 			
 		}
 	}
@@ -319,7 +331,7 @@ switch ($select) {
 	if (isset($_POST["action-deff-abbrechen"])) {
 		if (is_numeric($_POST["action-deff-abbrechen"])) {
 				
-			set_bauschleife_deff_abbruch($spieler_id, 0, $_POST["action-deff-abbrechen"]);
+			set_bauschleife_deff_abbruch($spieler_id, $planet_id, $_POST["action-deff-abbrechen"]);
 				
 		}
 	}
@@ -337,13 +349,13 @@ switch ($select) {
 			
 			$kann_gebaut_werden = true;
 
-			$bauschleife = check_bauschleife_activ($spieler_id, 0, "Structure");
+			$bauschleife = check_bauschleife_activ($spieler_id, $planet_id, "Structure");
 				
 			if ($bauschleife["ID"] > 0) { $kann_gebaut_werden = false; } else {
 				
 				$gebäude_id = $_POST["action-gebaeude-bauen"];
-				$ressource = get_ressource($spieler_id, 0);
-				$Gebäude = get_gebäude_nächste_stufe($spieler_id, 0, $gebäude_id, 1);
+				$ressource = get_ressource($spieler_id, $planet_id);
+				$Gebäude = get_gebäude_nächste_stufe($spieler_id, $planet_id, $gebäude_id, 1);
 		
 				if($ressource["Eisen"] < $Gebäude["Kosten_Eisen"]) { $kann_gebaut_werden = false; }
 				if($ressource["Silizium"] < $Gebäude["Kosten_Silizium"]) { $kann_gebaut_werden = false; }
@@ -355,7 +367,7 @@ switch ($select) {
 					
 					$bauzeit = time() + $Gebäude["Bauzeit"];
 					
-					set_bauschleife_struckture($spieler_id, 0, $gebäude_id, $Gebäude["Name"], $bauzeit, $ressource["Eisen"], $ressource["Silizium"], $ressource["Wasser"], $ressource["Energie"], $ressource["Karma"], $Gebäude["Kosten_Eisen"], $Gebäude["Kosten_Silizium"], $Gebäude["Kosten_Wasser"], $Gebäude["Kosten_Energie"], $Gebäude["Kosten_Karma"], $username);
+					set_bauschleife_struckture($spieler_id, $planet_id, $gebäude_id, $Gebäude["Name"], $bauzeit, $ressource["Eisen"], $ressource["Silizium"], $ressource["Wasser"], $ressource["Energie"], $ressource["Karma"], $Gebäude["Kosten_Eisen"], $Gebäude["Kosten_Silizium"], $Gebäude["Kosten_Wasser"], $Gebäude["Kosten_Energie"], $Gebäude["Kosten_Karma"], $username);
 					
 				} else {
 					
@@ -379,13 +391,13 @@ switch ($select) {
 				
 			$kann_gebaut_werden = true;
 	
-			$bauschleife = check_bauschleife_activ($spieler_id, 0, "Tech");
+			$bauschleife = check_bauschleife_activ($spieler_id, $planet_id, "Tech");
 	
 			if ($bauschleife["ID"] > 0) { $kann_gebaut_werden = false; } else {
 	
 				$tech_id = $_POST["action-forschung-bauen"];
-				$ressource = get_ressource($spieler_id, 0);
-				$Tech = get_tech_nächste_stufe($spieler_id, 0, $tech_id, 1);
+				$ressource = get_ressource($spieler_id, $planet_id);
+				$Tech = get_tech_nächste_stufe($spieler_id, $planet_id, $tech_id, 1);
 	
 				if($ressource["Eisen"] < $Tech["Kosten_Eisen"]) { $kann_gebaut_werden = false; }
 				if($ressource["Silizium"] < $Tech["Kosten_Silizium"]) { $kann_gebaut_werden = false; }
@@ -396,9 +408,9 @@ switch ($select) {
 						
 					$bauzeit = time() + $Tech["Bauzeit"];
 						
-					//set_bauschleife_struckture($spieler_id, 0, $gebäude_id, $Gebäude["Name"], $bauzeit, $ressource["Eisen"], $ressource["Silizium"], $ressource["Wasser"], $ressource["Energie"], $ressource["Karma"], $Tech["Kosten_Eisen"], $Tech["Kosten_Silizium"], $Tech["Kosten_Wasser"], $Tech["Kosten_Energie"], $Tech["Kosten_Karma"]);
+					//set_bauschleife_struckture($spieler_id, $planet_id, $gebäude_id, $Gebäude["Name"], $bauzeit, $ressource["Eisen"], $ressource["Silizium"], $ressource["Wasser"], $ressource["Energie"], $ressource["Karma"], $Tech["Kosten_Eisen"], $Tech["Kosten_Silizium"], $Tech["Kosten_Wasser"], $Tech["Kosten_Energie"], $Tech["Kosten_Karma"]);
 
-					set_bauschleife_tech($spieler_id, 0, $tech_id, $Tech["Name"], $bauzeit, $ressource["Eisen"], $ressource["Silizium"], $ressource["Wasser"], $ressource["Karma"], $Tech["Kosten_Eisen"], $Tech["Kosten_Silizium"], $Tech["Kosten_Wasser"], $Tech["Kosten_Karma"], $username);
+					set_bauschleife_tech($spieler_id, $planet_id, $tech_id, $Tech["Name"], $bauzeit, $ressource["Eisen"], $ressource["Silizium"], $ressource["Wasser"], $ressource["Karma"], $Tech["Kosten_Eisen"], $Tech["Kosten_Silizium"], $Tech["Kosten_Wasser"], $Tech["Kosten_Karma"], $username);
 					
 				} else {
 						
@@ -423,10 +435,10 @@ switch ($select) {
 	
 			
 				$ship_id = $_POST["action-schiffe-bauen"];
-				$ressource = get_ressource($spieler_id, 0);
+				$ressource = get_ressource($spieler_id, $planet_id);
 				$Ship = get_ship($_POST["action-schiffe-bauen"]);
 				$anzahl = usereingabe_cleaner ($_POST["vanzahl" . $_POST["action-schiffe-bauen"]]);
-				$raumschiffwerft_stufe = get_gebäude_aktuelle_stufe($spieler_id, 0, 7);
+				$raumschiffwerft_stufe = get_gebäude_aktuelle_stufe($spieler_id, $planet_id, 7);
 
 				if($anzahl <= 0 OR empty($anzahl) OR !is_numeric($anzahl)) { $kann_gebaut_werden = false; }
 				if($Ship["Stufe_Werft"] > $raumschiffwerft_stufe) { $kann_gebaut_werden = false; }
@@ -439,7 +451,7 @@ switch ($select) {
 					}
 				}
 						
-					$schiff_in_Besitz = get_schiffe_in_Besitz($spieler_id, 0, $Ship["Schiff_ID"]);
+					$schiff_in_Besitz = get_schiffe_in_Besitz($spieler_id, $planet_id, $Ship["Schiff_ID"]);
 					$max = false;
 				
 					if($Ship["Max_Hold_Planet"] != -1) {
@@ -465,7 +477,7 @@ switch ($select) {
 					
 					$bauzeit = $Ship['Bauzeit'] = $Ship['Bauzeit'] / (1 * $raumschiffwerft_stufe);
 	
-					set_bauschleife_ship($spieler_id, 0, $ship_id, $Ship["Name"], $anzahl, $bauzeit, $ressource["Eisen"], $ressource["Silizium"], $ressource["Wasser"], $ressource["Bot"], $ressource["Karma"], $Ship["Kosten_Eisen"], $Ship["Kosten_Silizium"], $Ship["Kosten_Wasser"], $Ship["Bots"], $Ship["Kosten_Karma"]);					
+					set_bauschleife_ship($spieler_id, $planet_id, $ship_id, $Ship["Name"], $anzahl, $bauzeit, $ressource["Eisen"], $ressource["Silizium"], $ressource["Wasser"], $ressource["Bot"], $ressource["Karma"], $Ship["Kosten_Eisen"], $Ship["Kosten_Silizium"], $Ship["Kosten_Wasser"], $Ship["Bots"], $Ship["Kosten_Karma"]);					
 						
 				} else {
 	
@@ -491,14 +503,14 @@ switch ($select) {
 	
 			
 				$ship_id = $_POST["action-deff-bauen"];
-				$ressource = get_ressource($spieler_id, 0);
+				$ressource = get_ressource($spieler_id, $planet_id);
 				$Deff = get_def($_POST["action-deff-bauen"]);
-				$waffenfabrik_stufe = get_gebäude_aktuelle_stufe($spieler_id, 0, 8);
+				$waffenfabrik_stufe = get_gebäude_aktuelle_stufe($spieler_id, $planet_id, 8);
 				$anzahl = usereingabe_cleaner ($_POST["vanzahl" . $_POST["action-deff-bauen"]]);
 				
 				if($anzahl <= 0 OR empty($anzahl) OR !is_numeric($anzahl)) { $kann_gebaut_werden = false; }
 	
-				$deff_in_Besitz = get_deff_in_Besitz($spieler_id, 0, $Deff["Schiff_ID"]);
+				$deff_in_Besitz = get_deff_in_Besitz($spieler_id, $planet_id, $Deff["Schiff_ID"]);
 				
 				$tech_stufe = get_tech_stufe_spieler($spieler_id);
 				
@@ -530,7 +542,7 @@ switch ($select) {
 				if ($kann_gebaut_werden == true) {
 					
 					$bauzeit = $Deff["Bauzeit"];
-					set_bauschleife_deff($spieler_id, 0, $ship_id, $Deff["Name"], $anzahl, $bauzeit, $ressource["Eisen"], $ressource["Silizium"], $ressource["Wasser"], $ressource["Bot"], $ressource["Karma"], $Deff["Kosten_Eisen"], $Deff["Kosten_Silizium"], $Deff["Kosten_Wasser"], $Deff["Bots"], $Deff["Kosten_Karma"]);					
+					set_bauschleife_deff($spieler_id, $planet_id, $ship_id, $Deff["Name"], $anzahl, $bauzeit, $ressource["Eisen"], $ressource["Silizium"], $ressource["Wasser"], $ressource["Bot"], $ressource["Karma"], $Deff["Kosten_Eisen"], $Deff["Kosten_Silizium"], $Deff["Kosten_Wasser"], $Deff["Bots"], $Deff["Kosten_Karma"]);					
 						
 				} else {
 	
@@ -589,12 +601,111 @@ switch ($select) {
 
 <script type="text/javascript"><!--
 var ts = new Date();
-function countdown(sec, name){
-var e = document.getElementById(name);
+
+function displayNone(name, par) {
+	/* Hide & Show by ES 22.06.2016 */
+	var elemente = document.getElementsByName(name);
+	for(var i=0; i<elemente.length; i++) {
+		elemente[i].style.display=par;
+		
+	}
+}	
+
+
+function details(name) {
+	var eButton = document.getElementsByName(name+"Button");
+
+	if (eButton[0].className=="detailsGeschlossen") {
+		displayNone(name,"");
+	}
+	else {	
+		window.setTimeout("displayNone('"+name+"','none')",300);
+	}
+	
+	setTimeout("detailsT2('"+name+"')",10);
+	
+
+}
+	
+function detailsT2(name) {
+	var elemente = document.getElementsByName(name);
+	var eButton = document.getElementsByName(name+"Button");
+	
+	if (eButton[0].className=="detailsGeschlossen") {
+		eButton[0].className="detailsOffen";
+	} else {
+		eButton[0].className="detailsGeschlossen";
+	}
+
+	for(var i=0; i<elemente.length; i++) {
+		if (elemente[i].className=="detailsAusgeblendet") {
+			elemente[i].className="detailsEingeblendet";
+		} else {
+			elemente[i].className="detailsAusgeblendet";	
+		}
+	}
+}
+
+function mPBarGlow(){
+	/* Progressbar by ES 12.06.2016 */
+	var elemente = document.getElementsByClassName("pBar");
+	
+	for(var i=0; i<elemente.length; i++) {
+		if (elemente[i].className=="pBar" && elemente[i].style.width!="100%") {
+			elemente[i].className="pBar pBarG";
+		} else {
+			elemente[i].className="pBar";	
+			
+		}
+	}
+	window.setTimeout("mPBarGlow()",3000);
+}
+
+mPBarGlow();
+
+function mPBar(soll, ist, maxWidth, name){
+	/* Progressbar by ES 12.06.2016 */
+	var e = document.getElementById(name);
+	var w = 0;
+	w = (ist * 100) / soll;
+	
+	e.style.width = w + "%";
+}
+
+function countdown_progress(sec, name, start, ende, beschriftung){
+
+	var e = document.getElementById(name);
 var tn = new Date();
 var tl = ((sec*1000)-(tn.getTime()-ts.getTime()))/1000;
 
 if (tl>0){	
+		
+		mPBar(ende, (ende - tl),100,"mPBar_"+name);
+		var t = parseInt(tl/(24*60*60));
+		tl = tl-(t*(24*60*60));		
+		var h = parseInt(tl/(60*60));
+		tl = tl-(h*(60*60));
+		var m = parseInt(tl/(60));
+		tl = tl-(m*(60));
+		var s = parseInt(tl);
+		if (h<10) h="0"+h;
+		if (m<10) m="0"+m;
+		if (s<10) s="0"+s;
+		if (t == 0) { var tstr = h+":"+m+":"+s; } else { var tstr = t+" Tage "+h+":"+m+":"+s; }		
+		e.innerHTML = tstr;
+		window.setTimeout("countdown_progress("+sec+",'"+name+"',"+start+","+ende+",'"+beschriftung+"')",500);
+	} else{
+		e.innerHTML = "<a href='index.php?s=<?php echo $select; ?>'>" + beschriftung + "</a>";
+		mPBar(100,100,100,"mPBar_"+name);
+	}
+}
+
+function countdown(sec, name){
+	var e = document.getElementById(name);
+	var tn = new Date();
+	var tl = ((sec*1000)-(tn.getTime()-ts.getTime()))/1000;
+
+	if (tl>1){				
 		var t = parseInt(tl/(24*60*60));
 		tl = tl-(t*(24*60*60));		
 		var h = parseInt(tl/(60*60));
@@ -609,9 +720,10 @@ if (tl>0){
 		e.innerHTML = tstr;
 		window.setTimeout("countdown("+sec+",'"+name+"')",500);
 	} else{
-		e.innerHTML = "<a href='index.php?s=<?php echo $select; ?>'>" + "abgelaufen" + "</a>";
+		e.innerHTML = "<a href='index.php?s=<?php echo $select; ?>'>" + "abgelaufen" + "</a>";			
 	}
 }
+
 
 // --></script>
 
@@ -719,9 +831,9 @@ switch ($select) {
 <!-- Ress -->
 <?php if($bar_planet_info == true) { 
 	
-				 refresh_ressource($spieler_id, 0, time());
+				 refresh_ressource($spieler_id, $planet_id, time());
 				
-				 $ressource = get_ressource($spieler_id, 0);
+				 $ressource = get_ressource($spieler_id, $planet_id);
 					
 					?>
 					<table border=0 cellspacing="0" cellpadding="0" class="planetbar" width="100%">
@@ -742,9 +854,13 @@ switch ($select) {
 										<td>></td>
 								<tr>
 								<td colspan=3>
-									<select name="planet" size="1" style="width: 150px;" onchange="this.form.submit()">
-									<?php echo get_list_of_all_planets($spieler_id, 0); ?>
-									</select>  
+								
+									<form>
+									<select name="p" size="1" style="width: 150px;" onchange="this.form.submit()">
+									<?php echo get_list_of_all_planets($spieler_id, $planet_id); ?>
+									</select>
+									<input type="hidden" name="s" value="<?php echo $select; ?>">
+									</form>   
 								</td></tr>
 								</table>
 								
@@ -771,7 +887,7 @@ switch ($select) {
 <!-- Content -->
 <?php 
 
-//$punkte = number_format(sprintf('%d', get_punkte($spieler_id, 0)), 0, ',', '.');
+//$punkte = number_format(sprintf('%d', get_punkte($spieler_id, $planet_id)), 0, ',', '.');
 $punkte = get_punkte($spieler_id);
 switch ($select) {
 	case "hypersprung":
@@ -876,15 +992,12 @@ switch ($select)
 <tr>
 <td colspan="2">
 <div class="time_elapsed">
-<span ><?php $time_elapsed_secs = microtime(true) - $start; echo "Total execution time " . round($time_elapsed_secs * 1000) . " milliseconds."; ?></span>
+<span ><?php $time_elapsed_secs = microtime(true) - $start; echo "Total execution time " . round($time_elapsed_secs * 1000) . " milliseconds. (" . $username . " // $planet_id)"; ?></span>
 </div>
 
 </td>
 </tr>
 </table>
-
-
-
 
 </body>
 </html>
