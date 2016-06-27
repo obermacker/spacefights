@@ -2812,6 +2812,18 @@ function flotte_senden($spieler_id, $planet_id, $flotte, $ziel_x, $ziel_y, $ziel
 	
 }
 
+function check_flotte_modul_vorhanden($flotte_schiffe, $modul) {
+	$gefunden = false;
+	foreach ($flotte_schiffe AS $Key => $value) {
+		if($value["Anzahl"] > 0) {
+			$schiff = get_ship($value["Schiff_ID"]);						
+			$a = strpos($schiff["Modul"], $modul);
+			if(strpos($schiff["Modul"], $modul) !== false ) { $gefunden = true; };
+		}
+	}
+	return $gefunden;
+}
+
 function flotte_vorhanden ($spieler_id, $planet_id, $flotte) {
 	require 'inc/connect_galaxy_1.php';
 	$sql = "SELECT `Schiff_Typ_1`, `Schiff_Typ_2`, `Schiff_Typ_3`, `Schiff_Typ_4`, `Schiff_Typ_5`, `Schiff_Typ_6`, `Schiff_Typ_7`, `Schiff_Typ_8`, `Schiff_Typ_9`, `Schiff_Typ_10`, `Schiff_Typ_11` FROM `planet` WHERE `Spieler_ID` = '$spieler_id' AND `Planet_ID` = $planet_id";

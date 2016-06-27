@@ -47,7 +47,20 @@ if(isset($_POST["action-flotte-starten"])) {
 						$i++;
 					}					
 				}
-				if($i > 0) {
+				
+			switch (intval($out["mission"])) {
+				case 1: $mission_str = "erkunden"; break;
+				case 2: $mission_str = "Transport"; break;
+				case 3: $mission_str = "Sicherungsflug"; break;
+				case 4: $mission_str = "Spionage"; break;
+				case 5: $mission_str = "Angriff";  break;
+				case 6: // Kolonisierung 				
+					$flotte_kann_abheben = check_flotte_modul_vorhanden($flotte_schiffe, "colonization");					
+					break;
+			}
+				
+				
+				if($i > 0 AND $flotte_kann_abheben == true) {
 					$mission_start = flotte_senden($spieler_id, $planet_id, $flotte_schiffe, $out["x"], $out["y"], $out["z"], $out["mission"], $out["flugzeit"], $out["mitnehmen"], $out["abholen"]);
 					echo $mission_start;						
 				}
