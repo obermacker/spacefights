@@ -2144,7 +2144,8 @@ function check_username_cleaner($value, $spieler_id){
 }
 
 function check_koordinaten_besetzt($x, $y, $z) {
-	
+	// true := wenn dort schon jemand siedelt
+	// false := wenn dort niemand ist;
 	require 'inc/connect_galaxy_1.php';
 
 	$result = $link->query("SELECT count(*) as total FROM `planet` WHERE `x` = $x AND `y` = $y AND `z` = $z")
@@ -2152,11 +2153,8 @@ function check_koordinaten_besetzt($x, $y, $z) {
 		
 	$data = mysqli_fetch_assoc($result);
 	
-	$anzahl = $data['total'];
-	
-	if ($anzahl > 0) { return false; } else { return true; }
-	
-		
+	$anzahl = $data['total'];	
+	if ($anzahl == 0) { return false; } else { return true; }
 }
 
 function check_valid_url() {
@@ -2742,6 +2740,12 @@ function flotte_senden($spieler_id, $planet_id, $flotte, $ziel_x, $ziel_y, $ziel
 				$ress_mitnehmen["2"] = floor($ress_mitnehmen["2"] / $platz);
 			}
 			
+			/*verbleibende Ressourcen errechnen und eintragen*/
+			$ressource["Eisen"] = $ressource["Eisen"] - $ress_mitnehmen["0"];
+			$ressource["Silizium"] = $ressource["Silizium"] - $ress_mitnehmen["1"];
+			$ressource["Wasser"]  = $ressource["Wasser"] - $ress_mitnehmen["2"];
+			$ressource["Bot"] = $ressource["Bot"] - $ress_mitnehmen["3"];
+			
 			//langsamstes Schiff suchen für Geschwindigkeit
 			$langsamstes_schiff = 10000000;
 			
@@ -2790,7 +2794,8 @@ function flotte_senden($spieler_id, $planet_id, $flotte, $ziel_x, $ziel_y, $ziel
 			//echo $sql;
 			if($result = mysqli_query($link, $query)) {
 				
-				$sql = "UPDATE `planet` SET " . implode(',', $tabelle_schiffe_update_planet) . " WHERE  `Spieler_ID` = '$spieler_id' AND `Planet_ID` = $planet_id";
+				//$tempString = ',`Ressource_Eisen`='.$ressource["Eisen"].', `Ressource_Silizium`= '.$ressource["Silizium"].', `Ressource_Wasser`= '.$ressource["Wasser"].', `Ressource_Bot`= '.$ressource["Bot"];
+				$sql = "UPDATE `planet` SET " . implode(',', $tabelle_schiffe_update_planet) . ",`Ressource_Eisen`= " .$ressource["Eisen"]. ", `Ressource_Silizium`= " . $ressource["Silizium"] . ", `Ressource_Wasser`= " . $ressource["Wasser"] . " , `Ressource_Bot`= " . $ressource["Bot"] . " WHERE  `Spieler_ID` = '$spieler_id' AND `Planet_ID` = $planet_id";
 				
 				$query = $sql or die("Error in the consult.." . mysqli_error("Error: #0002302 ".$link));
 					
@@ -3056,14 +3061,13 @@ function mission_erkunden($flotte_abarbeiten, $spieler_id) {
 	} else { return false; }
 }
 
-function mission_kolonisieren($flotte_abarbeiten, $spieler_id, $username) {
+function mission_kolonisieren($flotte_abarbeiten, $spieler_id, $username) {	
 	//- Schauen ob der Planet besetzt ist
 	//- Sonnensystem als permanent Entdeckt setzen
 	//- Planet besiedeln
 	//- Ress auspacken
 	//- 1 Koloschiff löschen 30% Ress gutschreiben
 	//- Flotte am neuen Planet stationieren
-	
 	require 'inc/connect_galaxy_1.php';
 
 	$x2 = $flotte_abarbeiten["x2"];
@@ -3071,26 +3075,84 @@ function mission_kolonisieren($flotte_abarbeiten, $spieler_id, $username) {
 	$z2 = $flotte_abarbeiten["z2"];
 	$Ankunft = $flotte_abarbeiten["Ankunft"];
 	
-	
 	$tech_spieler = get_tech_stufe_spieler($spieler_id); //Kolotech: Tech_10
 	$anzahl_planeten = get_anzahl_planeten($spieler_id, 1);
-	if($tech_spieler["Tech_10"] <= $anzahl_planeten - 1) { return false; }
-	
-	if (check_koordinaten_besetzt($x2, $y2, $z2) == true) { //Schauen ob der Planet besetzt ist
+	if($tech_spieler["Tech_10"] <= $anzahl_planeten - 1) { return false; }	
+	if (check_koordinaten_besetzt($x2, $y2, $z2) == false) { //Schauen ob der Planet besetzt ist
 		
-		$sql = "INSERT INTO `sonnensystem` (`ID`, `Spieler_ID`, `x`, `y`, `Entdeckt`, `locked`) VALUES (NULL, '$spieler_id', '$x2', '$y2', '" . date("Y-m-d\TH:i:s\Z", $Ankunft) . "', '0')";
+		$sql = "INSERT INTO `sonnensystem` (`ID`, `Spieler_ID`, `x`, `y`, `Entdeckt`, `locked`) VALUES (NULL, '$spieler_id', '$x2', '$y2', '" . date("Y-m-d\TH:i:s\Z", $Ankunft) . "', '1')";
 		$query = $sql or die("Error in the consult.." . mysqli_error("Error: #0002302 ".$link));
 		
 		if($result = mysqli_query($link, $query)) { //Sonnensystem als permanent Entdeckt setzen
 			
 			if(create_next_planet($spieler_id, $x2, $y2, $z2, $username) == true) {
 				
+				//lösche ein Koloschiff aus der Flotte				
+				$flotte_abarbeiten["Schiff_Typ_9"] = $flotte_abarbeiten["Schiff_Typ_9"] - 1; 
 				
+				//Stationiere die Flotte inklusive Ress auf dem neuen Planeten
 				
-			} else { return false; }			
-		} else { return false; }		
-	} else { return false; }
+				$p = get_planet_id_by_koordinaten($spieler_id, $x2, $y2, $z2);
+				if(mission_stationiere($flotte_abarbeiten, $spieler_id, $p) == true ) {
+					
+				} else { echo "Flotte nicht stationiert"; return false; }				
+			} else { echo "Planet nicht erstellt"; return false; }			
+		} else { echo "Fehler beim Sonnensystem auf locked setzen"; return false; }		
+	} else { echo "Planet bereist besetzt"; return false; }
 
+}
+
+function mission_stationiere($flotte_abarbeiten, $spieler_id, $planet_id) {
+	require 'inc/connect_galaxy_1.php';
+	$sql_part_schiffe = array();
+	for ($i = 1; $i <= 12; $i++) {
+		$sql_part_schiffe[] = "`Schiff_Typ_" . $i . "` = `Schiff_Typ_" . $i . "` + " . $flotte_abarbeiten["Schiff_Typ_" . $i]; 
+	}
+	
+	$sql_part_schiffe[] = "`Ressource_Eisen` = `Ressource_Eisen` + " . $flotte_abarbeiten["Ausladen_Eisen"];  
+	$sql_part_schiffe[] = "`Ressource_Silizium` = `Ressource_Silizium` + " . $flotte_abarbeiten["Ausladen_Silizium"];
+	$sql_part_schiffe[] = "`Ressource_Wasser` = `Ressource_Wasser` + " . $flotte_abarbeiten["Ausladen_Wasser"];
+	
+	$flotte_id = $flotte_abarbeiten["ID"];	
+	$anzahl_bots_in_fleet = get_zähle_bots($flotte_abarbeiten);
+	
+	$sql_part_schiffe[] = "`Stationiert_Bot` = `Stationiert_Bot` + " . $anzahl_bots_in_fleet;
+	
+	$sql = "UPDATE `planet` SET " . implode(", ", $sql_part_schiffe) . " WHERE `Spieler_ID` = '$spieler_id' AND `Planet_ID` = $planet_id";	
+	$query = $sql or die("Error in the consult.." . mysqli_error("Error: #0002302 ".$link));
+	
+	if($result = mysqli_query($link, $query)) {
+
+		//Bots auf dem Startplaneten abziehen
+		$planet_id_start = $flotte_abarbeiten["Start_Planet_ID"];
+		$sql = "UPDATE `planet` SET `Stationiert_Bot` = `Stationiert_Bot` - " . $anzahl_bots_in_fleet . " WHERE `Spieler_ID` = '$spieler_id' AND `Planet_ID` = $planet_id_start";
+		$query = $sql or die("Error in the consult.." . mysqli_error("Error: #0002302 ".$link));
+		if($result = mysqli_query($link, $query)) {
+
+			//Flotte löschen
+			$sql = "DELETE FROM `flotten` WHERE `ID` = " . $flotte_id;
+			$query = $sql or die("Error in the consult.." . mysqli_error("Error: #0002302 ".$link));
+			
+			if($result = mysqli_query($link, $query)) {
+				return true;
+			} else { echo "Flotte wurde nicht gelöscht ->" . $sql; return false; }
+			return true;
+			} else { echo "Bots auf dem Startplaneten löschen failed"; return false;	}
+				
+		} else {echo "Flotte wurde nicht auf den neuen Planeten übertragen ->" . $sql; return false; }
+		
+}
+
+function get_zähle_bots($flotte_abarbeiten) {
+	$bots = 0;
+	for($i = 1; $i <= 12; $i++) {
+		$anzahl = $flotte_abarbeiten["Schiff_Typ_" . $i];
+		if($anzahl > 0) {
+			$ship = get_ship($i);
+			$bots = $ship["Bots"] * $anzahl;
+		}
+	}
+	return $bots;
 }
 
 
@@ -3250,12 +3312,28 @@ function create_next_planet($spieler_id, $x, $y, $z, $username) {
 	//Planet
 	$planetname = $username."s Kolonie";
 	$nächste_id = get_anzahl_planeten($spieler_id, 1);
-	$abfrage = "INSERT INTO `planet`(`Spieler_ID`, `Spieler_Name`, `Planet_Name`, `x`, `y`, `z`, `Grund_Prod_Eisen`, `Grund_Prod_Silizium`, `Grund_Prod_Wasser`, `Planet_ID`) VALUES ('$spieler_id', '$username','$planetname', $x, $y, $z, 20,10,5, " . $nächste_id . ")";
+	$abfrage = "INSERT INTO `planet`(`Spieler_ID`, `Spieler_Name`, `Planet_Name`, `x`, `y`, `z`, `Grund_Prod_Eisen`, `Grund_Prod_Silizium`, `Grund_Prod_Wasser`, `Planet_ID`, `Produktion_Zeit`) VALUES ('$spieler_id', '$username','$planetname', $x, $y, $z, 20,10,5, " . $nächste_id . ", '" . time() . "')";
 
 	$query = $abfrage or die("Error in the consult.." . mysqli_error("Error: #0003b ".$link));
 	$result = mysqli_query($link, $query);
 
+	return true;
 
 }
+
+function get_planet_id_by_koordinaten($spieler_id, $x, $y, $p) {	
+	require 'inc/connect_galaxy_1.php';
+	$link->set_charset("utf8");
+
+	$abfrage = "SELECT `Planet_ID` FROM `planet` WHERE `Spieler_ID` = '" . $spieler_id. "' AND `x` = " . $x . " AND `y` = " . $y . " AND `z` = " . $p . " ORDER BY `Planet_ID` DESC LIMIT 1";	
+	$query = $abfrage or die("Error in the consult.." . mysqli_error("Error: #get_lastet_planet ".$link));
+	$result = mysqli_query($link, $query);
+
+	$row = mysqli_fetch_object($result);
+	return $row->Planet_ID;	
+
+}
+
+
 
 ?>
