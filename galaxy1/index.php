@@ -651,16 +651,17 @@ function detailsT2(name) {
 function mPBarGlow(){
 	/* Progressbar by ES 12.06.2016 */
 	var elemente = document.getElementsByClassName("pBar");
+	var weiterGluehen = true;
 	
 	for(var i=0; i<elemente.length; i++) {
-		if (elemente[i].className=="pBar" && elemente[i].style.width!="100%") {
+		if (elemente[i].className=="pBar" && elemente[i].title != "-") {
 			elemente[i].className="pBar pBarG";
 		} else {
 			elemente[i].className="pBar";	
-			
 		}
+		if (elemente[i].title == "-") {weiterGluehen=false;}
 	}
-	window.setTimeout("mPBarGlow()",3000);
+	if (weiterGluehen) {window.setTimeout("mPBarGlow()",3000);}
 }
 
 mPBarGlow();
@@ -670,8 +671,8 @@ function mPBar(soll, ist, maxWidth, name){
 	var e = document.getElementById(name);
 	var w = 0;
 	w = ist/ soll * maxWidth;
-	
 	e.style.width = w + "%";
+	if (soll==ist) {e.title="-";}
 }
 
 function countdown_progress(sec, name, start, ende, beschriftung,maxWidth,ohnePBar){
@@ -683,7 +684,7 @@ function countdown_progress(sec, name, start, ende, beschriftung,maxWidth,ohnePB
 	var tn = new Date();
 	var tl = ((sec*1000)-(tn.getTime()-ts.getTime()))/1000;
 
-	if (tl>0){	
+	if (tl>0.5){	
 		if (!ohnePBar){mPBar(ende, (ende - tl),maxWidth,"mPBar_"+name);}
 		var t = parseInt(tl/(24*60*60));
 		tl = tl-(t*(24*60*60));		
