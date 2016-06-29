@@ -10,7 +10,7 @@ if ($baut_gerade["ID"] != 0) {
 	
 	
 	?>
-	<table id="default" border=0 cellspacing="0" cellpadding="0" class="übersicht" width=100% style="margin-bottom: 2em;">
+	<table id="default" border=0 cellspacing="0" cellpadding="0" class="übersicht" width=100% style="margin-bottom: 2em; display:none; ">
 		<tbody>
 		<tr>
 			<th class="tbtb tbtb_ohne_links_rechts_oben" align="left" width="255" colspan=2><?php echo $Gebäude["Name"]; ?> (Stufe <?php echo ($Gebäude["Stufe"]); ?>) wird gebaut </th>
@@ -62,38 +62,68 @@ for($i = 1; $i <= 10; $i++) {
 	
 	?>
 	
-		<tr>
-			<td class="tbchell"><a href="javascript:details('G<?php echo $i; ?>');" id="detailsButton" name="G<?php echo $i; ?>Button" class="detailsGeschlossen" >&#9654;</a></td>
+			<?php 	if ($baut_gerade["ID"] == 0) {			//statuszeile ausgrauen , bzw. hervorheben
+						if (!$kann_gebaut_werden) {echo ('<tr class="passiv">');}
+					} else if ($baut_gerade["ID"] != $i) {
+						echo ('<tr class="passiv">');
+					} else {
+						echo ('<tr class="imBau">');
+					}
+			?>
+			<td class="tbchell"><a href="javascript:details('G<?php echo $i; ?>');" id="detailsButton" name="G<?php echo $i; ?>Button" class="detailsGeschlossen">▶</a></td>	
 			<td class="tbchell"><?php echo $Gebäude["Name"]; ?></td>
-			<td class="tbchell tbchell_ohne_right_border" style="padding-left: .5em;"><font color='#00FF00'>&#10138;</font></td>
+			<td class="tbchell tbchell_ohne_right_border" style="padding-left: .5em; width: 2em;"><font color='#00FF00'>&#10138;</font></td>
 			<td class="tbchell tbchell_ohne_left_border tbchell_ohne_right_border"><?php echo ($Gebäude["Stufe"]); ?></td>
-			<td class="tbchell tbchell_ohne_left_border">
+			<td class="tbchell tbchell_ohne_left_border" style="width: 3em;">
 				<?php if($kann_gebaut_werden == true && $baut_gerade["ID"] == 0) { ?> 				
 				<button type="submit" name="action-gebaeude-bauen" style="width: 3em; margin-left: .5em;" value="<?php echo $i; ?>"><font color='#00FF00'>+</font></button>
 				<?php } ?>
+				<?php if ($baut_gerade["ID"] == $i) { ?>
+					<button type="submit" name="action-gebaeude-abbrechen" style="width: 3em; margin-left: .5em;" value="<?php echo $i; ?>"><font color='#FF0000'>x</font></button>					
+				<?php } ?>
+				
 			</td>			
 			<td class="tbchell"><img src="img/eisen.png" class="img_ress"> <?php echo "<font color='$farbeE'>" . number_format($Gebäude["Kosten_Eisen"], 0, '.', '.') . "</font>"; ?></td>
 			<td class="tbchell"><img src="img/silizium.png" class="img_ress"> <?php echo "<font color='$farbeS'>" . number_format($Gebäude["Kosten_Silizium"], 0, '.', '.') . "</font>"; ?></td>
 			<td class="tbchell"><img src="img/wasser.png" class="img_ress"> <?php echo "<font color='$farbeW'>" . number_format($Gebäude["Kosten_Wasser"], 0, '.', '.') . "</font>"; ?></td>
 			<td class="tbchell"><img src="img/energie.png" class="img_ress"> <?php echo "<font color='$farbeEn'>" . number_format($Gebäude["Kosten_Energie"], 0, '.', '.') . "</font>"; ?></td>
-			<td class="tbchell" style="text-align: right;">
+			<td class="tbchell" style="text-align: right; width: 12em;">
 			<?php 				
 			if($kann_gebaut_werden == true && $baut_gerade["ID"] == 0) {
-				echo get_timestamp_in_was_sinnvolles($Gebäude["Bauzeit"]); ?> <?php				
+				echo get_timestamp_in_was_sinnvolles($Gebäude["Bauzeit"]); ?> </td></tr><?php				
 			} else {
 				if ($baut_gerade["ID"] == $i) {
 					?>
-					<button type="submit" name="action-gebaeude-abbrechen" class="LpBarZ" value="<?php echo $i; ?>">Abbrechen</button><?php
+					
+					<span id="cdKopf<?php echo $baut_gerade["ID"]; ?>" class="tbchell" style="padding-right: 0px;">
+						<script type="text/javascript">
+							countdown_progress(<?php echo $baut_gerade["Countdown"]; ?>, "cdKopf<?php echo $baut_gerade["ID"]; ?>", <?php echo time() - $baut_gerade["Start"]; ?> , <?php echo $baut_gerade["Bis"] - $baut_gerade["Start"]; ?>, 'fertiggestellt',0,true);
+						</script>
+					</span>
+					</td></tr>
+					<tr>
+						<td colspan="10" align="center" class="BGpBar">
+							<div id="mPBar_pbKopf<?php echo $baut_gerade["ID"]; ?>" class="pBar" style="margin-top: -1px; margin-left: 0.5%; height: 3px;"></div>
+							<span id="pbKopf<?php echo $baut_gerade["ID"]; ?>" class="LpBar" style="display:none;">
+								<script type="text/javascript">
+									countdown_progress(<?php echo $baut_gerade["Countdown"]; ?>, "pbKopf<?php echo $baut_gerade["ID"]; ?>" , <?php echo time() - $baut_gerade["Start"]; ?> , <?php echo $baut_gerade["Bis"] - $baut_gerade["Start"]; ?>, 'fertiggestellt',99);
+								</script>
+							</span>
+						</td>
+					</tr>
+				
+				
+					
+					<?php 
 				} else {
 					echo get_timestamp_in_was_sinnvolles($Gebäude["Bauzeit"]); ?> <?php
 				}
 			}
 			?>
-			</td>
-			</tr>
+
 			<tr name="G<?php echo $i ?>"class="detailsAusgeblendet" style="display:none;">
 			<td  colspan="10" align="center">
-				<table id="default" cellspacing="0" cellpadding="0" class="übersicht" width=98% style="margin: .5em;">
+				<table id="default" cellspacing="0" cellpadding="0" class="übersicht" width=99% style="margin: .5em;">
 					<tbody>
 					
 					<tr>
@@ -124,43 +154,9 @@ for($i = 1; $i <= 10; $i++) {
 					<tr style=""><td class="tbchell">
 					<?php echo $Gebäude["Wirkung"]; ?>
 					</td></tr>
-					<tr><td style="text-align: right;"  class="tbchell BGpBar">
-					
-					<?php 				
-					if($kann_gebaut_werden == true && $baut_gerade["ID"] == 0) {
-			
-						
-							echo get_timestamp_in_was_sinnvolles($Gebäude["Bauzeit"]); ?> <button type="submit" name="action-gebaeude-bauen" value="<?php echo $i; ?>">Bauen</button><?php				
-						 
-						
-					} else {
-						
-						if ($baut_gerade["ID"] == $i) {
-								
-								
-							?>
-							<div id="mPBar_gebaeude<?php echo $i; ?>" class = "pBar"></div>
-							<span id="gebaeude<?php echo $i; ?>" class="LpBar"><script type="text/javascript"><!--
-									countdown_progress(<?php echo $baut_gerade["Countdown"]; ?>, "gebaeude<?php echo $i; ?>", <?php echo time() - $baut_gerade["Start"]; ?> , <?php echo $baut_gerade["Bis"] - $baut_gerade["Start"]; ?>, 'Fertiggestellt');
-									</script></span>
-									<button type="submit" name="action-gebaeude-abbrechen" class="LpBarZ" value="<?php echo $i; ?>">Abbrechen</button><?php
-								} else {
-									
-									
-						
-						echo get_timestamp_in_was_sinnvolles($Gebäude["Bauzeit"]); ?> <button disabled style="visibility: hidden;">Bauen</button><?php
-								}
-					}
-					
-							
-					
-					
-					
-					?>
-					
-						
-									
-					</td></tr>
+					<?php if($baut_gerade["ID"] == $i) { ?>
+					<tr><td class="tbchell">Bau bis: <?php echo get_timestamp_in_was_lesbares($baut_gerade["Bis"]); ?></td></tr>
+					<?php } ?>
 					</tbody>
 					
 				</table>
@@ -178,4 +174,4 @@ for($i = 1; $i <= 10; $i++) {
 ?>
 </table>
 </form>
-<tt>▲▼▶▼</tt>
+<tt style="display:none">▲▼▶▼</tt>

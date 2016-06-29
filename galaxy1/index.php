@@ -633,8 +633,10 @@ function detailsT2(name) {
 	
 	if (eButton[0].className=="detailsGeschlossen") {
 		eButton[0].className="detailsOffen";
+		eButton[0].innerHTML = "▼";
 	} else {
 		eButton[0].className="detailsGeschlossen";
+		eButton[0].innerHTML = "▶";
 	}
 
 	for(var i=0; i<elemente.length; i++) {
@@ -667,20 +669,22 @@ function mPBar(soll, ist, maxWidth, name){
 	/* Progressbar by ES 12.06.2016 */
 	var e = document.getElementById(name);
 	var w = 0;
-	w = (ist * 100) / soll;
+	w = ist/ soll * maxWidth;
 	
 	e.style.width = w + "%";
 }
 
-function countdown_progress(sec, name, start, ende, beschriftung){
+function countdown_progress(sec, name, start, ende, beschriftung,maxWidth,ohnePBar){
 
+	if (maxWidth == undefined) {maxWidth = 100;}
+	if (ohnePBar == undefined) {ohnePBar = false;}
+	
 	var e = document.getElementById(name);
-var tn = new Date();
-var tl = ((sec*1000)-(tn.getTime()-ts.getTime()))/1000;
+	var tn = new Date();
+	var tl = ((sec*1000)-(tn.getTime()-ts.getTime()))/1000;
 
-if (tl>0){	
-		
-		mPBar(ende, (ende - tl),100,"mPBar_"+name);
+	if (tl>0){	
+		if (!ohnePBar){mPBar(ende, (ende - tl),maxWidth,"mPBar_"+name);}
 		var t = parseInt(tl/(24*60*60));
 		tl = tl-(t*(24*60*60));		
 		var h = parseInt(tl/(60*60));
@@ -691,12 +695,12 @@ if (tl>0){
 		if (h<10) h="0"+h;
 		if (m<10) m="0"+m;
 		if (s<10) s="0"+s;
-		if (t == 0) { var tstr = h+":"+m+":"+s; } else { var tstr = t+" Tage "+h+":"+m+":"+s; }		
+		if (t == 0) { var tstr = h+":"+m+":"+s; } else { var tstr = t ; if (t==1) { tstr+= " Tag "; } else {tstr +=" Tage ";} tstr += h+":"+m+":"+s; }		
 		e.innerHTML = tstr;
-		window.setTimeout("countdown_progress("+sec+",'"+name+"',"+start+","+ende+",'"+beschriftung+"')",500);
+		window.setTimeout("countdown_progress("+sec+",'"+name+"',"+start+","+ende+",'"+beschriftung+"',"+maxWidth+","+ohnePBar+")",500);
 	} else{
 		e.innerHTML = "<a href='index.php?s=<?php echo $select; ?>'>" + beschriftung + "</a>";
-		mPBar(100,100,100,"mPBar_"+name);
+		if (!ohnePBar){mPBar(100,100,maxWidth,"mPBar_"+name)};
 	}
 }
 
@@ -716,7 +720,7 @@ function countdown(sec, name){
 		if (h<10) h="0"+h;
 		if (m<10) m="0"+m;
 		if (s<10) s="0"+s;
-		if (t == 0) { var tstr = h+":"+m+":"+s; } else { var tstr = t+" Tage "+h+":"+m+":"+s; }		
+		if (t == 0) { var tstr = h+":"+m+":"+s; } else { var tstr = t ; if (t==1) { tstr+= " Tag "; } else {tstr +=" Tage ";} tstr += h+":"+m+":"+s; }		
 		e.innerHTML = tstr;
 		window.setTimeout("countdown("+sec+",'"+name+"')",500);
 	} else{

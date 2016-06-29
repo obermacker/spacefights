@@ -308,3 +308,9 @@ display: -webkit-flex;
 					-webkit-transform: scale(0) translateX(-50%); -webkit-transition: all 0.3s ease-in;}
 	.detailsEingeblendet { opacity: 1; /*visibility: visible;*/ transform: scale(1) translateX(0%); transition: all 0.3s ease-out;
 					-webkit-transform: scale(1) translateX(0%); -webkit-transition: all 0.3s ease-out;}
+
+
+/* für Bau-GUI  */
+
+.imBau {font-weight: bold;}
+.passiv {opacity:0.75;}
