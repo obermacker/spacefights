@@ -156,15 +156,13 @@ switch ($select) {
 }
 
 //---- ToDo: C
-
-
 ?>
 <!DOCTYPE HTML>
 <html lang="de">
-	<head>
-	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">	
-	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
     <?php if($cache == false) { ?>
     <meta http-equiv="Pragma" content="no-cache">
 	<meta http-equiv="Cache-Control" content="no-cache">
@@ -178,7 +176,6 @@ switch ($select) {
      
 
 <body>
-
 <?php
 
 //--- Flotte Aktion & Rückkehr
@@ -220,9 +217,9 @@ switch ($select) {
 						}
 						break;
 					case "Kolonisierung":
-						if(mission_kolonisieren($flotte_abarbeiten[$key], $spieler_id, $username) == false) {
-							if(mission_rückkehr_set($flotte_abarbeiten[$key], $spieler_id) == false) {
-								echo "Fehler mission_rückkehr index.php Zeile 200";
+						if(mission_kolonisieren($flotte_abarbeiten[$key], $spieler_id, $username) == true) {
+							if(mission_rückkehr_auflösen($flotte_abarbeiten[$key], $spieler_id) == false) {
+								echo "Fehler mission_rückkehr index.php Zeile 164";
 								echo "Wenn das hier jemand liest, sagt mal bitte bescheid.";
 								exit;
 							}
@@ -602,9 +599,6 @@ switch ($select) {
 // ENDE: Flotte Abbrechen wenn gewünscht
 ?>
 
-
-
-
 <script type="text/javascript"><!--
 var ts = new Date();
 
@@ -640,8 +634,7 @@ function detailsT2(name) {
 	if (eButton[0].className=="detailsGeschlossen") {
 		eButton[0].className="detailsOffen";
 		eButton[0].innerHTML = "▼";
-	} 
-	else {
+	} else {
 		eButton[0].className="detailsGeschlossen";
 		eButton[0].innerHTML = "▶";
 	}
@@ -658,17 +651,17 @@ function detailsT2(name) {
 function mPBarGlow(){
 	/* Progressbar by ES 12.06.2016 */
 	var elemente = document.getElementsByClassName("pBar");
+	var weiterGluehen = true;
 	
 	for(var i=0; i<elemente.length; i++) {
-		if (elemente[i].className=="pBar" && elemente[i].style.width!="100%") {
+		if (elemente[i].className=="pBar" && elemente[i].title != "-") {
 			elemente[i].className="pBar pBarG";
-		} else if (elemente[i].style.width=="100%"){
-			elemente[i].className="pBar pBarF";
-		}else{
+		} else {
 			elemente[i].className="pBar";	
 		}
+		if (elemente[i].title == "-") {weiterGluehen=false;}
 	}
-	setTimeout("mPBarGlow()",3000);
+	if (weiterGluehen) {window.setTimeout("mPBarGlow()",3000);}
 }
 
 mPBarGlow();
@@ -677,22 +670,22 @@ function mPBar(soll, ist, maxWidth, name){
 	/* Progressbar by ES 12.06.2016 */
 	var e = document.getElementById(name);
 	var w = 0;
-	w = maxWidth * ist / soll ;
-	
+	w = ist/ soll * maxWidth;
 	e.style.width = w + "%";
+	if (soll==ist) {e.title="-";}
 }
 
-function countdown_progress(sec, name, start, ende, beschriftung,maxWidth){
+function countdown_progress(sec, name, start, ende, beschriftung,maxWidth,ohnePBar){
 
 	if (maxWidth == undefined) {maxWidth = 100;}
+	if (ohnePBar == undefined) {ohnePBar = false;}
 	
 	var e = document.getElementById(name);
 	var tn = new Date();
 	var tl = ((sec*1000)-(tn.getTime()-ts.getTime()))/1000;
 
-if (tl>0){	
-		
-		mPBar(ende, (ende - tl),maxWidth,"mPBar_"+name);
+	if (tl>0.5){	
+		if (!ohnePBar){mPBar(ende, (ende - tl),maxWidth,"mPBar_"+name);}
 		var t = parseInt(tl/(24*60*60));
 		tl = tl-(t*(24*60*60));		
 		var h = parseInt(tl/(60*60));
@@ -703,12 +696,12 @@ if (tl>0){
 		if (h<10) h="0"+h;
 		if (m<10) m="0"+m;
 		if (s<10) s="0"+s;
-		if (t == 0) { var tstr = h+":"+m+":"+s; } else { var tstr = t+" Tage "+h+":"+m+":"+s; }		
+		if (t == 0) { var tstr = h+":"+m+":"+s; } else { var tstr = t ; if (t==1) { tstr+= " Tag "; } else {tstr +=" Tage ";} tstr += h+":"+m+":"+s; }		
 		e.innerHTML = tstr;
-		window.setTimeout("countdown_progress("+sec+",'"+name+"',"+start+","+ende+",'"+beschriftung+"',"+maxWidth+")",500);
+		window.setTimeout("countdown_progress("+sec+",'"+name+"',"+start+","+ende+",'"+beschriftung+"',"+maxWidth+","+ohnePBar+")",500);
 	} else{
 		e.innerHTML = "<a href='index.php?s=<?php echo $select; ?>'>" + beschriftung + "</a>";
-		mPBar(100,100,maxWidth,"mPBar_"+name);
+		if (!ohnePBar){mPBar(100,100,maxWidth,"mPBar_"+name)};
 	}
 }
 
@@ -728,7 +721,7 @@ function countdown(sec, name){
 		if (h<10) h="0"+h;
 		if (m<10) m="0"+m;
 		if (s<10) s="0"+s;
-		if (t == 0) { var tstr = h+":"+m+":"+s; } else { var tstr = t+" Tage "+h+":"+m+":"+s; }		
+		if (t == 0) { var tstr = h+":"+m+":"+s; } else { var tstr = t ; if (t==1) { tstr+= " Tag "; } else {tstr +=" Tage ";} tstr += h+":"+m+":"+s; }		
 		e.innerHTML = tstr;
 		window.setTimeout("countdown("+sec+",'"+name+"')",500);
 	} else{
