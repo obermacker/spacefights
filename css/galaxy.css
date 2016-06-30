@@ -290,8 +290,8 @@ display: -webkit-flex;
 	
 }
 /* by ES 22.06.2016*/
-.pBar {width: 0%; position: absolute; top: 0px; height: 100%; z-index: 5; background-color: #004578; transition: background-color 3s linear 0s;}
-	.pBarG {Background-color: #4178a2;}
+.pBar {width: 0%; position: absolute; top: 0px; height: 100%; z-index: 5; background-color: /*#004578*/#00cc00; transition: background-color 3s linear 0s;}
+	.pBarG {Background-color: /*#4178a2*/ #008800;}
 	.BGpBar {position: relative; padding-left: 0px;}
 	.LpBar {position: relative; z-index: 10; background-color: transparent; border: none;}
 	.LpBarZ {position: relative; z-index: 10;}
@@ -308,3 +308,9 @@ display: -webkit-flex;
 					-webkit-transform: scale(0) translateX(-50%); -webkit-transition: all 0.3s ease-in;}
 	.detailsEingeblendet { opacity: 1; /*visibility: visible;*/ transform: scale(1) translateX(0%); transition: all 0.3s ease-out;
 					-webkit-transform: scale(1) translateX(0%); -webkit-transition: all 0.3s ease-out;}
+
+
+/* für Bau-GUI  */
+
+.imBau {font-weight: bold;}
+.passiv {opacity:0.75;}
