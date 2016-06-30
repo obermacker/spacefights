@@ -11,6 +11,7 @@ require (dirname(__FILE__) . '/inc/conf_structure.php');
 require (dirname(__FILE__) . '/inc/conf_tech.php');
 include (dirname(__FILE__) . '/inc/conf_ship.php');
 include (dirname(__FILE__) . '/inc/conf_def.php');
+include (dirname(__FILE__) . '/inc/debug.php');
 
 $spieler_id = ""; $session_id = ""; $username = "";
 
@@ -156,6 +157,30 @@ switch ($select) {
 
 //---- ToDo: C
 
+
+?>
+<!DOCTYPE HTML>
+<html lang="de">
+	<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">	
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <?php if($cache == false) { ?>
+    <meta http-equiv="Pragma" content="no-cache">
+	<meta http-equiv="Cache-Control" content="no-cache">
+	<meta http-equiv="Expires" content="-1">
+	<?php } ?>
+	<link rel="icon" type="image/png" href="../favicon-32x32.png" sizes="32x32" />
+	<link rel="icon" type="image/png" href="../favicon-16x16.png" sizes="16x16" />
+    <link rel="stylesheet" href="../css/galaxy.css">    
+    <title>spacefights</title>
+    </head>
+     
+
+<body>
+
+<?php
+
 //--- Flotte Aktion & Rückkehr
 	$notfall_break = 0;	
 	while($flotte_abarbeiten = get_flotte_in_der_luft($spieler_id, time(), true)) {			
@@ -195,9 +220,9 @@ switch ($select) {
 						}
 						break;
 					case "Kolonisierung":
-						if(mission_kolonisieren($flotte_abarbeiten[$key], $spieler_id, $username) == true) {
-							if(mission_rückkehr_auflösen($flotte_abarbeiten[$key], $spieler_id) == false) {
-								echo "Fehler mission_rückkehr index.php Zeile 164";
+						if(mission_kolonisieren($flotte_abarbeiten[$key], $spieler_id, $username) == false) {
+							if(mission_rückkehr_set($flotte_abarbeiten[$key], $spieler_id) == false) {
+								echo "Fehler mission_rückkehr index.php Zeile 200";
 								echo "Wenn das hier jemand liest, sagt mal bitte bescheid.";
 								exit;
 							}
@@ -576,25 +601,6 @@ switch ($select) {
 	
 // ENDE: Flotte Abbrechen wenn gewünscht
 ?>
-<!DOCTYPE HTML>
-<html lang="de">
-	<head>
-	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">	
-	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <?php if($cache == false) { ?>
-    <meta http-equiv="Pragma" content="no-cache">
-	<meta http-equiv="Cache-Control" content="no-cache">
-	<meta http-equiv="Expires" content="-1">
-	<?php } ?>
-	<link rel="icon" type="image/png" href="../favicon-32x32.png" sizes="32x32" />
-	<link rel="icon" type="image/png" href="../favicon-16x16.png" sizes="16x16" />
-    <link rel="stylesheet" href="../css/galaxy.css">    
-    <title>spacefights</title>
-    </head>
-     
-
-<body>
 
 
 
@@ -633,8 +639,11 @@ function detailsT2(name) {
 	
 	if (eButton[0].className=="detailsGeschlossen") {
 		eButton[0].className="detailsOffen";
-	} else {
+		eButton[0].innerHTML = "▼";
+	} 
+	else {
 		eButton[0].className="detailsGeschlossen";
+		eButton[0].innerHTML = "▶";
 	}
 
 	for(var i=0; i<elemente.length; i++) {
@@ -653,12 +662,13 @@ function mPBarGlow(){
 	for(var i=0; i<elemente.length; i++) {
 		if (elemente[i].className=="pBar" && elemente[i].style.width!="100%") {
 			elemente[i].className="pBar pBarG";
-		} else {
+		} else if (elemente[i].style.width=="100%"){
+			elemente[i].className="pBar pBarF";
+		}else{
 			elemente[i].className="pBar";	
-			
 		}
 	}
-	window.setTimeout("mPBarGlow()",3000);
+	setTimeout("mPBarGlow()",3000);
 }
 
 mPBarGlow();
@@ -667,20 +677,22 @@ function mPBar(soll, ist, maxWidth, name){
 	/* Progressbar by ES 12.06.2016 */
 	var e = document.getElementById(name);
 	var w = 0;
-	w = (ist * 100) / soll;
+	w = maxWidth * ist / soll ;
 	
 	e.style.width = w + "%";
 }
 
-function countdown_progress(sec, name, start, ende, beschriftung){
+function countdown_progress(sec, name, start, ende, beschriftung,maxWidth){
 
+	if (maxWidth == undefined) {maxWidth = 100;}
+	
 	var e = document.getElementById(name);
-var tn = new Date();
-var tl = ((sec*1000)-(tn.getTime()-ts.getTime()))/1000;
+	var tn = new Date();
+	var tl = ((sec*1000)-(tn.getTime()-ts.getTime()))/1000;
 
 if (tl>0){	
 		
-		mPBar(ende, (ende - tl),100,"mPBar_"+name);
+		mPBar(ende, (ende - tl),maxWidth,"mPBar_"+name);
 		var t = parseInt(tl/(24*60*60));
 		tl = tl-(t*(24*60*60));		
 		var h = parseInt(tl/(60*60));
@@ -693,10 +705,10 @@ if (tl>0){
 		if (s<10) s="0"+s;
 		if (t == 0) { var tstr = h+":"+m+":"+s; } else { var tstr = t+" Tage "+h+":"+m+":"+s; }		
 		e.innerHTML = tstr;
-		window.setTimeout("countdown_progress("+sec+",'"+name+"',"+start+","+ende+",'"+beschriftung+"')",500);
+		window.setTimeout("countdown_progress("+sec+",'"+name+"',"+start+","+ende+",'"+beschriftung+"',"+maxWidth+")",500);
 	} else{
 		e.innerHTML = "<a href='index.php?s=<?php echo $select; ?>'>" + beschriftung + "</a>";
-		mPBar(100,100,100,"mPBar_"+name);
+		mPBar(100,100,maxWidth,"mPBar_"+name);
 	}
 }
 

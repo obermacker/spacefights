@@ -50,11 +50,12 @@ if(isset($_POST["action-flotte-starten"])) {
 				
 			switch (intval($out["mission"])) {
 				case 1: $mission_str = "erkunden"; break;
-				case 2: $mission_str = "Transport"; break;
-				case 3: $mission_str = "Sicherungsflug"; break;
-				case 4: $mission_str = "Spionage"; break;
-				case 5: $mission_str = "Angriff";  break;
-				case 6: // Kolonisierung 				
+				case 2: $mission_str = "Stationierung"; break;
+				case 3: $mission_str = "Transport"; break;
+				case 4: $mission_str = "Sicherungsflug"; break;
+				case 5: $mission_str = "Spionage"; break;
+				case 6: $mission_str = "Angriff";  break;
+				case 7: // Kolonisierung 				
 					$flotte_kann_abheben = check_flotte_modul_vorhanden($flotte_schiffe, "colonization");					
 					break;
 			}
@@ -128,11 +129,12 @@ if(isset($_GET["x"]) AND isset($_GET["y"]) AND isset($_GET["z"])) {
 		<td class="tbchell">
 			<select size=1 name="mission" id="mission"  style="width: 15em;" onchange="fuenfer10er(); func_geschwindigkeit();"  onkeypress="this.onchange();" onpaste="this.onchange();" oninput="this.onchange();">
 			<option value="1">Entdeckung</option>
-			<option value="2">Transport</option>
-			<option value="3" selected="selected">Sicherungsflug</option>
-			<option value="4">Spionage</option>
-			<option value="5">Angriff</option>
-			<option value="6">Kolonisierung</option>
+			<option value="2">Stationierung</option>
+			<option value="3">Transport</option>
+			<option value="4" selected="selected">Sicherungsflug</option>
+			<option value="5">Spionage</option>
+			<option value="6">Angriff</option>
+			<option value="7">Kolonisierung</option>
 			</select>
 		</td>		
 	</tr>

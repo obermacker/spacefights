@@ -5,14 +5,8 @@ function get_config_ships($id) {
 	//print_r ($var_spieler_stufe);
 	
 	$Erw_Bedingung = "bestanden";	
-
-	
-	
 	switch ($id) {
 		case 1: 
-			
-			
-			
 			$Ship = array(
 			"Schiff_ID" => 1,
 			"Name" => "Leichter Jäger",
@@ -46,8 +40,7 @@ function get_config_ships($id) {
 			"Tech_9" => 0,
 			"Tech_10" => 0,
 			"Tech_11" => 0,
-			"Tech_12" => 0
-				
+			"Tech_12" => 0				
 				);
 			break;	
 		case 2:			

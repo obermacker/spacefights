@@ -1586,7 +1586,7 @@ function get_list_of_all_planets($spieler_id, $planet_id, $vorauswahl = true) {
 	require 'inc/connect_galaxy_1.php';
 	$link->set_charset("utf8");
 	
-	$abfrage = "SELECT `Planet_Name`, `Planet_ID` FROM `planet` WHERE `Spieler_ID` = '$spieler_id'";
+	$abfrage = "SELECT `Planet_Name`, `Planet_ID`, `x`, `y`,`z` FROM `planet` WHERE `Spieler_ID` = '$spieler_id'";
 	
 	$query = $abfrage or die("Error in the consult.." . mysqli_error("Error: #0003 ".$link));
 	$result = mysqli_query($link, $query);
@@ -1594,7 +1594,7 @@ function get_list_of_all_planets($spieler_id, $planet_id, $vorauswahl = true) {
 	
 	while($row = mysqli_fetch_object($result)) {  
 	 	if ($row->Planet_ID == $planet_id AND $vorauswahl == true) { $select = "selected"; } else { $select = "";}
-		$ausgabe = $ausgabe . "<option $select value='" . ($row->Planet_ID + 1) . "'>" . $row->Planet_Name . "</option>";
+		$ausgabe = $ausgabe . "<option $select value='" . ($row->Planet_ID + 1) . "'>" . $row->Planet_Name . " (" . $row->x . ":" . $row->y . ":" . $row->z . ")</option>";
 	}
 	
 	return $ausgabe;
@@ -2698,11 +2698,12 @@ function flotte_senden($spieler_id, $planet_id, $flotte, $ziel_x, $ziel_y, $ziel
 			
 			switch (intval($mission)) {
 				case 1: $mission_str = "erkunden"; $ress_mitnehmen = array ( 0,0,0,0 ); $ress_abholen = array ( 0,0,0,0 ); break;
-				case 2: $mission_str = "Transport"; break;
-				case 3: $mission_str = "Sicherungsflug"; break;
-				case 4: $mission_str = "Spionage"; $ress_mitnehmen = array ( 0,0,0,0 ); $ress_abholen = array ( 0,0,0,0 ); break;
-				case 5: $mission_str = "Angriff"; $ress_mitnehmen = array ( 0,0,0,0 ); $ress_abholen = array ( 0,0,0,0 ); break;
-				case 6: $mission_str = "Kolonisierung"; break;
+				case 2: $mission_str = "Stationierung"; break;
+				case 3: $mission_str = "Transport"; break;
+				case 4: $mission_str = "Sicherungsflug"; break;
+				case 5: $mission_str = "Spionage"; $ress_mitnehmen = array ( 0,0,0,0 ); $ress_abholen = array ( 0,0,0,0 ); break;
+				case 6: $mission_str = "Angriff"; $ress_mitnehmen = array ( 0,0,0,0 ); $ress_abholen = array ( 0,0,0,0 ); break;
+				case 7: $mission_str = "Kolonisierung"; break;
 			}
 			
 			//Ress püfen
@@ -2805,9 +2806,9 @@ function flotte_senden($spieler_id, $planet_id, $flotte, $ziel_x, $ziel_y, $ziel
 					return "ist eingereiht";
 				}
 				
-			} else { return "keine Slots frei"; }
+			} else { return "fehler Zeile 2808"; }
 			
-		}			
+		} else { return "keine Slots frei"; }	// war an falscher Stelle ES 24.06.2016  15:03					
 	} else { return "ungenügen Schiffe für den vorgang!"; }
 	
 }
