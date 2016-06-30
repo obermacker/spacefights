@@ -5,19 +5,14 @@ function get_config_ships($id) {
 	//print_r ($var_spieler_stufe);
 	
 	$Erw_Bedingung = "bestanden";	
-
-	
-	
 	switch ($id) {
 		case 1: 
-			
-			
-			
 			$Ship = array(
 			"Schiff_ID" => 1,
 			"Name" => "Leichter Jäger",
 			"Name_Plural" => "Leichte Jäger",
 			"Beschreibung" => "lorem ipsum",
+			"Modul" => "",
 			"Kosten_Eisen" => 500,
 			"Kosten_Silizium" => 250,
 			"Kosten_Wasser" => 0,
@@ -45,8 +40,7 @@ function get_config_ships($id) {
 			"Tech_9" => 0,
 			"Tech_10" => 0,
 			"Tech_11" => 0,
-			"Tech_12" => 0
-				
+			"Tech_12" => 0				
 				);
 			break;	
 		case 2:			
@@ -55,6 +49,7 @@ function get_config_ships($id) {
 			"Name" => "Schwerer Jäger",
 			"Name_Plural" => "Schwere Jäger",
 			"Beschreibung" => "lorem ipsum",
+			"Modul" => "",
 			"Kosten_Eisen" => 1150,
 			"Kosten_Silizium" => 525,
 			"Kosten_Wasser" => 100,
@@ -92,7 +87,7 @@ function get_config_ships($id) {
 			"Name" => "Sternenkreuzer",
 			"Name_Plural" => "Sternenkreuzer",
 			"Beschreibung" => "lorem ipsum",
-			
+			"Modul" => "",
 			"Kosten_Eisen" => 2850,
 			"Kosten_Silizium" => 1150,
 			"Kosten_Wasser" => 375,
@@ -130,7 +125,7 @@ function get_config_ships($id) {
 			"Name" => "Zerstörer",
 			"Name_Plural" => "Zerstörer",
 			"Beschreibung" => "lorem ipsum",
-			
+			"Modul" => "",
 			"Kosten_Eisen" => 7875,
 			"Kosten_Silizium" => 2675,
 			"Kosten_Wasser" => 950,
@@ -168,7 +163,7 @@ function get_config_ships($id) {
 			"Name" => "Kleiner Transporter",
 			"Name_Plural" => "Kleine Transporter",
 			"Beschreibung" => "lorem ipsum",
-			
+			"Modul" => "trade;",
 			"Kosten_Eisen" => 425,
 			"Kosten_Silizium" => 300,
 			"Kosten_Wasser" => 25,
@@ -206,7 +201,7 @@ function get_config_ships($id) {
 			"Name" => "Großer Transporter",
 			"Name_Plural" => "Große Transporter",
 			"Beschreibung" => "lorem ipsum",
-			
+			"Modul" => "trade;",
 			"Kosten_Eisen" => 1500,
 			"Kosten_Silizium" => 1100,
 			"Kosten_Wasser" => 125,
@@ -244,7 +239,7 @@ function get_config_ships($id) {
 			"Name" => "Aufklärungssonde",
 			"Name_Plural" => "Aufklärungssonden",
 			"Beschreibung" => "lorem ipsum",
-			
+			"Modul" => "scout;",
 			"Kosten_Eisen" => 160,
 			"Kosten_Silizium" => 90,
 			"Kosten_Wasser" => 0,
@@ -282,7 +277,7 @@ function get_config_ships($id) {
 			"Name" => "Spionagesonde",
 			"Name_Plural" => "Spionagesonden",
 			"Beschreibung" => "lorem ipsum",
-			
+			"Modul" => "spy;",
 			"Kosten_Eisen" => 60,
 			"Kosten_Silizium" => 125,
 			"Kosten_Wasser" => 15,
@@ -320,7 +315,7 @@ function get_config_ships($id) {
 			"Name" => "Kolonisierungsschiff",
 			"Name_Plural" => "Kolonisierungsschiffe",
 			"Beschreibung" => "lorem ipsum",
-			
+			"Modul" => "colonization;",
 			"Kosten_Eisen" => 3750,
 			"Kosten_Silizium" => 4500,
 			"Kosten_Wasser" => 1880,
@@ -328,7 +323,7 @@ function get_config_ships($id) {
 			"Bots" => 12,
 			"Bauzeit" => (3750 + 4500) * 12,
 			"Kapazitaet" => 7500,
-			"Geschwindigkeit" => 250,
+			"Geschwindigkeit" => 100000, //250,
 			"Angriff" => 5,
 			"Verteidigung" => 50,
 			"Stufe_Werft" => 8,
@@ -355,10 +350,10 @@ function get_config_ships($id) {
 		case 10:
 			$Ship = array(
 			"Schiff_ID" => 10,
-			"Name" => "Bergungsschiff",
+			"Name" => "Bergungsschiff",	
 			"Name_Plural" => "Bergungsschiffe",
 			"Beschreibung" => "lorem ipsum",
-			
+			"Modul" => "rescue;",
 			"Kosten_Eisen" => 1750,
 			"Kosten_Silizium" => 750,
 			"Kosten_Wasser" => 500,
@@ -396,7 +391,7 @@ function get_config_ships($id) {
 			"Name" => "Shuttle",
 			"Name_Plural" => "Shuttles",
 			"Beschreibung" => "lorem ipsum",
-			
+			"Modul" => "bot;",
 			"Kosten_Eisen" => 2000,
 			"Kosten_Silizium" => 2000,
 			"Kosten_Wasser" => 2000,
@@ -432,7 +427,8 @@ function get_config_ships($id) {
 			"Schiff_ID" => 12,
 			"Name" => "Dimension Tide",
 			"Name_Plural" => "Dimension Tides",
-			"Beschreibung" => "Satellite that fires a temporary black hole",				
+			"Beschreibung" => "Satellite that fires a temporary black hole",
+			"Modul" => "",
 			"Kosten_Eisen" => 20000000,
 			"Kosten_Silizium" => 20000000,
 			"Kosten_Wasser" => 20000000,
