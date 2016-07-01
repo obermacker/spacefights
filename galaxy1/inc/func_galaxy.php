@@ -11,9 +11,12 @@ function get_timestamp_in_was_sinnvolles($value) {
 	if($tage == 0) {
 		return $dtF->diff($dtT)->format('%H:%I:%S');
 	} else {
-		return $dtF->diff($dtT)->format('%a Tage %H:%I:%S');
-	}
-	
+		if ($tage==1) {
+			return $dtF->diff($dtT)->format('%a Tag %H:%I:%S');
+		} else {
+			return $dtF->diff($dtT)->format('%a Tage %H:%I:%S');
+		}
+	}	
 		
 }
 
