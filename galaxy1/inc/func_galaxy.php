@@ -1,25 +1,5 @@
 <?php
 use phpbb\notification\method\email;
-function get_timestamp_in_was_sinnvolles($value) {
-	$secs = number_format($value, 0, '', '');
-	$dtF = new DateTime("@0");
-	$dtT = new DateTime("@$secs");
-	
-	$diff = $dtF->diff($dtT);	
-	$tage = $diff->days;
-
-	if($tage == 0) {
-		return $dtF->diff($dtT)->format('%H:%I:%S');
-	} else {
-		if ($tage==1) {
-			return $dtF->diff($dtT)->format('%a Tag %H:%I:%S');
-		} else {
-			return $dtF->diff($dtT)->format('%a Tage %H:%I:%S');
-		}
-	}
-	
-		
-}
 
 function get_timestamp_in_was_lesbares($value) {	
 	return date('d.m.Y H:i:s', $value);
@@ -2751,12 +2731,6 @@ function flotte_senden($spieler_id, $planet_id, $flotte, $ziel_x, $ziel_y, $ziel
 			$ressource["Wasser"]  = $ressource["Wasser"] - $ress_mitnehmen["2"];
 			$ressource["Bot"] = $ressource["Bot"] - $ress_mitnehmen["3"];
 			
-			/*verbleibende Ressourcen errechnen und eintragen*/
-			$ressource["Eisen"] = $ressource["Eisen"] - $ress_mitnehmen["0"];
-			$ressource["Silizium"] = $ressource["Silizium"] - $ress_mitnehmen["1"];
-			$ressource["Wasser"]  = $ressource["Wasser"] - $ress_mitnehmen["2"];
-			$ressource["Bot"] = $ressource["Bot"] - $ress_mitnehmen["3"];
-			
 			//langsamstes Schiff suchen für Geschwindigkeit
 			$langsamstes_schiff = 10000000;
 			
@@ -3357,6 +3331,24 @@ function get_planet_id_by_koordinaten($spieler_id, $x, $y, $p) {
 
 }
 
+function get_timestamp_in_was_sinnvolles($value) {
+	$secs = number_format($value, 0, '', '');
+	$dtF = new DateTime("@0");
+	$dtT = new DateTime("@$secs");
+
+	$diff = $dtF->diff($dtT);
+	$tage = $diff->days;
+
+	if($tage == 0) {
+		return $dtF->diff($dtT)->format('%H:%I:%S');
+	} else {
+		if ($tage==1) {
+			return $dtF->diff($dtT)->format('%a Tag %H:%I:%S');
+		} else {
+			return $dtF->diff($dtT)->format('%a Tage %H:%I:%S');
+		}
+	}
+}
 
 
 ?>
