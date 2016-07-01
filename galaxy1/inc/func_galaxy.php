@@ -17,7 +17,6 @@ function get_timestamp_in_was_sinnvolles($value) {
 			return $dtF->diff($dtT)->format('%a Tage %H:%I:%S');
 		}
 	}	
-		
 }
 
 function get_timestamp_in_was_lesbares($value) {	
