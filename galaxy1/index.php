@@ -223,6 +223,12 @@ switch ($select) {
 								echo "Wenn das hier jemand liest, sagt mal bitte bescheid.";
 								exit;
 							}
+						} else {
+							if(mission_rückkehr_set($flotte_abarbeiten[$key], $spieler_id) == false) {
+								echo "Fehler mission_rückkehr index.php Zeile 164";
+								echo "Wenn das hier jemand liest, sagt mal bitte bescheid.";
+								exit;
+							}
 						}
 						break;
 					case "Spionage":
