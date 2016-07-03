@@ -246,9 +246,9 @@ switch ($select) {
 						} else { echo "fehler beim stationieren"; }
 						break;							
 					case "Transport":
-						if(mission_erkunden($flotte_abarbeiten[$key], $spieler_id) == true) {
+						if(mission_transport($flotte_abarbeiten[$key], $spieler_id) == true) {							
 							if(mission_rückkehr_set($flotte_abarbeiten[$key], $spieler_id) == false) {
-								echo "Fehler mission_rückkehr index.php Zeile 164";
+								echo "Fehler mission_rückkehr index.php Zeile 251";
 								echo "Wenn das hier jemand liest, sagt mal bitte bescheid.";
 								exit;
 							}
@@ -810,7 +810,7 @@ switch ($select) {
 <!-- Menü -->
 <table id="hauptmenue" width="100%"  cellspacing="0" cellpadding="1" style="margin-top: 2px;">
 				 <tr><td><a class="navi" href="index.php">Übersicht</a></td></tr>
-				 <tr><td>Imperium</td></tr>
+				 <tr><td><s>Imperium</td></tr>
 				 <tr><td><a class="navi" href="index.php?s=Rohstoffe">Rohstoffe</a></td></tr>
 				 <tr><td><hr></td></tr>
 				 <tr><td><a class="navi" href="index.php?s=Gebaeude">Gebäude</a></td></tr>
@@ -819,20 +819,20 @@ switch ($select) {
 				 <tr><td><a class="navi" href="index.php?s=Forschung">Forschung</a></td></tr>
 				 <tr><td><hr></a></td></tr>
 				 <tr><td><a class="navi" href="index.php?s=Sonnensystem">Sonnensystem</a></td></tr>
-				 <tr><td>Koordinatenbuch</td></tr>
+				 <tr><td><s>Koordinatenbuch</td></tr>
 				 <tr><td><a class="navi" href="index.php?s=Flotte">Flotte</a></td></tr>
-				 <tr><td>Handel</td></tr>
+				 <tr><td><s>Handel</td></tr>
 				 <tr><td><hr></a></td></tr>
-				 <tr><td>Allianzen</td></tr>
+				 <tr><td><s>Allianzen</td></tr>
 				 <tr><td><a class="navi" href="index.php?s=Rangliste">Rangliste</a></td></tr>
-				 <tr><td>Kampfstatistik</td></tr>
-				 <tr><td>Technologie</td></tr>
+				 <tr><td><s>Kampfstatistik</s></td></tr>
+				 <tr><td><s>Technologie</td></tr>
 				 <tr><td><a class="navi" href="index.php?s=Einstellungen">Einstellungen</a></td></tr>
 				 <tr><td><hr></a></td></tr>
 				 <tr><td><a class="navi" href="index.php?s=Nachrichten">Nachrichten</a></td></tr>
 				 <tr><td><a class="navi" href="http://spacefights.darkbug.de/index.php?m=chat" target="starbug_chat">Chat</a></td></tr>
 				 <tr><td><a class="navi" href="http://spacefights.org/forum/" target="_forum">Forum</a></td></tr>
-				 <tr><td>Hilfe</td></tr>
+				 <tr><td><s>Hilfe</td></tr>
 				 <tr><td><hr></a></td></tr>
 				 
 				  <tr><td><a class="navi" href="../logout.php">Ausloggen</a></td></tr>

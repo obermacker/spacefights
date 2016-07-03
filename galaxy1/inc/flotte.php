@@ -240,7 +240,7 @@ if(isset($_GET["x"]) AND isset($_GET["y"]) AND isset($_GET["z"])) {
 	
 	<table id="default" cellspacing="0" border=0 cellpadding="0" class="übersicht" width=100%>
 		<tr>
-			<td class="tbchell" style="text-align: right;"><button class="btn_main" type="submit" name="action-flotte-starten" value="action-flotte-starten">Experimentell (Nur Sicherungsflug ist halbwegs sicher)</button></td>
+			<td class="tbchell" style="text-align: right;"><button class="btn_main" type="submit" name="action-flotte-starten" value="action-flotte-starten">Flotte starten</button></td>
 		</tr>
 	</table>
 	<input id="Distanz"  type="" placeholder="Distanz"><br>

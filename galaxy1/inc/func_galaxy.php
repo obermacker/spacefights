@@ -1958,7 +1958,7 @@ function get_ressource($spieler_id, $planet_id) {
 	
 
 	$ressource["Eisen"] = $row->Ressource_Eisen;
-	$ressource["Silizium"] = $ausgabe = $row->Ressource_Silizium;
+	$ressource["Silizium"] = $row->Ressource_Silizium;
 	$ressource["Wasser"] = $row->Ressource_Wasser;
 	$ressource["Energie"] = $row->Ressource_Energie;
 	$ressource["Bot"] = $row->Ressource_Bot;
@@ -3056,6 +3056,104 @@ function mission_erkunden($flotte_abarbeiten, $spieler_id) {
 	if($result = mysqli_query($link, $query)) {
 		return true;
 	} else { return false; }
+}
+
+function mission_transport($flotte_abarbeiten, $spieler_id) {
+	//1. Ress ausladen
+	//2. Wenn eingeladen werden soll vorhandene Ress prüfen
+	//3. Ress einladen
+	
+	require 'inc/connect_galaxy_1.php';
+	
+	//Start: 1. Ress ausladen
+	$sql_part_schiffe = array();
+	$x2 = $flotte_abarbeiten["x2"];
+	$y2 = $flotte_abarbeiten["y2"];
+	$z2 = $flotte_abarbeiten["z2"];
+	$kapazität = $flotte_abarbeiten["Kapazitaet"];
+	$planet_id = get_planet_id_by_koordinaten($spieler_id, $x2, $y2, $z2);
+	
+
+	$sql_part_schiffe[] = "`Ressource_Eisen` = `Ressource_Eisen` + " . $flotte_abarbeiten["Ausladen_Eisen"];
+	$sql_part_schiffe[] = "`Ressource_Silizium` = `Ressource_Silizium` + " . $flotte_abarbeiten["Ausladen_Silizium"];
+	$sql_part_schiffe[] = "`Ressource_Wasser` = `Ressource_Wasser` + " . $flotte_abarbeiten["Ausladen_Wasser"];
+	
+	$flotte_id = $flotte_abarbeiten["ID"];
+	
+	$sql = "UPDATE `planet` SET " . implode(", ", $sql_part_schiffe) . " WHERE `Spieler_ID` = '$spieler_id' AND `Planet_ID` = $planet_id";
+	$query = $sql or die("Error in the consult.." . mysqli_error("Error: #0002302 ".$link));
+	
+	if($result = mysqli_query($link, $query)) {		
+		//2. Wenn eingeladen werden soll vorhandene Ress prüfen
+		
+		$einladen = array();
+		$einladen["Eisen"] = 0;
+		$einladen["Silizium"] = 0;
+		$einladen["Wasser"] = 0;
+		$einladen["Eisen_Wunsch"] = $flotte_abarbeiten["Einladen_Eisen"];
+		$einladen["Silizium_Wunsch"] = $flotte_abarbeiten["Einladen_Silizium"];
+		$einladen["Wasser_Wunsch"] = $flotte_abarbeiten["Einladen_Wasser"];
+		
+		$Ressource = get_ressource($spieler_id, $planet_id);
+		//Eisen
+		if($einladen["Eisen_Wunsch"] >= $Ressource["Eisen"]) {
+			$einladen["Eisen"] = $Ressource["Eisen"];			
+		} else {
+			$einladen["Eisen"] = $einladen["Eisen_Wunsch"];			
+		}				
+
+		//Silizium
+		if($einladen["Silizium_Wunsch"] >= $Ressource["Silizium"]) {
+			$einladen["Silizium"] = $Ressource["Silizium"];			
+		} else {
+			$einladen["Silizium"] = $einladen["Silizium_Wunsch"];			
+		}				
+		
+		//Wasser
+		if($einladen["Wasser_Wunsch"] >= $Ressource["Wasser"]) {
+			$einladen["Wasser"] = $Ressource["Wasser"];
+		} else {
+			$einladen["Wasser"] = $einladen["Wasser_Wunsch"];
+		}
+		
+		//Kapazität prüfen und gg. anpassen
+		if($kapazität < $einladen["Eisen"] + $einladen["Silizium"] + $einladen["Wasser"]) {
+			$benötigt = $einladen["Eisen"] + $einladen["Silizium"] + $einladen["Wasser"];
+			$platz = $benötigt / $kapazität;
+			$einladen["Eisen"] = floor($einladen["Eisen"] / $platz);
+			$einladen["Silizium"] = floor($einladen["Silizium"] / $platz);
+			$einladen["Wasser"] = floor($einladen["Wasser"] / $platz);
+		}
+		
+		$sql_part_ress = array();
+		$sql_part_ress[] = "`Ressource_Eisen` = `Ressource_Eisen` - " . $einladen["Eisen"];
+		$sql_part_ress[] = "`Ressource_Silizium` = `Ressource_Silizium` - " . $einladen["Silizium"];
+		$sql_part_ress[] = "`Ressource_Wasser` = `Ressource_Wasser` - " . $einladen["Wasser"];
+		
+		$sql = "UPDATE `planet` SET " . implode(", ", $sql_part_ress) . " WHERE `Spieler_ID` = '$spieler_id' AND `Planet_ID` = $planet_id";
+		$query = $sql or die("Error in the consult.." . mysqli_error("Error: #0002302 ".$link));
+		
+		if($result = mysqli_query($link, $query)) {			
+			//Flotte füllen		
+
+			$sql_part_ress = array();
+			$sql_part_ress[] = "`Ausladen_Eisen` =  " . $einladen["Eisen"];
+			$sql_part_ress[] = "`Ausladen_Silizium` = " . $einladen["Silizium"];
+			$sql_part_ress[] = "`Ausladen_Wasser` = " . $einladen["Wasser"];
+			
+			$sql = "UPDATE `flotten` SET " . implode(", ", $sql_part_ress) . " WHERE `Spieler_ID` = '$spieler_id' AND `ID` = $flotte_id";
+			$query = $sql or die("Error in the consult.." . mysqli_error("Error: #0002302 ".$link));
+			
+			if($result = mysqli_query($link, $query)) {
+				
+				return true;
+			}
+				
+		}
+		
+	}
+	
+	return false;
 }
 
 function mission_kolonisieren($flotte_abarbeiten, $spieler_id, $username) {	

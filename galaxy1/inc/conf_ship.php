@@ -209,7 +209,7 @@ function get_config_ships($id) {
 			"Bots" => 3,
 			"Bauzeit" => (1500 + 1100) * 3,
 			"Kapazitaet" => 25000,
-			"Geschwindigkeit" => 750,
+			"Geschwindigkeit" => 200000, //750,
 			"Angriff" => 3,
 			"Verteidigung" => 40,
 			"Stufe_Werft" => 6,

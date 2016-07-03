@@ -24,8 +24,9 @@ a.navi:hover {  background-color: rgba(0, 69, 120, 0.55); color: #FFFFFF; }
 a:link, a:visited, a:active, a:hover
 { 
 	text-decoration:none;
-	font-weight:bold;
-	color:#1e6794;  
+	/*font-weight:bold;*/
+	color:#1e6794;
+	  
 }
 
 a:active, a:hover
@@ -89,7 +90,7 @@ input,textarea,select, button { border-color:#000000; border-width:1px; backgrou
 .tbb { background-color: #000000; }
 
 .tbt { padding:5px; background-color:#000000; }
-.tbtb { border-left: 0px solid #3a6784; border-bottom: 1px solid #3a6784; border-right: 1px solid #3a6784; padding:5px; background-color: #004578; padding-left: 1em;}
+.tbtb {  font-weight: normal; border-left: 0px solid #3a6784; border-bottom: 1px solid #3a6784; border-right: 1px solid #3a6784; padding:5px; background-color: #004578; padding-left: 1em;}
 .tbtb_linksbundig { text-align: left; }
 .tbtb_mitte { text-align: center; }
 .tbtb_ohne_unten { border-bottom: 0px solid #3a6784;}
