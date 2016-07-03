@@ -240,7 +240,11 @@ switch ($select) {
 							}
 						}
 						break;
-						
+					case "Stationierung":
+						if(mission_stationiere($flotte_abarbeiten[$key], $spieler_id) == true) {
+							
+						} else { echo "fehler beim stationieren"; }
+						break;							
 					case "Transport":
 						if(mission_erkunden($flotte_abarbeiten[$key], $spieler_id) == true) {
 							if(mission_rückkehr_set($flotte_abarbeiten[$key], $spieler_id) == false) {

@@ -3089,8 +3089,8 @@ function mission_kolonisieren($flotte_abarbeiten, $spieler_id, $username) {
 				
 				//Stationiere die Flotte inklusive Ress auf dem neuen Planeten
 				
-				$p = get_planet_id_by_koordinaten($spieler_id, $x2, $y2, $z2);
-				if(mission_stationiere($flotte_abarbeiten, $spieler_id, $p) == true ) {
+				
+				if(mission_stationiere($flotte_abarbeiten, $spieler_id) == true ) {
 					
 				} else { echo "Flotte nicht stationiert"; return false; }				
 			} else { echo "Planet nicht erstellt"; return false; }			
@@ -3099,9 +3099,14 @@ function mission_kolonisieren($flotte_abarbeiten, $spieler_id, $username) {
 
 }
 
-function mission_stationiere($flotte_abarbeiten, $spieler_id, $planet_id) {
+function mission_stationiere($flotte_abarbeiten, $spieler_id) {
 	require 'inc/connect_galaxy_1.php';
 	$sql_part_schiffe = array();
+	$x2 = $flotte_abarbeiten["x2"];
+	$y2 = $flotte_abarbeiten["y2"];
+	$z2 = $flotte_abarbeiten["z2"];
+	$planet_id = get_planet_id_by_koordinaten($spieler_id, $x2, $y2, $z2);
+	
 	for ($i = 1; $i <= 12; $i++) {
 		$sql_part_schiffe[] = "`Schiff_Typ_" . $i . "` = `Schiff_Typ_" . $i . "` + " . $flotte_abarbeiten["Schiff_Typ_" . $i]; 
 	}
