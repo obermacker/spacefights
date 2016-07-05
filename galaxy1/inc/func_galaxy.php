@@ -1376,7 +1376,8 @@ function get_gebäude_nächste_stufe($spieler_id, $planet_id, $gebäude_id, $spe
 		$Gebäude["Name"] = $row_kosten_nächstes_Gebäude["Name"];
 		$Gebäude["Beschreibung"] = $row_kosten_nächstes_Gebäude["Beschreibung"];
 		$Gebäude["Wirkung"] = $row_kosten_nächstes_Gebäude["Wirkung"];
-		
+		$Gebäude["Bild"] = $row_kosten_nächstes_Gebäude["Bild"];
+				
 		$Gebäude["Kosten_Eisen"] = $row_kosten_nächstes_Gebäude["Kosten_Eisen"];
 		$Gebäude["Kosten_Silizium"] = $row_kosten_nächstes_Gebäude["Kosten_Silizium"];
 		$Gebäude["Kosten_Wasser"] = $row_kosten_nächstes_Gebäude["Kosten_Wasser"];
