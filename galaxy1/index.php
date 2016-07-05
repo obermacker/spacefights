@@ -662,14 +662,16 @@ function mPBarGlow(){
 	/* Progressbar by ES 12.06.2016 */
 	var elemente = document.getElementsByClassName("pBar");
 	var weiterGluehen = true;
-	
-	for(var i=0; i<elemente.length; i++) {
-		if (elemente[i].className=="pBar" && elemente[i].title != "-") {
-			elemente[i].className="pBar pBarG";
+	var daGluehtNochWas=false;
+
+for(var i=0; i<elemente.length; i++) {
+		if (elemente[i].classList.contains("pBar") && elemente[i].title != "-") {
+			elemente[i].classList.toggle("pBarG");
+			daGluehtNochWas=true;
 		} else {
-			elemente[i].className="pBar";	
+			elemente[i].classList.remove("pBarG");
 		}
-		if (elemente[i].title == "-") {weiterGluehen=false;}
+		if (elemente[i].title == "-" && !daGluehtNochWas) {weiterGluehen=false;}else{weiterGluehen=true;};
 	}
 	if (weiterGluehen) {window.setTimeout("mPBarGlow()",3000);}
 }

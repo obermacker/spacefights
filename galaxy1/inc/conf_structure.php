@@ -7,6 +7,7 @@ function get_config_structure($id) {
 			$Gebäude["Name"] = "Eisen-Mine";
 			$Gebäude["Beschreibung"] = "Diese Mine wird zur Förderung von Eisen benötigt.";
 			$Gebäude["Wirkung"] = "Erhöht die Fördermenge von Eisen";
+			$Gebäude["Bild"] = "img/eisen-mine.jpg";
 			$Gebäude["Level_Cap"] = 30;
 				
 			$Gebäude["Kosten_Eisen"] = 55;
@@ -26,6 +27,7 @@ function get_config_structure($id) {
 			$Gebäude["Name"] = "Silizium-Mine";
 			$Gebäude["Beschreibung"] = "Diese Mine wird zur Förderung von Silizium benötigt.";
 			$Gebäude["Wirkung"] = "Erhöht die Fördermenge von Silizium";
+			$Gebäude["Bild"] = "";
 			$Gebäude["Level_Cap"] = 30;
 				
 			$Gebäude["Kosten_Eisen"] = 85;
@@ -44,6 +46,7 @@ function get_config_structure($id) {
 			$Gebäude["Name"] = "Wasserbrunnen";
 			$Gebäude["Beschreibung"] = "Diese Mine wird zur Förderung von Wasser benötigt.";
 			$Gebäude["Wirkung"] = "Erhöht die Fördermenge von Wasser";
+			$Gebäude["Bild"] = "";
 			$Gebäude["Level_Cap"] = 30;
 				
 			$Gebäude["Kosten_Eisen"] = 110;
@@ -62,6 +65,7 @@ function get_config_structure($id) {
 			$Gebäude["Name"] = "Kraftwerk";
 			$Gebäude["Beschreibung"] = "Das Kraftwerk wird benötigt um die anderen Gebäude mit Energie zu versorgen.";
 			$Gebäude["Wirkung"] = "Erhöht die Energie.";
+			$Gebäude["Bild"] = "";
 			$Gebäude["Level_Cap"] = 100;
 				
 			$Gebäude["Kosten_Eisen"] = 70;
@@ -81,6 +85,7 @@ function get_config_structure($id) {
 			$Gebäude["Name"] = "Bauzentrum";
 			$Gebäude["Beschreibung"] = "Beschleunigt den Bau neuer Gebäude.";
 			$Gebäude["Wirkung"] = "Bauzeit = Reg. Bauzeit / (1 + Stufe Bauzentrum)";
+			$Gebäude["Bild"] = "";
 			$Gebäude["Level_Cap"] = -1;
 		
 			$Gebäude["Kosten_Eisen"] = 400;
@@ -100,6 +105,7 @@ function get_config_structure($id) {
 			$Gebäude["Name"] = "Rohstoffbunker";
 			$Gebäude["Beschreibung"] = "Tief unter der Erde sind die Rohstoffe vor feindlichen Übergriffen sicher.";
 			$Gebäude["Wirkung"] = "Rohstoffe im Rohstoffbunker können von Feinden nicht geplündert werden.";
+			$Gebäude["Bild"] = "";
 			$Gebäude["Level_Cap"] = -1;
 		
 			$Gebäude["Kosten_Eisen"] = 10000;
@@ -118,6 +124,7 @@ function get_config_structure($id) {
 			$Gebäude["Name"] = "Raumschiffwerft";
 			$Gebäude["Beschreibung"] = "Ermöglicht den Bau von Raumschiffen.";
 			$Gebäude["Wirkung"] = "Raumschiffe können schneller gebaut werden.";
+			$Gebäude["Bild"] = "";
 			$Gebäude["Level_Cap"] = -1;
 		
 			$Gebäude["Kosten_Eisen"] = 800;
@@ -136,6 +143,7 @@ function get_config_structure($id) {
 			$Gebäude["Name"] = "Waffenfabrik";
 			$Gebäude["Beschreibung"] = "Ermöglicht den Bau von Waffenanlagen.";
 			$Gebäude["Wirkung"] = "Beschleunigt und Verbessert Waffenanlagen.";
+			$Gebäude["Bild"] = "";
 			$Gebäude["Level_Cap"] = -1;
 		
 			$Gebäude["Kosten_Eisen"] = 600;
@@ -154,6 +162,7 @@ function get_config_structure($id) {
 			$Gebäude["Name"] = "Forschungslabor";
 			$Gebäude["Beschreibung"] = "Dient zum erforschen und verbessern neuer Technologien.";
 			$Gebäude["Wirkung"] = "Beschleunigt die Erforschung neuer Technologien.";
+			$Gebäude["Bild"] = "";
 			$Gebäude["Level_Cap"] = -1;
 		
 			$Gebäude["Kosten_Eisen"] = 200;
@@ -172,6 +181,7 @@ function get_config_structure($id) {
 			$Gebäude["Name"] = "Handelsposten";
 			$Gebäude["Beschreibung"] = "Ermöglicht die Teilnahme am interstellaren Handel.";
 			$Gebäude["Wirkung"] = "Höhere Stufen wirken unterschiedlich, siehe FAQ.";
+			$Gebäude["Bild"] = "";
 			$Gebäude["Level_Cap"] = -1;
 		
 			$Gebäude["Kosten_Eisen"] = 10000;
