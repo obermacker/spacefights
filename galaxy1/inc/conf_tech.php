@@ -16,6 +16,7 @@ function get_config_tech($id, $var_spieler_stufe) {
 	switch ($id) {
 		case 1:
 			$Tech["Name"] = "Sondentechnik";
+			$Tech["Bild"] = "img/foerderturm.gif";
 			$Tech["Level_Cap"] = 30;
 				
 			$Tech["Kosten_Eisen"] = 400;
@@ -31,6 +32,7 @@ function get_config_tech($id, $var_spieler_stufe) {
 				
 		case 2:
 			$Tech["Name"] = "Raketentechnik";
+			$Tech["Bild"] = "";
 			$Tech["Level_Cap"] = 30;
 				
 			$Tech["Kosten_Eisen"] = 400;
@@ -46,6 +48,7 @@ function get_config_tech($id, $var_spieler_stufe) {
 				
 		case 3:
 			$Tech["Name"] = "Antriebstechnik";
+			$Tech["Bild"] = "";
 			$Tech["Level_Cap"] = 30;
 				
 			$Tech["Kosten_Eisen"] = 400;
@@ -61,6 +64,7 @@ function get_config_tech($id, $var_spieler_stufe) {
 		
 		case 4:
 			$Tech["Name"] = "Schildtechnik";
+			$Tech["Bild"] = "";
 			$Tech["Level_Cap"] = 30;
 				
 			$Tech["Kosten_Eisen"] = 0;
@@ -76,6 +80,7 @@ function get_config_tech($id, $var_spieler_stufe) {
 	
 		case 5:
 			$Tech["Name"] = "Transporttechnik";
+			$Tech["Bild"] = "";
 			$Tech["Level_Cap"] = 30;
 				
 			$Tech["Kosten_Eisen"] = 400;
@@ -91,6 +96,7 @@ function get_config_tech($id, $var_spieler_stufe) {
 	
 		case 6:
 			$Tech["Name"] = "Flottentechnik";
+			$Tech["Bild"] = "";
 			$Tech["Level_Cap"] = 30;
 				
 			$Tech["Kosten_Eisen"] = 0;
@@ -106,6 +112,7 @@ function get_config_tech($id, $var_spieler_stufe) {
 	
 		case 7:
 			$Tech["Name"] = "Recycling";
+			$Tech["Bild"] = "";
 			$Tech["Level_Cap"] = 30;
 				
 			$Tech["Kosten_Eisen"] = 36000;
@@ -121,6 +128,7 @@ function get_config_tech($id, $var_spieler_stufe) {
 	
 		case 8:
 			$Tech["Name"] = "Lasertechnik";
+			$Tech["Bild"] = "";
 			$Tech["Level_Cap"] = 30;
 				
 			$Tech["Kosten_Eisen"] = 600;
@@ -142,6 +150,7 @@ function get_config_tech($id, $var_spieler_stufe) {
 	
 		case 9:
 			$Tech["Name"] = "Spionageabwehrtechnik";
+			$Tech["Bild"] = "";
 			$Tech["Level_Cap"] = 30;
 				
 			$Tech["Kosten_Eisen"] = 200;
@@ -157,6 +166,7 @@ function get_config_tech($id, $var_spieler_stufe) {
 	
 		case 10:
 			$Tech["Name"] = "Kolonisierungstechnik";
+			$Tech["Bild"] = "";
 			$Tech["Level_Cap"] = 30;
 				
 			$Tech["Kosten_Eisen"] = 40000;
@@ -172,6 +182,7 @@ function get_config_tech($id, $var_spieler_stufe) {
 	
 		case 11:
 			$Tech["Name"] = "Ökonomik";
+			$Tech["Bild"] = "";
 			$Tech["Level_Cap"] = 30;
 				
 			$Tech["Kosten_Eisen"] = 80000;
@@ -187,6 +198,7 @@ function get_config_tech($id, $var_spieler_stufe) {
 
 		case 12:
 			$Tech["Name"] = "Ionentechnik";
+			$Tech["Bild"] = "";
 			$Tech["Level_Cap"] = 30;
 				
 			$Tech["Kosten_Eisen"] = 1000;

@@ -306,25 +306,37 @@ a.kontakte {
 /* für Bau-GUI  */
 
 .bauGUI .imBau {font-weight: bold;}
+
 .bauGUI .passiv {color: rgba(255,255,255,0.75);}
 .bauGUI .passiv.zuWenigRess {color: rgba(255,0,0,0.75);}
 .bauGUI .passiv img {opacity:0.75;}
-.bauGUI .bildDetails {height:21.5em;  display: block;  margin: auto;}
+
+.bauGUI .bildDetails {height:21.5em;  display: block;  margin: 1em auto;}
 .bauGUI .zuWenigRess {color:red;}
-.bauGUI .stufenPfeil {color:#0f0; padding-left: .5em; width: 2em;}
-.bauGUI .btTdWidth {width: 3.5em;}
-.bauGUI .pBar {margin-top: -1px; margin-left: 0.5%; height: 3px;}
-.bauGUI .pBarBkGrd {margin-top: -1px; margin-left: 0.5%; height: 3px; width: 99%; opacity:0.6; z-index: 3; background-color: red;}
+.bauGUI .stufenPfeil {color:#0f0; padding-right: .3em; text-align: right; width: 2em;}
+
+/*.bauGUI .btTdWidth {width: 3.5em;}*/
+
+.bauGUI .pBar {margin-top: -6px; margin-left: 0.5%; height: 3px;}
+.bauGUI .pBarBkGrd {margin-top: -6px; margin-left: 0.5%; height: 3px; width: 99%; opacity:0.6; z-index: 3; background-color: red;}
+
 .bauGUI .tbBauzeit {text-align: right; width: 12em;}
+.bauGUI .tbMaxFS {text-align:center; font-weight:bold; color:red}
+.bauGUI .tbMaxFS.passiv {color: rgba(255,0,0,0.75);}
+.bauGUI .tbBezeichnung {width: 18em;}
+.bauGUI .tbStufe {text-align: right;  width: 1.3em;}
+
+.bauGUI .trMitPBar {height: 2.6em; vertical-align: baseline;}
+
 .bauGUI .tbBeschreibungLang {padding:0; margin: 0 auto 1em auto;}
-.bauGUI .tbBeschreibungLangMitPBar {padding:0; margin: 4px auto 1em auto;}
-.bauGUI .tbBeschreibungLangText {margin: .5em;}
+.bauGUI .tbBeschreibungLangText {margin: 0.5em; vertical-align: baseline;}
 
 /* neue Button braucht das Spiel */
 
-.bauGUI .bt {z-index:20;  /*display: block;*/  height: 1.5em;  width: 2.6em;  margin-top: 0.2em;  margin-left: 0.3em;
+.bauGUI .bt {z-index:20;  /*display: block;*/  height: 1.5em;  width: 2.6em;  margin-top: 0.2em; margin-left: 0.5em; margin-right: 0.5em;
 			cursor: pointer;  color: #fff;  background-color: #036;	/*#047;*/  border: none;  border-radius: 3px;}
 .bauGUI .bt:active {transform: translateY(2px);}
+.bauGUI .btPlatzhalter {visibility:hidden;}
 
 .bauGUI .bt.btPlus{font-weight:900;  /*font-size:105%;*/  color: #0f0;  vertical-align: 15%;}
 .bauGUI .bt.btPlus:hover {background-color: #383;}
