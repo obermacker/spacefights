@@ -165,7 +165,7 @@ function set_bauschleife_struckture($spieler_id, $planet_id, $geb채ude_id, $geb�
 	
 }
 
-function set_bauschleife_tech($spieler_id, $planet_id, $tech_id, $tech_name, $bauzeit, $ressource_eisen, $ressource_silizium, $ressource_wasser, $ressource_karma, $kosten_eisen, $kosten_silizium, $kosten_wasser, $kosten_karma, $username) {
+function set_bauschleife_tech($spieler_id, $planet_id, $tech_id, $tech_name, $bauStart, $bauzeit, $ressource_eisen, $ressource_silizium, $ressource_wasser, $ressource_karma, $kosten_eisen, $kosten_silizium, $kosten_wasser, $kosten_karma, $username) {
 	require 'inc/connect_galaxy_1.php';
 	
 	$ressource_eisen = $ressource_eisen - $kosten_eisen;
@@ -183,7 +183,7 @@ function set_bauschleife_tech($spieler_id, $planet_id, $tech_id, $tech_name, $ba
 	if (mysqli_query($link, $query)) {
 		
 		
-		$abfrage = "UPDATE `spieler` SET `Tech_Schleife_ID` = $tech_id, `Tech_Schleife_Name` = '$tech_name', `Tech_Schleife_Bauzeit` = $bauzeit WHERE `Spieler_ID` = '$spieler_id'";
+		$abfrage = "UPDATE `spieler` SET `Tech_Schleife_ID` = $tech_id, `Tech_Schleife_Name` = '$tech_name', `Tech_Schleife_Bauzeit_Bis` = $bauzeit, `Tech_Schleife_Bauzeit_Start` = $bauStart  WHERE `Spieler_ID` = '$spieler_id'";
 		
 		$query = $abfrage or die("Error in the consult.." . mysqli_error("Error: set_bauschleife_tech #1 ".$link));
 		
@@ -922,7 +922,8 @@ function set_bauschleife_tech_fertig($spieler_id, $planet_id, $tech_id, $usernam
 	"` = " . $Tech["Stufe"] . ",
 	`Tech_Schleife_ID` = 0, 
 	`Tech_Schleife_Name` = '', 
-	`Tech_Schleife_Bauzeit` = 0
+	`Tech_Schleife_Bauzeit_Bis` = 0,
+	`Tech_Schleife_Bauzeit_Start` = 0
 	 WHERE `Spieler_ID` = '$spieler_id'";
 	
 	$query = $abfrage or die("Error in the consult.." . mysqli_error("Error: set_bauschleife_struckture #1 ".$link));
@@ -1004,7 +1005,8 @@ function set_bauschleife_tech_abbruch($spieler_id, $planet_id, $tech_id, $userna
 		$abfrage  = "UPDATE `spieler` SET
 		`Tech_Schleife_ID` = 0, 
 		`Tech_Schleife_Name` = '', 
-		`Tech_Schleife_Bauzeit` = 0
+		`Tech_Schleife_Bauzeit_Bis` = 0,
+		`Tech_Schleife_Bauzeit_Start` = 0
 		WHERE `Spieler_ID` = '$spieler_id'";
 			
 			$query = $abfrage or die("Error in the consult.." . mysqli_error("Error: set_bauschleife_struckture #1 ".$link));
@@ -1301,7 +1303,7 @@ function check_bauschleife_activ($spieler_id, $planet_id, $zweig) {
 					
 			break;
 		case "Tech":
-				$abfrage = "SELECT `Tech_Schleife_ID`, `Tech_Schleife_Bauzeit`  FROM `spieler` WHERE `Spieler_ID` = '$spieler_id'";
+				$abfrage = "SELECT `Tech_Schleife_ID`, `Tech_Schleife_Bauzeit_Bis` , `Tech_Schleife_Bauzeit_Start`  FROM `spieler` WHERE `Spieler_ID` = '$spieler_id'";
 				
 				$query = $abfrage or die("Error in the consult.." . mysqli_error("Error: check_bauschleife_activ #1 ".$link));
 				$result = mysqli_query($link, $query);
@@ -1309,8 +1311,9 @@ function check_bauschleife_activ($spieler_id, $planet_id, $zweig) {
 				$row = mysqli_fetch_object($result);
 				
 				$bauschleife["ID"] = $row->Tech_Schleife_ID;
-				$bauschleife["Bis"] = $row->Tech_Schleife_Bauzeit; //get_timestamp_in_was_sinnvolles($row->Bauschleife_Gebaeude_Bis - time());
-				$bauschleife["Countdown"] = $row->Tech_Schleife_Bauzeit - time(); //get_timestamp_in_was_sinnvolles($row->Bauschleife_Gebaeude_Bis - time());
+				$bauschleife["Start"] = $row->Tech_Schleife_Bauzeit_Start; 
+				$bauschleife["Bis"] = $row->Tech_Schleife_Bauzeit_Bis; 
+				$bauschleife["Countdown"] = $row->Tech_Schleife_Bauzeit_Bis - time(); 
 				return $bauschleife;
 					
 			break;
@@ -1491,6 +1494,7 @@ function get_tech_n채chste_stufe($spieler_id, $planet_id, $tech_id, $speed_mod) 
 		$row_kosten_n채chste_Forschung = get_config_tech($tech_id, $row_aktuelle_Stufe_Tech);
 		
 		$Tech["Name"] = $row_kosten_n채chste_Forschung["Name"];
+		$Tech["Bild"] = $row_kosten_n채chste_Forschung["Bild"];
 		$Tech["Beschreibung"] = $row_kosten_n채chste_Forschung["Beschreibung"];
 		$Tech["Wirkung"] = $row_kosten_n채chste_Forschung["Wirkung"];
 		$Tech["Kosten_Eisen"] = $row_kosten_n채chste_Forschung["Kosten_Eisen"];
@@ -1817,7 +1821,7 @@ function get_activity_planet_spieler_schiffe($spieler_id, $planet_id) {
 		
 	//spieler|forschung
 	
-	$abfrage = "SELECT `Tech_Schleife_Name`, `Tech_Schleife_Bauzeit` FROM `spieler` WHERE `Spieler_ID` = '$spieler_id'";
+	$abfrage = "SELECT `Tech_Schleife_Name`, `Tech_Schleife_Bauzeit_Bis` , `Tech_Schleife_Bauzeit_Start`  FROM `spieler` WHERE `Spieler_ID` = '$spieler_id'";
 	
 	$query = $abfrage or die("Error in the consult.." . mysqli_error("Error: #0010b ".$link));
 	$result = mysqli_query($link, $query);
@@ -1825,7 +1829,7 @@ function get_activity_planet_spieler_schiffe($spieler_id, $planet_id) {
 	$row = mysqli_fetch_object($result);
 	
 	
-	if ( $row->Tech_Schleife_Bauzeit <> 0) {  $activity["Forschung"]["Name"] = $row->Tech_Schleife_Name; $activity["Forschung"]["Zeit-Bis"] = $row->Tech_Schleife_Bauzeit - time(); } else { $activity["Forschung"]["Name"] = ""; $activity["Forschung"]["Zeit-Bis"] = "-"; }
+	if ( $row->Tech_Schleife_Bauzeit_Bis <> 0) {  $activity["Forschung"]["Name"] = $row->Tech_Schleife_Name; $activity["Forschung"]["Zeit-Bis"] = $row->Tech_Schleife_Bauzeit_Bis - time(); } else { $activity["Forschung"]["Name"] = ""; $activity["Forschung"]["Zeit-Bis"] = "-"; }
 	
 	return $activity;
 	
@@ -2057,7 +2061,7 @@ function create_first_planet($spieler_id, $x, $y, $z, $username, $galaxy_number)
 	
 	//Spieler
 	
-	$abfrage = "INSERT INTO `spieler`(`ID`, `Spieler_ID`, `Spieler_Name`, `Typ`, `Bot_Produktion_Zeit`, `Tech_1`, `Tech_2`, `Tech_3`, `Tech_4`, `Tech_5`, `Tech_6`, `Tech_7`, `Tech_8`, `Tech_9`, `Tech_10`, `Tech_11`, `Tech_12`, `Tech_Schleife_ID`, `Tech_Schleife_Eisen`, `Tech_Schleife_Name`, `Tech_Schleife_Silizium`, `Tech_Schleife_Wasser`, `Tech_Schleife_Bauzeit`, `Tech_Schleife_Planet`) VALUES ('','$spieler_id','$username','human',".time().",0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0)";
+	$abfrage = "INSERT INTO `spieler`(`ID`, `Spieler_ID`, `Spieler_Name`, `Typ`, `Bot_Produktion_Zeit`, `Tech_1`, `Tech_2`, `Tech_3`, `Tech_4`, `Tech_5`, `Tech_6`, `Tech_7`, `Tech_8`, `Tech_9`, `Tech_10`, `Tech_11`, `Tech_12`, `Tech_Schleife_ID`, `Tech_Schleife_Eisen`, `Tech_Schleife_Name`, `Tech_Schleife_Silizium`, `Tech_Schleife_Wasser`, `Tech_Schleife_Bauzeit_Bis`, `Tech_Schleife_Bauzeit_Start` `Tech_Schleife_Planet`) VALUES ('','$spieler_id','$username','human',".time().",0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0)";
 	
 	$query = $abfrage or die("Error in the consult.." . mysqli_error("Error: #0003 ".$link));
 	$result = mysqli_query($link, $query);

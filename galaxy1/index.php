@@ -438,11 +438,12 @@ switch ($select) {
 	
 				if ($kann_gebaut_werden == true) {
 						
-					$bauzeit = time() + $Tech["Bauzeit"];
-						
+					$bauStart = time(); 
+					$bauzeit = $bauStart + $Tech["Bauzeit"];
+											
 					//set_bauschleife_struckture($spieler_id, $planet_id, $gebäude_id, $Gebäude["Name"], $bauzeit, $ressource["Eisen"], $ressource["Silizium"], $ressource["Wasser"], $ressource["Energie"], $ressource["Karma"], $Tech["Kosten_Eisen"], $Tech["Kosten_Silizium"], $Tech["Kosten_Wasser"], $Tech["Kosten_Energie"], $Tech["Kosten_Karma"]);
 
-					set_bauschleife_tech($spieler_id, $planet_id, $tech_id, $Tech["Name"], $bauzeit, $ressource["Eisen"], $ressource["Silizium"], $ressource["Wasser"], $ressource["Karma"], $Tech["Kosten_Eisen"], $Tech["Kosten_Silizium"], $Tech["Kosten_Wasser"], $Tech["Kosten_Karma"], $username);
+					set_bauschleife_tech($spieler_id, $planet_id, $tech_id, $Tech["Name"], $bauStart, $bauzeit, $ressource["Eisen"], $ressource["Silizium"], $ressource["Wasser"], $ressource["Karma"], $Tech["Kosten_Eisen"], $Tech["Kosten_Silizium"], $Tech["Kosten_Wasser"], $Tech["Kosten_Karma"], $username);
 					
 				} else {
 						

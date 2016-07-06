@@ -7,7 +7,7 @@ function get_config_structure($id) {
 			$Gebäude["Name"] = "Eisen-Mine";
 			$Gebäude["Beschreibung"] = "Diese Mine wird zur Förderung von Eisen benötigt.";
 			$Gebäude["Wirkung"] = "Erhöht die Fördermenge von Eisen";
-			$Gebäude["Bild"] = "img/eisen-mine.jpg";
+			$Gebäude["Bild"] = "img/foerderturm.gif";
 			$Gebäude["Level_Cap"] = 30;
 				
 			$Gebäude["Kosten_Eisen"] = 55;
@@ -27,7 +27,7 @@ function get_config_structure($id) {
 			$Gebäude["Name"] = "Silizium-Mine";
 			$Gebäude["Beschreibung"] = "Diese Mine wird zur Förderung von Silizium benötigt.";
 			$Gebäude["Wirkung"] = "Erhöht die Fördermenge von Silizium";
-			$Gebäude["Bild"] = "";
+			$Gebäude["Bild"] = "img/foerderturm.gif";
 			$Gebäude["Level_Cap"] = 30;
 				
 			$Gebäude["Kosten_Eisen"] = 85;

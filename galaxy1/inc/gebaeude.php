@@ -13,11 +13,10 @@ $bilderEinblenden = true;
 
 	<table id="default" cellspacing="0" cellpadding="0" class="übersicht" width=100%>
 		<tr>
-			<th class="tbtb "> </th>
-			<th class="tbtb "><?php echo($bezArt); ?></th>
+			<th class="tbtb " colspan=2><?php echo($bezArt); ?></th>
 			<th class="tbtb " colspan=3>Stufe</th>
 			<th class="tbtb " colspan=4>Kosten</th>
-			<th class="tbtb "><?php echo($textZeit); ?></th>	
+			<th class="tbtb tbBauzeit"><?php echo($textZeit); ?></th>	
 		</tr>
 		
 		<?php 
@@ -39,29 +38,32 @@ $bilderEinblenden = true;
 			if ($baut_gerade["ID"] == 0) {if (!$kann_gebaut_werden) { $classStr='passiv';}} else if ($baut_gerade["ID"] != $i) {$classStr='passiv';} else {$classStr='imBau';}
 			?>
 			
-			<tr>
-				<td class="tbchell"><a href="javascript:details('G<?php echo $i; ?>');" id="detailsButton" name="G<?php echo $i; ?>Button" class="detailsGeschlossen">▶</a></td>	
-				<td class="tbchell <?php echo $classStr; ?>"><?php echo $objekt["Name"]; ?></td>
-				<td class="tbchell <?php echo $classStr; ?> tbchell_ohne_right_border stufenPfeil">&#10138;</td>
-				<td class="tbchell <?php echo $classStr; ?> tbchell_ohne_left_border tbchell_ohne_right_border"><?php echo ($objekt["Stufe"]); ?></td>
-				<td class="tbchell <?php echo $classStr; ?> tbchell_ohne_left_border btTdWidth" >
+			<tr class ="<?php if ($baut_gerade["ID"] == $i) {echo('trMitPBar');} else {echo('');}?>">
+				<td width=1% class="tbchell"><a href="javascript:details('G<?php echo $i; ?>');" id="detailsButton" name="G<?php echo $i; ?>Button" class="detailsGeschlossen">▶</a></td>	
+				<td width=1% class="tbchell tbBezeichnung <?php echo $classStr; ?>"><?php echo $objekt["Name"]; ?></td>
+				<td width=1% class="tbchell <?php echo $classStr; ?> tbchell_ohne_right_border stufenPfeil">&#10138;</td>
+				<td width=1% class="tbchell <?php echo $classStr; ?> tbchell_ohne_left_border tbchell_ohne_right_border tbStufe"><?php echo ($objekt["Stufe"]); ?></td>
+				<td width=1% class="tbchell <?php echo $classStr; ?> tbchell_ohne_left_border" >
 				<?php	//********** hier bei Übernahme der GUI auch ändern **********//
 						if($kann_gebaut_werden == true && $baut_gerade["ID"] == 0) {?> 				
 							<button class="bt btPlus" type="submit" name="action-gebaeude-bauen" value="<?php echo $i; ?>">	
 								<span>+</span>
 							</button>
-				<?php 	} ?>
-				<?php 	if ($baut_gerade["ID"] == $i) { ?>
+				<?php 	} else if ($baut_gerade["ID"] == $i) { ?>
 							<button class="bt btMinus" type="submit" name="action-gebaeude-abbrechen" value="<?php echo $i; ?>">
 								<span>X</span>
 							</button>					
-				<?php } ?>
+				<?php 	} else { ?>
+								<button class="bt btPlatzhalter" type="submit" name="" value="">
+									<span>*</span>
+								</button>					
+				<?php	} ?>
 				</td>			
 				<td class="tbchell <?php echo $classStr . ' ' . $farbeE; ?> "><img src="img/eisen.png" class="img_ress"> <?php echo number_format($objekt["Kosten_Eisen"], 0, '.', '.'); ?></td>
 				<td class="tbchell <?php echo $classStr . ' ' . $farbeS; ?> "><img src="img/silizium.png" class="img_ress"> <?php echo number_format($objekt["Kosten_Silizium"], 0, '.', '.'); ?></td>
 				<td class="tbchell <?php echo $classStr . ' ' . $farbeW; ?> "><img src="img/wasser.png" class="img_ress"> <?php echo number_format($objekt["Kosten_Wasser"], 0, '.', '.'); ?></td>
 				<td class="tbchell <?php echo $classStr . ' ' . $farbeEn; ?> "><img src="img/energie.png" class="img_ress"> <?php echo number_format($objekt["Kosten_Energie"], 0, '.', '.');?></td>
-				<td class="tbchell tbBauzeit <?php echo $classStr; ?> " >
+				<td  width=1% class="tbchell tbBauzeit <?php echo $classStr; ?> " >
 					<?php
 					if($baut_gerade["ID"] != $i) {
 						echo get_timestamp_in_was_sinnvolles($objekt["Bauzeit"]); 				
@@ -89,8 +91,8 @@ $bilderEinblenden = true;
 				<?php 
 				//************  ab hier Beschreibung lang !   *****************//
 				?>
-				<td  class="tbchell <?php if ($baut_gerade["ID"] == $i) {echo('tbBeschreibungLangMitPBar');} else {echo('tbBeschreibungLang');}?>" colspan="10" align="center">
-					<table cellspacing="0" cellpadding="0" class="übersicht <?php if ($baut_gerade["ID"] == $i) {echo('tbBeschreibungLangMitPBar');} else {echo('tbBeschreibungLang');}?>" width=99%;>
+				<td  class="tbchell tbBeschreibungLang" colspan="10" align="center">
+					<table cellspacing="0" cellpadding="0" class="übersicht tbBeschreibungLang" width=99%;>
 						<tbody>
 							<tr> 
 								<?php if ($objekt["Bild"] != "" && $bilderEinblenden){ ?>
@@ -98,7 +100,7 @@ $bilderEinblenden = true;
 											<img src="<?php echo($objekt["Bild"]); ?>" class="bildDetails">
 										</td>
 								<?php } ?>
-								<td>
+								<td class="tbBeschreibungLangText">
 									<table id="default" class="tbBeschreibungLangText">
 										<tbody>
 											<tr>
@@ -106,7 +108,7 @@ $bilderEinblenden = true;
 											</tr>
 											<tr>
 												<td >
-													<ul class="ress"><!-- class="nav inline-items" -->
+													<ul class="ress">
 														<li class="<?php echo $farbeE; ?>"><img src="img/eisen.png" class="img_ress"> <?php echo number_format($objekt["Kosten_Eisen"], 0, '.', '.'); ?></li>
 														<li class="<?php echo $farbeS; ?>"><img src="img/silizium.png" class="img_ress"> <?php echo number_format($objekt["Kosten_Silizium"], 0, '.', '.'); ?></li>
 														<li class="<?php echo $farbeW; ?>"><img src="img/wasser.png" class="img_ress"> <?php echo number_format($objekt["Kosten_Wasser"], 0, '.', '.'); ?></li>
