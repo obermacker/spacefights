@@ -30,7 +30,7 @@ $bilderEinblenden = true;
 			
 			//********** hier bei Übernahme der GUI auch ändern **********//
 			$objekt = get_tech_nächste_stufe($spieler_id, $planet_id, $i, 1);
-			dVar($objekt);
+			
 			if ($objekt["Forschung"] == "OK" || $objekt["Forschung"] == "MAX") {
 				
 				$keinForschungslabor = false;
