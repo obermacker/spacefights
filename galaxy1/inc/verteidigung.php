@@ -55,7 +55,7 @@ function getMaxAnzahlBauV ($objekt, $ressVorhanden) {
 
 ?>
 
-<script language="javascript" type="text/javascript" src="inc/bauGUI2.js"></script>
+<script language="javascript" type="text/javascript" src="bauGUI2.js"></script>
 
 <form action="index.php" method="post" autocomplete="off" class="bauGUI2">
 	<input type="hidden" name="s" value="<?php echo($bezInput); ?>">
