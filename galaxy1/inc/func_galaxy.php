@@ -104,13 +104,13 @@ function get_ship($ship_id) {
 	
 }
 
-function get_def($def_id) {
+function get_deff($deff_id) {
 
-	$row_def = get_config_def($def_id, 0);
+	$row_deff = get_config_deff($deff_id, 0);
 
-	$row_def["Bauzeit"] = $row_def["Bauzeit"];//get_timestamp_in_was_sinnvolles($row_def["Bauzeit"]);
+	$row_deff["Bauzeit"] = $row_deff["Bauzeit"];		//get_timestamp_in_was_sinnvolles($row_def["Bauzeit"]);
 
-	return $row_def;
+	return $row_deff;
 
 }
 
@@ -715,7 +715,7 @@ function set_bauschleife_deff_fertig($spieler_id, $planet_id) {
 		$anzahl = $row->Anzahl;
 		$deff_soll = $deff_ist + $anzahl;
 		
-		$Deff = get_def($row->Typ);
+		$Deff = get_deff($row->Typ);
 		
 		$punkte = get_punkte($spieler_id, $planet_id);
 		//$punkte = $punkte + ((($Deff["Kosten_Eisen"] + $Deff["Kosten_Silizium"] + $Deff["Kosten_Wasser"]) * $anzahl) / 1000);
@@ -764,7 +764,7 @@ function set_bauschleife_deff_fertig($spieler_id, $planet_id) {
 		//schauen wie viele vom Typ sind stationiert
 
 		$tabelle = "Deff_Typ_" . $row->Typ;
-		$Deff = get_def($row->Typ);
+		$Deff = get_deff($row->Typ);
 		$abfrage_planet = "SELECT `$tabelle` FROM `planet` WHERE `Spieler_ID` = '$spieler_id' AND `Planet_ID` = $planet_id";
 		$query = $abfrage_planet  or die("Error in the consult.." . mysqli_error("Error in set_bauschleife_Deff_fertig ".$link));
 		$result = mysqli_query($link, $query);
@@ -1166,7 +1166,7 @@ function set_bauschleife_deff_abbruch($spieler_id, $planet_id, $schleife_id) {
 
 	if (!empty($row)) {
 
-		$Deff = get_def($row->Typ);
+		$Deff = get_deff($row->Typ);
 		$anzahl = $row->Anzahl;
 
 		$eisen_ruck = ($Deff["Kosten_Eisen"] * $anzahl) / 3 * 2;
@@ -1773,7 +1773,7 @@ function get_Deff_stationiert($spieler_id, $planet_id) {
 
 	for($i = 1; $i <= 6; $i++) {
 
-		$row_deff = get_def($i);
+		$row_deff = get_deff($i);
 
 		$tabelle = "Deff_Typ_".$i;
 

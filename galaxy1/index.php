@@ -163,18 +163,17 @@ switch ($select) {
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 <meta name="viewport" content="width=device-width, initial-scale=1">
-    <?php if($cache == false) { ?>
-    <meta http-equiv="Pragma" content="no-cache">
+<?php if($cache == false) { ?>
+	<meta http-equiv="Pragma" content="no-cache">
 	<meta http-equiv="Cache-Control" content="no-cache">
 	<meta http-equiv="Expires" content="-1">
-	<?php } ?>
-	<link rel="icon" type="image/png" href="../favicon-32x32.png" sizes="32x32" />
-	<link rel="icon" type="image/png" href="../favicon-16x16.png" sizes="16x16" />
-    <link rel="stylesheet" href="../css/galaxy.css">    
-    <title>spacefights</title>
-    </head>
-     
-
+<?php } ?>
+<link rel="icon" type="image/png" href="../favicon-32x32.png" sizes="32x32" />
+<link rel="icon" type="image/png" href="../favicon-16x16.png" sizes="16x16" />
+<link rel="stylesheet" href="../css/galaxy.css">    
+<script language="javascript" type="text/javascript" src="inc/index.js"></script>
+<title>spacefights</title>
+</head>
 <body>
 <?php
 
@@ -529,31 +528,33 @@ switch ($select) {
 
 	if(isset($_POST["action-deff-bauen"])) {
 	
-		if (is_numeric($_POST["action-deff-bauen"])) {
+		
+
 	
-	
-			$kann_gebaut_werden = true;
-	
+		$ressource = get_ressource($spieler_id, $planet_id);
+		$waffenfabrik_stufe = get_gebäude_aktuelle_stufe($spieler_id, $planet_id, 8);
+
+		for ($i = 1; $i <= $deffCount; $i++) {
+		
+			if (isset($_POST["vanzahl" . $i])) {
 			
-				$ship_id = $_POST["action-deff-bauen"];
-				$ressource = get_ressource($spieler_id, $planet_id);
-				$Deff = get_def($_POST["action-deff-bauen"]);
-				$waffenfabrik_stufe = get_gebäude_aktuelle_stufe($spieler_id, $planet_id, 8);
-				$anzahl = usereingabe_cleaner ($_POST["vanzahl" . $_POST["action-deff-bauen"]]);
-				
+				$kann_gebaut_werden = true;
+				$Deff = get_deff($i); 
+				$ship_id = $i;
+				$anzahl = usereingabe_cleaner ($_POST["vanzahl" . $i]);
+			
 				if($anzahl <= 0 OR empty($anzahl) OR !is_numeric($anzahl)) { $kann_gebaut_werden = false; }
 	
 				$deff_in_Besitz = get_deff_in_Besitz($spieler_id, $planet_id, $Deff["Schiff_ID"]);
-				
+	
 				$tech_stufe = get_tech_stufe_spieler($spieler_id);
 				
-				for($t = 1; $t <= 12; $t++) {
+				for($t = 1; $t <= $techCount; $t++) {
 					if ($tech_stufe["Tech_" . $t] < $Deff["Tech_" . $t]) {
 						$kann_gebaut_werden = false;
 					}
 				}
-				
-				
+								
 				$max = false;
 					
 				if($Deff["Max_Hold_Planet"] != -1) {				
@@ -573,16 +574,12 @@ switch ($select) {
 				if($ressource["Bot"] < ($Deff["Bots"] * $anzahl)) { $kann_gebaut_werden = false; }
 				
 				if ($kann_gebaut_werden == true) {
-					
 					$bauzeit = $Deff["Bauzeit"];
 					set_bauschleife_deff($spieler_id, $planet_id, $ship_id, $Deff["Name"], $anzahl, $bauzeit, $ressource["Eisen"], $ressource["Silizium"], $ressource["Wasser"], $ressource["Bot"], $ressource["Karma"], $Deff["Kosten_Eisen"], $Deff["Kosten_Silizium"], $Deff["Kosten_Wasser"], $Deff["Bots"], $Deff["Kosten_Karma"]);					
-						
 				} else {
-	
 					echo("$kann_gebaut_werden"); //ToDo: Fehlermeldung einbauen
-	
 				}
-			
+			}
 		}
 	}
 	
@@ -610,140 +607,6 @@ switch ($select) {
 // ENDE: Flotte Abbrechen wenn gewünscht
 ?>
 
-<script type="text/javascript"><!--
-var ts = new Date();
-
-function displayNone(name, par) {
-	/* Hide & Show by ES 22.06.2016 */
-	var elemente = document.getElementsByName(name);
-	for(var i=0; i<elemente.length; i++) {
-		elemente[i].style.display=par;
-		
-	}
-}	
-
-
-function details(name) {
-	var eButton = document.getElementsByName(name+"Button");
-
-	if (eButton[0].className=="detailsGeschlossen") {
-		displayNone(name,"");
-	}
-	else {	
-		window.setTimeout("displayNone('"+name+"','none')",300);
-	}
-	
-	setTimeout("detailsT2('"+name+"')",10);
-	
-
-}
-	
-function detailsT2(name) {
-	var elemente = document.getElementsByName(name);
-	var eButton = document.getElementsByName(name+"Button");
-	
-	if (eButton[0].className=="detailsGeschlossen") {
-		eButton[0].className="detailsOffen";
-		eButton[0].innerHTML = "▼";
-	} else {
-		eButton[0].className="detailsGeschlossen";
-		eButton[0].innerHTML = "▶";
-	}
-
-	for(var i=0; i<elemente.length; i++) {
-		if (elemente[i].className=="detailsAusgeblendet") {
-			elemente[i].className="detailsEingeblendet";
-		} else {
-			elemente[i].className="detailsAusgeblendet";	
-		}
-	}
-}
-
-function mPBarGlow(){
-	/* Progressbar by ES 12.06.2016 */
-	var elemente = document.getElementsByClassName("pBar");
-	var weiterGluehen = true;
-	var daGluehtNochWas=false;
-
-for(var i=0; i<elemente.length; i++) {
-		if (elemente[i].classList.contains("pBar") && elemente[i].title != "-") {
-			elemente[i].classList.toggle("pBarG");
-			daGluehtNochWas=true;
-		} else {
-			elemente[i].classList.remove("pBarG");
-		}
-		if (elemente[i].title == "-" && !daGluehtNochWas) {weiterGluehen=false;}else{weiterGluehen=true;};
-	}
-	if (weiterGluehen) {window.setTimeout("mPBarGlow()",3000);}
-}
-
-mPBarGlow();
-
-function mPBar(soll, ist, maxWidth, name){
-	/* Progressbar by ES 12.06.2016 */
-	var e = document.getElementById(name);
-	var w = 0;
-	w = ist/ soll * maxWidth;
-	e.style.width = w + "%";
-	if (soll==ist) {e.title="-";}
-}
-
-function countdown_progress(sec, name, start, ende, beschriftung,maxWidth,ohnePBar){
-
-	if (maxWidth == undefined) {maxWidth = 100;}
-	if (ohnePBar == undefined) {ohnePBar = false;}
-	
-	var e = document.getElementById(name);
-	var tn = new Date();
-	var tl = ((sec*1000)-(tn.getTime()-ts.getTime()))/1000;
-
-	if (tl>0.5){	
-		if (!ohnePBar){mPBar(ende, (ende - tl),maxWidth,"mPBar_"+name);}
-		var t = parseInt(tl/(24*60*60));
-		tl = tl-(t*(24*60*60));		
-		var h = parseInt(tl/(60*60));
-		tl = tl-(h*(60*60));
-		var m = parseInt(tl/(60));
-		tl = tl-(m*(60));
-		var s = parseInt(tl);
-		if (h<10) h="0"+h;
-		if (m<10) m="0"+m;
-		if (s<10) s="0"+s;
-		if (t == 0) { var tstr = h+":"+m+":"+s; } else { var tstr = t ; if (t==1) { tstr+= " Tag "; } else {tstr +=" Tage ";} tstr += h+":"+m+":"+s; }		
-		e.innerHTML = tstr;
-		window.setTimeout("countdown_progress("+sec+",'"+name+"',"+start+","+ende+",'"+beschriftung+"',"+maxWidth+","+ohnePBar+")",500);
-	} else{
-		e.innerHTML = "<a href='index.php?s=<?php echo $select; ?>'>" + beschriftung + "</a>";
-		if (!ohnePBar){mPBar(100,100,maxWidth,"mPBar_"+name)};
-	}
-}
-
-function countdown(sec, name){
-	var e = document.getElementById(name);
-	var tn = new Date();
-	var tl = ((sec*1000)-(tn.getTime()-ts.getTime()))/1000;
-
-	if (tl>1){				
-		var t = parseInt(tl/(24*60*60));
-		tl = tl-(t*(24*60*60));		
-		var h = parseInt(tl/(60*60));
-		tl = tl-(h*(60*60));
-		var m = parseInt(tl/(60));
-		tl = tl-(m*(60));
-		var s = parseInt(tl);
-		if (h<10) h="0"+h;
-		if (m<10) m="0"+m;
-		if (s<10) s="0"+s;
-		if (t == 0) { var tstr = h+":"+m+":"+s; } else { var tstr = t ; if (t==1) { tstr+= " Tag "; } else {tstr +=" Tage ";} tstr += h+":"+m+":"+s; }		
-		e.innerHTML = tstr;
-		window.setTimeout("countdown("+sec+",'"+name+"')",500);
-	} else{
-		e.innerHTML = "<a href='index.php?s=<?php echo $select; ?>'>" + "abgelaufen" + "</a>";			
-	}
-}
-
-
-// --></script>
 
 <?php 
 

@@ -1,5 +1,7 @@
 <?php
 
+$techCount=12; 		//Anzahl TechTypen
+
 function get_config_tech($id, $var_spieler_stufe) {
 	
 	$Tech["Beschreibung"] = "/lost_id/";
