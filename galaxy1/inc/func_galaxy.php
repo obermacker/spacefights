@@ -123,7 +123,7 @@ function get_gebäude_aktuelle_stufe($spieler_id, $planet_id, $gebäude_id) {
 	$abfrage = "SELECT `Stufe_Gebaeude_1`, `Stufe_Gebaeude_2`, `Stufe_Gebaeude_3`, `Stufe_Gebaeude_4`, `Stufe_Gebaeude_5`, `Stufe_Gebaeude_6`, `Stufe_Gebaeude_7`, `Stufe_Gebaeude_8`, `Stufe_Gebaeude_9`, `Stufe_Gebaeude_10`, `Stufe_Gebaeude_11` FROM `planet` WHERE `Spieler_ID` = '$spieler_id' AND `Planet_ID` = '$planet_id'";
 	
 	$query = $abfrage or die("Error in the consult.." . mysqli_error("Error: get_gebäude_nächste_stufe #1 ".$link));
-	$result = mysqli_query($link, $query);
+	$result = mysqli_query($link, $query) or die("Error in the consult.." . mysqli_error($link));
 	
 	$row_aktuelle_Stufe = mysqli_fetch_object($result);
 	
@@ -210,7 +210,7 @@ function get_letzte_bauschleife_ship($spieler_id, $planet_id) {
 
 	$abfrage = "SELECT `Bauzeit_Bis` FROM `bauschleifeflotte` WHERE `Spieler_ID` = '$spieler_id' AND `Planet_ID` = '$planet_id' ORDER BY Bauzeit_Bis DESC";	
 	$query = $abfrage or die("Error in the consult.." . mysqli_error("Error: get_letzte_bauschleife_ship #1 ".$link));
-	$result = mysqli_query($link, $query);
+	$result = mysqli_query($link, $query) or die("Error in the consult.." . mysqli_error($link));
 	
 	$row = mysqli_fetch_object($result);
 	
@@ -233,7 +233,7 @@ function get_letzte_bauschleife_deff($spieler_id, $planet_id) {
 
 	$abfrage = "SELECT `Bauzeit_Bis` FROM `bauschleifedeff` WHERE `Spieler_ID` = '$spieler_id' AND `Planet_ID` = '$planet_id' ORDER BY Bauzeit_Bis DESC";
 	$query = $abfrage or die("Error in the consult.." . mysqli_error("Error: get_letzte_bauschleife_ship #1 ".$link));
-	$result = mysqli_query($link, $query);
+	$result = mysqli_query($link, $query) or die("Error in the consult.." . mysqli_error($link));
 
 	$row = mysqli_fetch_object($result);
 
@@ -545,7 +545,7 @@ function set_bauschleife_ship_fertig($spieler_id, $planet_id) {
 	$abfrage = "SELECT `ID`, `Typ`, `Spieler_ID`, `Planet_ID`, `Name`, `Anzahl`, `Bauzeit_Von`, `Bauzeit_Einzel`, `Bauzeit_Bis` FROM `bauschleifeflotte`  WHERE `Bauzeit_Bis` <= " . time() . " AND `Spieler_ID` = '$spieler_id' AND `Planet_ID` = $planet_id";
 	
 	$query = $abfrage or die("Error in the consult.." . mysqli_error("Error in set_bauschleife_ship_fertig ".$link));
-	$result_bauschleifeflotte = mysqli_query($link, $query);
+	$result_bauschleifeflotte = mysqli_query($link, $query) or die("Error in the consult.." . mysqli_error($link));
 		
 	while($row = mysqli_fetch_object($result_bauschleifeflotte)) {
 		
@@ -554,7 +554,7 @@ function set_bauschleife_ship_fertig($spieler_id, $planet_id) {
 		$tabelle = "Schiff_Typ_" . $row->Typ;
 		$abfrage_planet = "SELECT `$tabelle`, `Stationiert_Bot` FROM `planet` WHERE `Spieler_ID` = '$spieler_id' AND `Planet_ID` = $planet_id";
 			$query = $abfrage_planet  or die("Error in the consult.." . mysqli_error("Error in set_bauschleife_ship_fertig ".$link));
-			$result = mysqli_query($link, $query);
+			$result = mysqli_query($link, $query) or die("Error in the consult.." . mysqli_error($link));
 			$row_planet = mysqli_fetch_object($result);
 			$schiffe_ist = $row_planet->$tabelle;
 		
@@ -607,7 +607,7 @@ function set_bauschleife_ship_fertig($spieler_id, $planet_id) {
 	$abfrage = "SELECT `ID`, `Typ`, `Spieler_ID`, `Planet_ID`, `Name`, `Anzahl`, `Bauzeit_Von`, `Bauzeit_Einzel`, `Bauzeit_Bis` FROM `bauschleifeflotte`  WHERE `Bauzeit_Von` < " . time() . " AND `Bauzeit_Bis` >= " . time() . " AND `Spieler_ID` = '$spieler_id' AND `Planet_ID` = $planet_id";
 
 	$query = $abfrage or die("Error in the consult.." . mysqli_error("Error in set_bauschleife_ship_fertig ".$link));
-	$result_bauschleifeflotte = mysqli_query($link, $query);
+	$result_bauschleifeflotte = mysqli_query($link, $query) or die("Error in the consult.." . mysqli_error($link));
 	
 	while($row = mysqli_fetch_object($result_bauschleifeflotte)) {
 
@@ -617,7 +617,7 @@ function set_bauschleife_ship_fertig($spieler_id, $planet_id) {
 		$Ship = get_ship($row->Typ);
 		$abfrage_planet = "SELECT `$tabelle`, `Stationiert_Bot` FROM `planet` WHERE `Spieler_ID` = '$spieler_id' AND `Planet_ID` = $planet_id";
 		$query = $abfrage_planet  or die("Error in the consult.." . mysqli_error("Error in set_bauschleife_ship_fertig ".$link));
-		$result = mysqli_query($link, $query);
+		$result = mysqli_query($link, $query) or die("Error in the consult.." . mysqli_error($link));
 		$row_planet = mysqli_fetch_object($result);
 		$schiffe_ist = $row_planet->$tabelle;
 			
@@ -697,7 +697,7 @@ function set_bauschleife_deff_fertig($spieler_id, $planet_id) {
 	$abfrage = "SELECT `ID`, `Typ`, `Spieler_ID`, `Planet_ID`, `Name`, `Anzahl`, `Bauzeit_Von`, `Bauzeit_Einzel`, `Bauzeit_Bis` FROM `bauschleifedeff`  WHERE `Bauzeit_Bis` <= " . time() . " AND `Spieler_ID` = '$spieler_id' AND `Planet_ID` = $planet_id";
 
 	$query = $abfrage or die("Error in the consult.." . mysqli_error("Error in set_bauschleife_Deff_fertig ".$link));
-	$result = mysqli_query($link, $query);
+	$result = mysqli_query($link, $query) or die("Error in the consult.." . mysqli_error($link));
 
 	while($row = mysqli_fetch_object($result)) {
 
@@ -706,7 +706,7 @@ function set_bauschleife_deff_fertig($spieler_id, $planet_id) {
 		$tabelle = "Deff_Typ_" . $row->Typ;
 		$abfrage_planet = "SELECT `$tabelle` FROM `planet` WHERE `Spieler_ID` = '$spieler_id' AND `Planet_ID` = $planet_id";
 		$query = $abfrage_planet  or die("Error in the consult.." . mysqli_error("Error in set_bauschleife_Deff_fertig ".$link));
-		$result = mysqli_query($link, $query);
+		$result = mysqli_query($link, $query) or die("Error in the consult.." . mysqli_error($link));
 		$row_planet = mysqli_fetch_object($result);
 		$deff_ist = $row_planet->$tabelle;
 
@@ -757,7 +757,7 @@ function set_bauschleife_deff_fertig($spieler_id, $planet_id) {
 	$abfrage = "SELECT `ID`, `Typ`, `Spieler_ID`, `Planet_ID`, `Name`, `Anzahl`, `Bauzeit_Von`, `Bauzeit_Einzel`, `Bauzeit_Bis` FROM `bauschleifedeff`  WHERE `Bauzeit_Von` < " . time() . " AND `Bauzeit_Bis` >= " . time() . " AND `Spieler_ID` = '$spieler_id' AND `Planet_ID` = $planet_id";
 
 	$query = $abfrage or die("Error in the consult.." . mysqli_error("Error in set_bauschleife_Deff_fertig ".$link));
-	$result = mysqli_query($link, $query);
+	$result = mysqli_query($link, $query) or die("Error in the consult.." . mysqli_error($link));
 
 	while($row = mysqli_fetch_object($result)) {
 
@@ -767,7 +767,7 @@ function set_bauschleife_deff_fertig($spieler_id, $planet_id) {
 		$Deff = get_deff($row->Typ);
 		$abfrage_planet = "SELECT `$tabelle` FROM `planet` WHERE `Spieler_ID` = '$spieler_id' AND `Planet_ID` = $planet_id";
 		$query = $abfrage_planet  or die("Error in the consult.." . mysqli_error("Error in set_bauschleife_Deff_fertig ".$link));
-		$result = mysqli_query($link, $query);
+		$result = mysqli_query($link, $query) or die("Error in the consult.." . mysqli_error($link));
 		$row_planet = mysqli_fetch_object($result);
 		$deff_ist = $row_planet->$tabelle;
 
@@ -837,7 +837,7 @@ function get_punkte($spieler_id) {
 	$abfrage = "SELECT `punkte_structur`, `punkte_flotte`, `punkte_forschung` FROM `spieler`  WHERE `Spieler_ID` = '$spieler_id'";
 	
 	$query = $abfrage or die("Error in the consult.." . mysqli_error("Error in  ".$link));
-	$result = mysqli_query($link, $query);
+	$result = mysqli_query($link, $query) or die("Error in the consult.." . mysqli_error($link));
 	$row = mysqli_fetch_object($result);
 	
 	$punkte = array();
@@ -1033,7 +1033,7 @@ function set_bauschleife_ship_abbruch($spieler_id, $planet_id, $schleife_id) {
 	$abfrage  = "SELECT `ID`, `Typ`, `Anzahl`, `Bauzeit_Von` FROM `bauschleifeflotte` WHERE `Spieler_ID` = '$spieler_id' AND `Planet_ID` = $planet_id AND ID = $schleife_id";
 	$query = $abfrage or die("Error in the consult.." . mysqli_error("Error: set_bauschleife_ship_abbruch #1 ".$link));
 	
-	$result = mysqli_query($link, $query);
+	$result = mysqli_query($link, $query) or die("Error in the consult.." . mysqli_error($link));
 	$row = mysqli_fetch_object($result);
 		
 		if (!empty($row)) {
@@ -1083,7 +1083,7 @@ function set_bauschleife_ship_abbruch($spieler_id, $planet_id, $schleife_id) {
 				$abfrage  = "SELECT `ID`, `Bauzeit_Von`, `Bauzeit_Bis` FROM `bauschleifeflotte` WHERE `Spieler_ID` = '$spieler_id' AND `Planet_ID` = $planet_id AND Bauzeit_Von > " . time();
 				$query = $abfrage or die("Error in the consult.." . mysqli_error("Error: set_bauschleife_struckture #1 ".$link));
 				
-				$result = mysqli_query($link, $query);
+				$result = mysqli_query($link, $query) or die("Error in the consult.." . mysqli_error($link));
 				
 				if (!empty($result)) {
 					
@@ -1161,7 +1161,7 @@ function set_bauschleife_deff_abbruch($spieler_id, $planet_id, $schleife_id) {
 	$abfrage  = "SELECT `ID`, `Typ`, `Anzahl`, `Bauzeit_Von` FROM `bauschleifedeff` WHERE `Spieler_ID` = '$spieler_id' AND `Planet_ID` = $planet_id AND ID = $schleife_id";
 	$query = $abfrage or die("Error in the consult.." . mysqli_error("Error: set_bauschleife_ship_abbruch #1 ".$link));
 
-	$result = mysqli_query($link, $query);
+	$result = mysqli_query($link, $query) or die("Error in the consult.." . mysqli_error($link));
 	$row = mysqli_fetch_object($result);
 
 	if (!empty($row)) {
@@ -1211,7 +1211,7 @@ function set_bauschleife_deff_abbruch($spieler_id, $planet_id, $schleife_id) {
 				$abfrage  = "SELECT `ID`, `Bauzeit_Von`, `Bauzeit_Bis` FROM `bauschleifedeff` WHERE `Spieler_ID` = '$spieler_id' AND `Planet_ID` = $planet_id AND Bauzeit_Von > " . time();
 				$query = $abfrage or die("Error in the consult.." . mysqli_error("Error: set_bauschleife_struckture #1 ".$link));
 
-				$result = mysqli_query($link, $query);
+				$result = mysqli_query($link, $query) or die("Error in the consult.." . mysqli_error($link));
 
 				if (!empty($result)) {
 						
@@ -1290,8 +1290,8 @@ function check_bauschleife_activ($spieler_id, $planet_id, $zweig) {
 		case "Structure":
 				$abfrage = "SELECT `Bauschleife_Gebaeude_ID`, `Bauschleife_Gebaeude_Bis`, `Bauschleife_Gebaeude_Start` FROM `planet` WHERE `Spieler_ID` = '$spieler_id' AND `Planet_ID` = $planet_id";
 				
-				$query = $abfrage or die("Error in the consult.." . mysqli_error("Error: check_bauschleife_activ #1 ".$link));
-				$result = mysqli_query($link, $query);
+				$query = $abfrage;
+				$result = mysqli_query($link, $query) or die("Error in the consult.." . mysqli_error($link));
 				
 				$row = mysqli_fetch_object($result);
 				
@@ -1305,8 +1305,8 @@ function check_bauschleife_activ($spieler_id, $planet_id, $zweig) {
 		case "Tech":
 				$abfrage = "SELECT `Tech_Schleife_ID`, `Tech_Schleife_Bauzeit_Bis` , `Tech_Schleife_Bauzeit_Start`  FROM `spieler` WHERE `Spieler_ID` = '$spieler_id'";
 				
-				$query = $abfrage or die("Error in the consult.." . mysqli_error("Error: check_bauschleife_activ #1 ".$link));
-				$result = mysqli_query($link, $query);
+				$query = $abfrage;
+				$result = mysqli_query($link, $query) or die("Error in the consult.." . mysqli_error($link));
 				
 				$row = mysqli_fetch_object($result);
 				
@@ -1320,8 +1320,8 @@ function check_bauschleife_activ($spieler_id, $planet_id, $zweig) {
 		case "Ship":
 				$abfrage = "SELECT `ID`, `Bauzeit_Von`, `Bauzeit_Bis` FROM `bauschleifeflotte` WHERE `Bauzeit_Von` < " . time() . " AND `Spieler_ID` = '$spieler_id' AND `Planet_ID` = $planet_id";
 				
-				$query = $abfrage or die("Error in the consult.." . mysqli_error("Error: check_bauschleife_activ #1 ".$link));
-				$result = mysqli_query($link, $query);
+				$query = $abfrage;
+				$result = mysqli_query($link, $query) or die("Error in the consult.." . mysqli_error($link));
 				
 				$row = mysqli_fetch_object($result);
 				if(!empty($row)) {
@@ -1337,8 +1337,8 @@ function check_bauschleife_activ($spieler_id, $planet_id, $zweig) {
 		case "Deff":
 				$abfrage = "SELECT `ID`, `Bauzeit_Von`, `Bauzeit_Bis` FROM `bauschleifedeff` WHERE `Bauzeit_Von` < " . time() . " AND `Spieler_ID` = '$spieler_id' AND `Planet_ID` = $planet_id";
 				
-				$query = $abfrage or die("Error in the consult.." . mysqli_error("Error: check_bauschleife_activ #1 ".$link));
-				$result = mysqli_query($link, $query);
+				$query = $abfrage;
+				$result = mysqli_query($link, $query) or die("Error in the consult.." . mysqli_error($link));
 				
 				$row = mysqli_fetch_object($result);
 				if(!empty($row)) {
@@ -1363,7 +1363,7 @@ function get_gebäude_nächste_stufe($spieler_id, $planet_id, $gebäude_id, $spe
 	$abfrage = "SELECT `Stufe_Gebaeude_1`, `Stufe_Gebaeude_2`, `Stufe_Gebaeude_3`, `Stufe_Gebaeude_4`, `Stufe_Gebaeude_5`, `Stufe_Gebaeude_6`, `Stufe_Gebaeude_7`, `Stufe_Gebaeude_8`, `Stufe_Gebaeude_9`, `Stufe_Gebaeude_10`, `Stufe_Gebaeude_11` FROM `planet` WHERE `Spieler_ID` = '$spieler_id' AND `Planet_ID` = '$planet_id'";
 	
 		$query = $abfrage or die("Error in the consult.." . mysqli_error("Error: get_gebäude_nächste_stufe #1 ".$link));
-		$result = mysqli_query($link, $query);
+		$result = mysqli_query($link, $query) or die("Error in the consult.." . mysqli_error($link));
 		
 		$row_aktuelle_Stufe = mysqli_fetch_object($result);
 	
@@ -1453,7 +1453,7 @@ function get_tech_stufe_spieler($spieler_id) {
 	$abfrage = "SELECT `Tech_1`, `Tech_2`, `Tech_3`, `Tech_4`, `Tech_5`, `Tech_6`, `Tech_7`, `Tech_8`, `Tech_9`, `Tech_10`, `Tech_11`, `Tech_12`, `Tech_Schleife_ID` FROM `spieler` WHERE `Spieler_ID` = '$spieler_id'";
 	
 	$query = $abfrage or die("Error in the consult.." . mysqli_error("Error: get_tech_nächste_stufe #1 ".$link));
-	$result = mysqli_query($link, $query);
+	$result = mysqli_query($link, $query) or die("Error in the consult.." . mysqli_error($link));
 	
 	$row_aktuelle_Stufe_Tech = mysqli_fetch_array($result);
 	
@@ -1480,7 +1480,7 @@ function get_tech_nächste_stufe($spieler_id, $planet_id, $tech_id, $speed_mod) 
 	$abfrage = "SELECT `Tech_1`, `Tech_2`, `Tech_3`, `Tech_4`, `Tech_5`, `Tech_6`, `Tech_7`, `Tech_8`, `Tech_9`, `Tech_10`, `Tech_11`, `Tech_12`, `Tech_Schleife_ID` FROM `spieler` WHERE `Spieler_ID` = '$spieler_id'";
 
 		$query = $abfrage or die("Error in the consult.." . mysqli_error("Error: get_tech_nächste_stufe #1 ".$link));
-		$result = mysqli_query($link, $query);
+		$result = mysqli_query($link, $query) or die("Error in the consult.." . mysqli_error($link));
 
 		$row_aktuelle_Stufe_Tech = mysqli_fetch_array($result);
 		
@@ -1558,7 +1558,7 @@ function set_last_planet($spieler_id, $planet_id) {
 	
 	$abfrage = "SELECT `Planet_ID` FROM `planet` WHERE `Spieler_ID` = '$spieler_id' AND `Planet_ID` = $planet_id";	
 	$query = $abfrage or die("Error in the consult.." . mysqli_error("Error: #0003 ".$link));
-	$result = mysqli_query($link, $query);
+	$result = mysqli_query($link, $query) or die("Error in the consult.." . mysqli_error($link));
 	
 	$row_cnt = $result->num_rows;
 	if($row_cnt > 0) {
@@ -1578,7 +1578,7 @@ function get_list_of_all_planets($spieler_id, $planet_id, $vorauswahl = true) {
 	$abfrage = "SELECT `Planet_Name`, `Planet_ID`, `x`, `y`,`z` FROM `planet` WHERE `Spieler_ID` = '$spieler_id'";
 	
 	$query = $abfrage or die("Error in the consult.." . mysqli_error("Error: #0003 ".$link));
-	$result = mysqli_query($link, $query);
+	$result = mysqli_query($link, $query) or die("Error in the consult.." . mysqli_error($link));
 	$ausgabe ="";
 	
 	while($row = mysqli_fetch_object($result)) {  
@@ -1597,7 +1597,7 @@ function get_list_of_all_planets_new($spieler_id, $planet_id, $vorauswahl = true
 	$abfrage = "SELECT `Planet_Name`, `Planet_ID`, `x`, `y`, `z` FROM `planet` WHERE `Spieler_ID` = '$spieler_id'";
 
 	$query = $abfrage or die("Error in the consult.." . mysqli_error("Error: #0003 ".$link));
-	$result = mysqli_query($link, $query);
+	$result = mysqli_query($link, $query) or die("Error in the consult.." . mysqli_error($link));
 	
 	$ausgabe = array();
 
@@ -1626,7 +1626,7 @@ function get_koordinaten_planet($spieler_id, $planet_id) {
 	$abfrage = "SELECT `x`, `y`, `z`, `Planet_Name` FROM `planet` WHERE `Spieler_ID` = '$spieler_id' AND `Planet_ID` = $planet_id";
 	
 	$query = $abfrage or die("Error in the consult.." . mysqli_error("Error: #0003 ".$link));
-	$result = mysqli_query($link, $query);
+	$result = mysqli_query($link, $query) or die("Error in the consult.." . mysqli_error($link));
 	
 	$row = mysqli_fetch_object($result);
 	
@@ -1646,7 +1646,7 @@ function get_Ressbunker_Inhalt($spieler_id, $planet_id) {
 	$abfrage = "SELECT 	`Bunker_Kapa`, `Bunker_Eisen`, `Bunker_Silizium`, `Bunker_Wasser` FROM `planet` WHERE `Spieler_ID` = '$spieler_id' AND `Planet_ID` = $planet_id";
 	
 	$query = $abfrage or die("Error in the consult.." . mysqli_error("Error: get_Ressbunker_Inhalt #1 ".$link));
-	$result = mysqli_query($link, $query);
+	$result = mysqli_query($link, $query) or die("Error in the consult.." . mysqli_error($link));
 	
 	$row = mysqli_fetch_object($result);
 	
@@ -1694,7 +1694,7 @@ function get_Handelsposten_Inhalt($spieler_id, $planet_id) {
 	$abfrage = "SELECT 	`Handel_Kapa`, `Handel_Eisen`, `Handel_Silizium`, `Handel_Wasser` FROM `planet` WHERE `Spieler_ID` = '$spieler_id' AND `Planet_ID` = $planet_id";
 
 	$query = $abfrage or die("Error in the consult.." . mysqli_error("Error: get_Ressbunker_Inhalt #1 ".$link));
-	$result = mysqli_query($link, $query);
+	$result = mysqli_query($link, $query) or die("Error in the consult.." . mysqli_error($link));
 
 	$row = mysqli_fetch_object($result);
 
@@ -1720,7 +1720,7 @@ function get_Schiffe_stationiert($spieler_id, $planet_id) {
 	$abfrage = "SELECT `Schiff_Typ_1`, `Schiff_Typ_2`, `Schiff_Typ_3`, `Schiff_Typ_4`, `Schiff_Typ_5`, `Schiff_Typ_6`, `Schiff_Typ_7`, `Schiff_Typ_8`, `Schiff_Typ_9`, `Schiff_Typ_10`, `Schiff_Typ_11` FROM `planet` WHERE `Spieler_ID` = '$spieler_id' AND `Planet_ID` = $planet_id";
 	
 	$query = $abfrage or die("Error in the consult.." . mysqli_error("Error: get_Schiffe_stationiert #1 ".$link));
-	$result = mysqli_query($link, $query);
+	$result = mysqli_query($link, $query) or die("Error in the consult.." . mysqli_error($link));
 	
 
 	$row = mysqli_fetch_object($result);
@@ -1766,7 +1766,7 @@ function get_Deff_stationiert($spieler_id, $planet_id) {
 	$abfrage = "SELECT `Deff_Typ_1`, `Deff_Typ_2`, `Deff_Typ_3`, `Deff_Typ_4`, `Deff_Typ_5`, `Deff_Typ_6` FROM `planet` WHERE `Spieler_ID` = '$spieler_id' AND `Planet_ID` = $planet_id";
 
 	$query = $abfrage or die("Error in the consult.." . mysqli_error("Error: get_Schiffe_stationiert #1 ".$link));
-	$result = mysqli_query($link, $query);
+	$result = mysqli_query($link, $query) or die("Error in the consult.." . mysqli_error($link));
 
 
 	$row = mysqli_fetch_object($result);
@@ -1811,7 +1811,7 @@ function get_activity_planet_spieler_schiffe($spieler_id, $planet_id) {
 	$abfrage = "SELECT `Bauschleife_Gebaeude_Name`, `Bauschleife_Gebaeude_Bis`, `Bauschleife_Flotte_ID` FROM `planet` WHERE `Spieler_ID` = '$spieler_id' AND `Planet_ID` = $planet_id";
 	
 	$query = $abfrage or die("Error in the consult.." . mysqli_error("Error: #0010a ".$link));
-	$result = mysqli_query($link, $query);
+	$result = mysqli_query($link, $query) or die("Error in the consult.." . mysqli_error($link));
 	
 	$row = mysqli_fetch_object($result);
 	
@@ -1824,7 +1824,7 @@ function get_activity_planet_spieler_schiffe($spieler_id, $planet_id) {
 	$abfrage = "SELECT `Tech_Schleife_Name`, `Tech_Schleife_Bauzeit_Bis` , `Tech_Schleife_Bauzeit_Start`  FROM `spieler` WHERE `Spieler_ID` = '$spieler_id'";
 	
 	$query = $abfrage or die("Error in the consult.." . mysqli_error("Error: #0010b ".$link));
-	$result = mysqli_query($link, $query);
+	$result = mysqli_query($link, $query) or die("Error in the consult.." . mysqli_error($link));
 	
 	$row = mysqli_fetch_object($result);
 	
@@ -1845,7 +1845,7 @@ function get_activity_schiffe_Liste($spieler_id, $planet_id) {
 	$abfrage = "SELECT `ID`, `Name`, `Anzahl`, `Bauzeit_Bis` FROM `bauschleifeflotte` WHERE `Spieler_ID` = '$spieler_id' AND `Planet_ID` = $planet_id";
 
 	$query = $abfrage or die("Error in the consult.." . mysqli_error("Error: #0010c ".$link));
-	$result = mysqli_query($link, $query);
+	$result = mysqli_query($link, $query) or die("Error in the consult.." . mysqli_error($link));
 
 	
 	
@@ -1877,7 +1877,7 @@ function get_activity_schiffe_einzel($spieler_id, $planet_id) {
 	$abfrage = "SELECT `Bauzeit_Von`, `Bauzeit_Einzel`, `Name` FROM `bauschleifeflotte` WHERE `Spieler_ID` = '$spieler_id' AND `Planet_ID` = $planet_id LIMIT 1";
 
 	$query = $abfrage or die("Error in the consult.." . mysqli_error("Error: #0010c ".$link));
-	$result = mysqli_query($link, $query);
+	$result = mysqli_query($link, $query) or die("Error in the consult.." . mysqli_error($link));
 	
 	if($row = mysqli_fetch_object($result)) {
 
@@ -1903,7 +1903,7 @@ function get_activity_deff_einzel($spieler_id, $planet_id) {
 	$abfrage = "SELECT `Bauzeit_Von`, `Bauzeit_Einzel`, `Name` FROM `bauschleifedeff` WHERE `Spieler_ID` = '$spieler_id' AND `Planet_ID` = $planet_id LIMIT 1";
 
 	$query = $abfrage or die("Error in the consult.." . mysqli_error("Error: #0010c ".$link));
-	$result = mysqli_query($link, $query);
+	$result = mysqli_query($link, $query) or die("Error in the consult.." . mysqli_error($link));
 
 	if($row = mysqli_fetch_object($result)) {
 
@@ -1929,7 +1929,7 @@ function get_activity_deff_Liste($spieler_id, $planet_id) {
 	$abfrage = "SELECT `ID`, `Name`, `Anzahl`, `Bauzeit_Bis` FROM `bauschleifedeff` WHERE `Spieler_ID` = '$spieler_id' AND `Planet_ID` = $planet_id";
 
 	$query = $abfrage or die("Error in the consult.." . mysqli_error("Error: #0010c ".$link));
-	$result = mysqli_query($link, $query);
+	$result = mysqli_query($link, $query) or die("Error in the consult.." . mysqli_error($link));
 
 
 
@@ -1957,7 +1957,7 @@ function get_ressource($spieler_id, $planet_id) {
 	$abfrage = "SELECT `Ressource_Eisen`, `Ressource_Silizium`, `Ressource_Wasser`, `Ressource_Bot`, `Stationiert_Bot`, `Ressource_Energie`, `Ressource_Karma` FROM `planet` WHERE `Spieler_ID` = '$spieler_id' AND `Planet_ID` = $planet_id";
 	
 	$query = $abfrage or die("Error in the consult.." . mysqli_error("Error: #0003 ".$link));
-	$result = mysqli_query($link, $query);
+	$result = mysqli_query($link, $query) or die("Error in the consult.." . mysqli_error($link));
 	
 	$row = mysqli_fetch_object($result);
 	
@@ -2009,7 +2009,7 @@ function refresh_ressource($spieler_id, $planet_id, $zeitpunkt) {
 		$sql = "UPDATE `planet` SET `Ressource_Eisen`= $produktion_eisen , `Ressource_Silizium`= $produktion_silizium, `Ressource_Wasser`= $produktion_wasser, `Produktion_Zeit`= $zeitpunkt WHERE `Spieler_ID` = '$spieler_id' AND `Planet_ID` = $planet_id"; 
 		
 		$query = $sql or die("Error in the consult.." . mysqli_error("Error:  refresh_ressource".$link));
-		$result = mysqli_query($link, $query);
+		$result = mysqli_query($link, $query) or die("Error in the consult.." . mysqli_error($link));
 		
 		//echo "<pre>" . $sql . "</pre>";
 		
@@ -2024,7 +2024,7 @@ function get_produktion($spieler_id, $planet_id) {
 	$abfrage = "SELECT `Prod_Eisen`, `Prod_Silizium`, `Prod_Wasser`, `Bunker_Kapa`, `Handel_Kapa`, `Ressource_Energie`, `Produktion_Zeit`, `Grund_Prod_Eisen`, `Grund_Prod_Silizium`, `Grund_Prod_Wasser` FROM `planet` WHERE `Spieler_ID` = '$spieler_id' AND `Planet_ID` = $planet_id";
 	
 	$query = $abfrage or die("Error in the consult.." . mysqli_error("Error: #0003 ".$link));
-	$result = mysqli_query($link, $query);
+	$result = mysqli_query($link, $query) or die("Error in the consult.." . mysqli_error($link));
 	
 	$row = mysqli_fetch_object($result);
 	
@@ -2064,7 +2064,7 @@ function create_first_planet($spieler_id, $x, $y, $z, $username, $galaxy_number)
 	$abfrage = "INSERT INTO `spieler`(`ID`, `Spieler_ID`, `Spieler_Name`, `Typ`, `Bot_Produktion_Zeit`, `Tech_1`, `Tech_2`, `Tech_3`, `Tech_4`, `Tech_5`, `Tech_6`, `Tech_7`, `Tech_8`, `Tech_9`, `Tech_10`, `Tech_11`, `Tech_12`, `Tech_Schleife_ID`, `Tech_Schleife_Eisen`, `Tech_Schleife_Name`, `Tech_Schleife_Silizium`, `Tech_Schleife_Wasser`, `Tech_Schleife_Bauzeit_Bis`, `Tech_Schleife_Bauzeit_Start` `Tech_Schleife_Planet`) VALUES ('','$spieler_id','$username','human',".time().",0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0)";
 	
 	$query = $abfrage or die("Error in the consult.." . mysqli_error("Error: #0003 ".$link));
-	$result = mysqli_query($link, $query);
+	$result = mysqli_query($link, $query) or die("Error in the consult.." . mysqli_error($link));
 	
 	//Planet
 	
@@ -2073,7 +2073,7 @@ function create_first_planet($spieler_id, $x, $y, $z, $username, $galaxy_number)
 	$abfrage = "INSERT INTO `planet`(`Spieler_ID`, `Spieler_Name`, `Planet_Name`, `x`, `y`, `z`, `Grund_Prod_Eisen`, `Grund_Prod_Silizium`, `Grund_Prod_Wasser`) VALUES ('', '$username','$planetname', $x, $y, $z, 20,10,5)";
 	
 	$query = $abfrage or die("Error in the consult.." . mysqli_error("Error: #0003b ".$link));
-	$result = mysqli_query($link, $query);
+	$result = mysqli_query($link, $query) or die("Error in the consult.." . mysqli_error($link));
 	
 }
 
@@ -2081,7 +2081,7 @@ function get_in_galaxy_name($spieler_id, $galaxy_number){
 	require 'inc/connect_spieler.php';
 	$link->set_charset("utf8");
 	$query = "SELECT `spieler_ID`, `name_galaxy_1`, `name_galaxy_2`, `name_galaxy_3` FROM `spieler` WHERE `spieler_ID` = '".$spieler_id."'" or die("Error in the consult.." . mysqli_error("Error: #0003 ".$link));
-	$result = mysqli_query($link, $query);
+	$result = mysqli_query($link, $query) or die("Error in the consult.." . mysqli_error($link));
 
 
 	$row = mysqli_fetch_object($result);
@@ -2238,7 +2238,7 @@ function login($username, $passwort){
 	
 	//execute the query.
 	
-	$result = mysqli_query($link, $query);
+	$result = mysqli_query($link, $query) or die("Error in the consult.." . mysqli_error($link));
 	$row = mysqli_fetch_array($result);
 	
 	if($row["passwort"]== $passwort)
@@ -2268,7 +2268,7 @@ function check_auth($spieler_id, $session_id) {
 	mysqli_select_db($link, "spieler");
 	
 	$query = "SELECT `ID`, `spieler_ID`, `session_id`, `HTTP_USER_AGENT` FROM `spieler` WHERE `spieler_ID` = '".$spieler_id."' AND `session_id` = '".$session_id."' LIMIT 1" or die("Error: #0009 " . mysqli_error($link));
-	$result = mysqli_query($link, $query);
+	$result = mysqli_query($link, $query) or die("Error in the consult.." . mysqli_error($link));
 	$row = mysqli_fetch_array($result);
 	
 	if($row["HTTP_USER_AGENT"] == md5($_SERVER['HTTP_USER_AGENT']))
@@ -2315,7 +2315,7 @@ function get_spieler_name($spieler_id) {
 	require 'inc/connect_galaxy_1.php';
 	$sql = "SELECT `Spieler_Name` FROM `spieler` WHERE `Spieler_ID` = '$spieler_id'";
 	$query = $sql or die("Error in the consult.." . mysqli_error("Error: #0003 ".$link));
-	$result = mysqli_query($link, $query);
+	$result = mysqli_query($link, $query) or die("Error in the consult.." . mysqli_error($link));
 	$row = mysqli_fetch_object($result);
 	return $row->Spieler_Name;	
 }
@@ -2326,7 +2326,7 @@ function get_spieler_image($spieler_id) {
 	mysqli_select_db($link, "galaxy1");
 	$sql = "SELECT `avatar` FROM `spieler` WHERE `Spieler_ID` = '$spieler_id'";
 	$query = $sql or die("Error in the consult.." . mysqli_error("Error: #0003 ".$link));
-	$result = mysqli_query($link, $query);
+	$result = mysqli_query($link, $query) or die("Error in the consult.." . mysqli_error($link));
 	$row = mysqli_fetch_object($result);
 	
 	return $row->avatar;
@@ -2508,7 +2508,7 @@ function get_produktions_zyklen_seit_letzter_aktualisierung($spieler_id, $zeit) 
 	$abfrage = "SELECT `Bot_Produktion_Zeit` FROM `spieler` WHERE `Spieler_ID` = '$spieler_id'";
 	
 	$query = $abfrage or die("Error in the consult.." . mysqli_error("Error: #0003 ".$link));
-	$result = mysqli_query($link, $query);
+	$result = mysqli_query($link, $query) or die("Error in the consult.." . mysqli_error($link));
 	
 	$row = mysqli_fetch_object($result);
 	
@@ -2527,7 +2527,7 @@ function set_produktions_zyklen_seit_letzter_aktualisierung($spieler_id) {
 	$abfrage = "UPDATE `spieler` SET `Bot_Produktion_Zeit` = '$zeit' WHERE `Spieler_ID` = '$spieler_id'";
 
 	$query = $abfrage or die("Error in the consult.." . mysqli_error("Error: #0003 ".$link));
-	$result = mysqli_query($link, $query);
+	$result = mysqli_query($link, $query) or die("Error in the consult.." . mysqli_error($link));
 	
 	if (mysqli_query($link, $query)) {
 	} else {
@@ -2545,7 +2545,7 @@ function get_robots_galaxy_db($spieler_id) {
 	$abfrage = "SELECT SUM(`Ressource_Bot` + `Stationiert_Bot`) as Gesamt_Bot, `Planet_ID` FROM `planet` WHERE `Spieler_ID` = '$spieler_id'";
 	
 	$query = $abfrage or die("Error in the consult.." . mysqli_error("Error: #0003 ".$link));
-	$result = mysqli_query($link, $query);
+	$result = mysqli_query($link, $query) or die("Error in the consult.." . mysqli_error($link));
 	
 	$bots_vorhanden_planet = array();
 	
@@ -2571,7 +2571,7 @@ function set_robots_galaxy_db($spieler_id, $bots_vorhanden_planet, $planet_zuwac
 		$sql = "UPDATE `planet` SET `Ressource_Bot` = `Ressource_Bot` +".$planet_zuwachs[$key].", `Gesamt_Bot` = `Gesamt_Bot` +".$planet_zuwachs[$key]." WHERE `Spieler_ID` = '$spieler_id' AND `Planet_ID` = '$i'";
 		
 		$query = $sql or die("Error in the consult.." . mysqli_error("Error: #0003 ".$link));
-		$result = mysqli_query($link, $query);
+		$result = mysqli_query($link, $query) or die("Error in the consult.." . mysqli_error($link));
 	
 	
 		
@@ -2589,7 +2589,7 @@ function get_erkundete_systeme($spieler_id, $x1, $y1, $x2, $y2) {
 	
 	$query = $sql or die("Error in the consult.." . mysqli_error("Error: #0002302 ".$link));
 	
-	$result = mysqli_query($link, $query);
+	$result = mysqli_query($link, $query) or die("Error in the consult.." . mysqli_error($link));
 	$i = 0;
 	$Erkundet["error"] = false;
 	$Erkundet["message"] = "";
@@ -2628,7 +2628,7 @@ function get_eigene_systeme($spieler_id) {
 	$sql = "SELECT `Spieler_ID`, `x`, `y`, `z`, `Planet_ID` FROM `planet` WHERE `Spieler_ID` = '$spieler_id'";
 	$query = $sql or die("Error in the consult.." . mysqli_error("Error: #0002302 ".$link));
 
-	$result = mysqli_query($link, $query);
+	$result = mysqli_query($link, $query) or die("Error in the consult.." . mysqli_error($link));
 
 	while($row = mysqli_fetch_object($result)) {
 		$Systeme["X"] = $row->x;
@@ -2820,7 +2820,7 @@ function flotte_vorhanden ($spieler_id, $planet_id, $flotte) {
 	
 	$query = $sql or die("Error in the consult.." . mysqli_error("Error: #0002302 ".$link));
 	
-	$result = mysqli_query($link, $query);
+	$result = mysqli_query($link, $query) or die("Error in the consult.." . mysqli_error($link));
 	$row = mysqli_fetch_object($result);
 	
 	$flotte_vorhanden = true;
@@ -2859,7 +2859,7 @@ function flotte_slots_frei($spieler_id) {
 	
 	$query = $sql or die("Error in the consult.." . mysqli_error("Error: #0002302 ".$link));
 	
-	$result = mysqli_query($link, $query);
+	$result = mysqli_query($link, $query) or die("Error in the consult.." . mysqli_error($link));
 	$row = mysqli_fetch_object($result);
 	
 		$mögliche_slots = $row->Tech_6 + 1;
@@ -2868,7 +2868,7 @@ function flotte_slots_frei($spieler_id) {
 	
 	$query = $sql or die("Error in the consult.." . mysqli_error("Error: #0002302 ".$link));
 	
-	$result = mysqli_query($link, $query);
+	$result = mysqli_query($link, $query) or die("Error in the consult.." . mysqli_error($link));
 	$row = mysqli_fetch_object($result);
 	
 		$anzahl_slots = $row->total;
@@ -2889,7 +2889,7 @@ function get_addiere_schiffe_stationiert($spieler_id, $ship_id) {
 	$sql = "SELECT SUM(`Schiff_Typ_" . $ship_id . "`) as summe FROM `planet` WHERE `Spieler_ID` = '" . $spieler_id . "'";
 	$query = $sql or die("Error in the consult.." . mysqli_error("Error: #0002302 ".$link));
 	
-	$result = mysqli_query($link, $query);
+	$result = mysqli_query($link, $query) or die("Error in the consult.." . mysqli_error($link));
 	$row = mysqli_fetch_object($result);
 	return $row->summe;
 }
@@ -2899,7 +2899,7 @@ function get_addiere_schiffe_luft($spieler_id, $ship_id) {
 	$sql = "SELECT SUM(`Schiff_Typ_" . $ship_id . "`) as summe FROM `flotten` WHERE `Spieler_ID` = '" . $spieler_id . "'";
 	$query = $sql or die("Error in the consult.." . mysqli_error("Error: #0002302 ".$link));
 
-	$result = mysqli_query($link, $query);
+	$result = mysqli_query($link, $query) or die("Error in the consult.." . mysqli_error($link));
 	
 	$row = mysqli_fetch_object($result);
 	if(isset($row->summe)) {
@@ -2916,7 +2916,7 @@ function get_addiere_deff_stationiert($spieler_id, $deff_id) {
 	$sql = "SELECT SUM(`Deff_Typ_" . $deff_id . "`) as summe FROM `planet` WHERE `Spieler_ID` = '" . $spieler_id . "'";
 	$query = $sql or die("Error in the consult.." . mysqli_error("Error: #0002302 ".$link));
 
-	$result = mysqli_query($link, $query);
+	$result = mysqli_query($link, $query) or die("Error in the consult.." . mysqli_error($link));
 	$row = mysqli_fetch_object($result);
 	return $row->summe;
 }
@@ -2938,7 +2938,7 @@ function get_flotte_in_der_luft($spieler_id, $zeit, $abarbeiten = false) {
 	
 	$query = $sql or die("Error in the consult.." . mysqli_error("Error: #0002302 ".$link));
 	
-	$result = mysqli_query($link, $query);
+	$result = mysqli_query($link, $query) or die("Error in the consult.." . mysqli_error($link));
 	$i = 0;
 	while($row = mysqli_fetch_object($result)) {
 		$balken[$i]["ID"] = $row->ID;
@@ -2996,7 +2996,7 @@ function get_flotte_mit_id($spieler_id, $id) {
 
 	$query = $sql or die("Error in the consult.." . mysqli_error("Error: #0002302 ".$link));
 
-	$result = mysqli_query($link, $query);
+	$result = mysqli_query($link, $query) or die("Error in the consult.." . mysqli_error($link));
 	$row_cnt = $result->num_rows;
 	if($row_cnt > 0) {
 		$row = mysqli_fetch_object($result);
@@ -3420,7 +3420,7 @@ function create_next_planet($spieler_id, $x, $y, $z, $username) {
 	$abfrage = "INSERT INTO `planet`(`Spieler_ID`, `Spieler_Name`, `Planet_Name`, `x`, `y`, `z`, `Grund_Prod_Eisen`, `Grund_Prod_Silizium`, `Grund_Prod_Wasser`, `Planet_ID`, `Produktion_Zeit`) VALUES ('$spieler_id', '$username','$planetname', $x, $y, $z, 20,10,5, " . $nächste_id . ", '" . time() . "')";
 
 	$query = $abfrage or die("Error in the consult.." . mysqli_error("Error: #0003b ".$link));
-	$result = mysqli_query($link, $query);
+	$result = mysqli_query($link, $query) or die("Error in the consult.." . mysqli_error($link));
 
 	return true;
 
@@ -3432,7 +3432,7 @@ function get_planet_id_by_koordinaten($spieler_id, $x, $y, $p) {
 
 	$abfrage = "SELECT `Planet_ID` FROM `planet` WHERE `Spieler_ID` = '" . $spieler_id. "' AND `x` = " . $x . " AND `y` = " . $y . " AND `z` = " . $p . " ORDER BY `Planet_ID` DESC LIMIT 1";	
 	$query = $abfrage or die("Error in the consult.." . mysqli_error("Error: #get_lastet_planet ".$link));
-	$result = mysqli_query($link, $query);
+	$result = mysqli_query($link, $query) or die("Error in the consult.." . mysqli_error($link));
 
 	$row = mysqli_fetch_object($result);
 	return $row->Planet_ID;	
