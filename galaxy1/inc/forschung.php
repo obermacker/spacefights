@@ -39,14 +39,14 @@ $bilderEinblenden = true;
 				$kann_gebaut_werden = true; 
 				$farbeE = ""; if($ressource["Eisen"] < $objekt["Kosten_Eisen"]) { $farbeE = "zuWenigRess"; $kann_gebaut_werden = false; }
 				$farbeS = ""; if($ressource["Silizium"] < $objekt["Kosten_Silizium"]) { $farbeS = "zuWenigRess"; $kann_gebaut_werden = false; }
-				$farbeW = ""; if($ressource["Wasser"] < $objekt["Kosten_Wasser"]) { $farbeW = "´zuWenigRess"; $kann_gebaut_werden = false; }
+				$farbeW = ""; if($ressource["Wasser"] < $objekt["Kosten_Wasser"]) { $farbeW = "zuWenigRess"; $kann_gebaut_werden = false; }
 				
 				// $classStr für Statuszeile ausgrauen , bzw. hervorhebensetzen
 				$classStr = "";
 				if ($baut_gerade["ID"] == 0) {if (!$kann_gebaut_werden || $maxBaustufe) { $classStr='passiv';}} else if ($baut_gerade["ID"] != $i) {$classStr='passiv';} else {$classStr='imBau';}
 				?>
 				
-				<tr class ="<?php if ($baut_gerade["ID"] == $i) {echo('trMitPBar');} else {echo('');}?>">
+				<tr <?php if ($baut_gerade["ID"] == $i) { ?>  class ="trMitPBar" <?php } ?> >
 					<td width=1% class="tbchell"><a href="javascript:details('G<?php echo $i; ?>');" id="detailsButton" name="G<?php echo $i; ?>Button" class="detailsGeschlossen">▶</a></td>	
 					<td width=1% class="tbchell tbBezeichnung <?php echo $classStr; ?>"><?php echo $objekt["Name"]; ?></td>
 					<?php if ($maxBaustufe) { ?>

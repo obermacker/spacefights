@@ -1,6 +1,8 @@
 <?php
 
-function get_config_def($id, $var_spieler_stufe) {
+$deffCount=6; 			// Anzahl Deff-Typen
+
+function get_config_deff($id, $var_spieler_stufe) {
 	
 	//print_r ($var_spieler_stufe);
 
@@ -10,7 +12,9 @@ function get_config_def($id, $var_spieler_stufe) {
 			"Schiff_ID" => 1,
 			"Name" => "Raketenwerfer",
 			"Name_Plural" => "Raketenwerfer",
+			"Bild" => "img/foerderturm.gif",
 			"Beschreibung" => "lorem ipsum",
+			
 			"Kosten_Eisen" => 500,
 			"Kosten_Silizium" => 250,
 			"Kosten_Wasser" => 0,
@@ -46,7 +50,9 @@ function get_config_def($id, $var_spieler_stufe) {
 			"Schiff_ID" => 2,
 			"Name" => "Laserkanone",
 			"Name_Plural" => "Laserkanonen",
+			"Bild" => "",
 			"Beschreibung" => "lorem ipsum",
+			
 			"Kosten_Eisen" => 1150,
 			"Kosten_Silizium" => 525,
 			"Kosten_Wasser" => 100,
@@ -83,7 +89,9 @@ function get_config_def($id, $var_spieler_stufe) {
 			"Schiff_ID" => 3,
 			"Name" => "Ionenkanone",
 			"Name_Plural" => "Ionenkanonen",
+			"Bild" => "",
 			"Beschreibung" => "lorem ipsum",			
+			
 			"Kosten_Eisen" => 2850,
 			"Kosten_Silizium" => 1150,
 			"Kosten_Wasser" => 375,
@@ -118,10 +126,11 @@ function get_config_def($id, $var_spieler_stufe) {
 		case 4:
 			$Deff = array(
 			"Schiff_ID" => 4,
-			"Name" => "Kleiner Schild",
-			"Name_Plural" => "Kleiner Schild",
+			"Name" => "kleiner Schild",
+			"Name_Plural" => "kleiner Schilde",
+			"Bild" => "",
 			"Beschreibung" => "lorem ipsum",
-			
+
 			"Kosten_Eisen" => 7500,
 			"Kosten_Silizium" => 6250,
 			"Kosten_Wasser" => 1250,
@@ -156,8 +165,9 @@ function get_config_def($id, $var_spieler_stufe) {
 		case 5:
 			$Deff = array(
 			"Schiff_ID" => 5,
-			"Name" => "Großer Schild",
-			"Name_Plural" => "Großer Schild",
+			"Name" => "großer Schild",
+			"Name_Plural" => "großer Schilde",
+			"Bild" => "",
 			"Beschreibung" => "lorem ipsum",
 			
 			"Kosten_Eisen" => 35000,
@@ -197,7 +207,9 @@ function get_config_def($id, $var_spieler_stufe) {
 			"Schiff_ID" => 6,
 			"Name" => "Dimension Tide",
 			"Name_Plural" => "Dimension Tides",
+			"Bild" => "",
 			"Beschreibung" => "Satellite that fires a temporary black hole",				
+
 			"Kosten_Eisen" => 20000000,
 			"Kosten_Silizium" => 20000000,
 			"Kosten_Wasser" => 20000000,

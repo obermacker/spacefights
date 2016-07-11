@@ -22,7 +22,7 @@ if (isset($flotte)) { ?>
 										<span id="flotte<?php echo $i; ?>"><script type="text/javascript"><!--
 										countdown(<?php echo $zeit_bis; ?>, "flotte<?php echo $i; ?>");
 										</script></span>
-										<form style="display: inline;" action="index.php" method="post" autocomplete="off"><button type="submit" name="action-schiffe-abbrechen" id="action-schiffe-abbrechen_<?php echo $i; ?>" value="<?php echo $ID; ?>">x</button></form>
+										<form style="display: inline;" action="index.php" method="post" autocomplete="off"><input type="hidden" name="s" value="<?php echo $select; ?>"><button type="submit" name="action-schiffe-abbrechen" id="action-schiffe-abbrechen_<?php echo $i; ?>" value="<?php echo $ID; ?>">x</button></form>
 		</td></tr>
 		</table>
 		<?php 
@@ -63,7 +63,7 @@ if (isset($deff_schleife)) { ?>
 										<span id="deff<?php echo $i; ?>"><script type="text/javascript"><!--
 										countdown(<?php echo $zeit_bis; ?>, "deff<?php echo $i; ?>");
 										</script></span>
-										<form style="display: inline;" action="index.php" method="post" autocomplete="off"><button type="submit" name="action-deff-abbrechen" id="action-deff-abbrechen_<?php echo $i; ?>" value="<?php echo $ID; ?>">x</button></form>
+										<form style="display: inline;" action="index.php" method="post" autocomplete="off"><input type="hidden" name="s" value="<?php echo $select; ?>"><button type="submit" name="action-deff-abbrechen" id="action-deff-abbrechen_<?php echo $i; ?>" value="<?php echo $ID; ?>">x</button></form>
 		</td></tr>
 		</table>
 		<?php 
