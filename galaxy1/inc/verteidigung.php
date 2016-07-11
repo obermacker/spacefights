@@ -59,7 +59,7 @@ function getMaxAnzahlBauV ($objekt, $ressVorhanden) {
 
 <form action="index.php" method="post" autocomplete="off" class="bauGUI2">
 	<input type="hidden" name="s" value="<?php echo($bezInput); ?>">
-	<input type="hidden" name="ship_id" id="ship_id" value="">
+	<input type="hidden" name="ship_id__" id="ship_id__" value="">
 	
 	<table id="default" cellspacing="0" cellpadding="0" class="übersicht" width=100%>
 		<tr>

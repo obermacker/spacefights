@@ -727,25 +727,30 @@ switch ($select) {
 							<td><img src="img/held.png" class="img_ress">Helden</td>
 							<td><img src="img/karma.png" class="img_ress">Karma</td>
 							<td rowspan=2 width=200px align="left">
-								
-								<table>
-									<tr>
-										<td>Planet</td>
-										<td><</td>
-										<td>></td>
-								<tr>
-								<td colspan=3>
-								
-									<form>
-									<select name="p" size="1" style="width: 150px;" onchange="this.form.submit()">
-									<?php echo get_list_of_all_planets($spieler_id, $planet_id); ?>
-									</select>
-									<input type="hidden" name="s" value="<?php echo $select; ?>">
-									</form>   
-								</td></tr>
-								</table>
-								
-								     	
+								<form>
+									<table>
+										<tr>
+											<td>Planet</td>
+											<td>
+												<?php $anzahlPlaneten = get_anzahl_planeten($spieler_id, 1); ?>
+												<button class="bt" type="submit" name="zurueck" onclick = "p.value = zurueck.value" 
+													value="<?php if ($planet_id == 0) {echo $anzahlPlaneten;} else {echo $planet_id;}?>" ><</button>
+											</td>
+											<td>
+												<button class="bt" type="submit" name="vor" onclick = "p.value = vor.value" 
+													value="<?php if ($planet_id == $anzahlPlaneten -1) {echo ('1');} else {echo $planet_id + 2;} ?>" >></button>
+											</td>
+										</tr>
+										<tr>
+											<td colspan=3>
+												<select name="p"  style="width: 180px;" onchange="this.form.submit()" autofocus>
+													<?php echo get_list_of_all_planets($spieler_id, $planet_id); ?>
+												</select>
+												<input type="hidden" name="s" value="<?php echo $select; ?>">
+											</td>
+										</tr>
+									</table>
+								</form> 
 							</td>
 						</tr>
 						<tr>
