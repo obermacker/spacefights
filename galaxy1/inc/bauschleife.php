@@ -1,5 +1,5 @@
 <?php  
-$flotte = get_activity_schiffe_Liste($spieler_id, 0);
+$flotte = get_activity_schiffe_Liste($spieler_id, $planet_id);
 if (isset($flotte)) { ?>
 	
 	
@@ -40,7 +40,7 @@ if (isset($flotte)) { ?>
 <?php } ?>
 
 <?php  
-$deff_schleife = get_activity_deff_Liste($spieler_id, 0);
+$deff_schleife = get_activity_deff_Liste($spieler_id, $planet_id);
 if (isset($deff_schleife)) { ?>
 	
 

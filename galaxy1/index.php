@@ -280,36 +280,33 @@ switch ($select) {
 
 	//--- Gebäude
 	$bauschleife = check_bauschleife_activ($spieler_id, $planet_id, "Structure");
-	if ($bauschleife["ID"] > 0 and $bauschleife["Bis"] <= time()) {
-		
-		$gebäude_id = $bauschleife["ID"];		
-		set_bauschleife_struckture_fertig($spieler_id, $planet_id, $gebäude_id, $username);
-		
+	if ($bauschleife != NULL) {
+		if ($bauschleife["Bis"] <= time()) {
+			$gebäude_id = $bauschleife["ID"];		
+			set_bauschleife_struckture_fertig($spieler_id, $planet_id, $gebäude_id, $username);
+		}
 	}
 
 	//--- Forschung
 	$bauschleife = check_bauschleife_activ($spieler_id, $planet_id, "Tech");
-	if ($bauschleife["ID"] > 0 and $bauschleife["Bis"] <= time()) {
-	
-		$tech_id = $bauschleife["ID"];
-		set_bauschleife_tech_fertig($spieler_id, $planet_id, $tech_id, $username);
-	
+	if ($bauschleife != NULL) {
+		if ($bauschleife["Bis"] <= time()) {
+			$tech_id = $bauschleife["ID"];
+			set_bauschleife_tech_fertig($spieler_id, $planet_id, $tech_id, $username);
+		}
 	}
 	
 	//--- Schiffe
 	
 	$bauschleife = check_bauschleife_activ($spieler_id, $planet_id, "Ship");
-	if ($bauschleife["ID"] > 0) {
-		
+	if ($bauschleife != NULL) {
 		set_bauschleife_ship_fertig($spieler_id, $planet_id);
-		
-	
 	}
 	
 	//--- Deff
 	
 	$bauschleife = check_bauschleife_activ($spieler_id, $planet_id, "Deff");
-	if ($bauschleife["ID"] > 0) {
+	if ($bauschleife != NULL) {
 		set_bauschleife_deff_fertig($spieler_id, $planet_id);
 	}
 	
@@ -325,7 +322,7 @@ switch ($select) {
 	
 			$bauschleife = check_bauschleife_activ($spieler_id, $planet_id, "Structure");
 			
-			if ($bauschleife["ID"] > 0) { 
+			if ($bauschleife != NULL) { 
 				
 				$gebäude_id = $_POST["action-gebaeude-abbrechen"];				
 
@@ -341,7 +338,7 @@ switch ($select) {
 	
 			$bauschleife = check_bauschleife_activ($spieler_id, $planet_id, "Tech");
 				
-			if ($bauschleife["ID"] > 0) {
+			if ($bauschleife != NULL) {
 	
 				$tech_id = $_POST["action-forschung-abbrechen"];
 	
@@ -382,7 +379,7 @@ switch ($select) {
 
 			$bauschleife = check_bauschleife_activ($spieler_id, $planet_id, "Structure");
 				
-			if ($bauschleife["ID"] > 0) { $kann_gebaut_werden = false; } else {
+			if ($bauschleife != NULL) { $kann_gebaut_werden = false; } else {
 				
 				$gebäude_id = $_POST["action-gebaeude-bauen"];
 				$ressource = get_ressource($spieler_id, $planet_id);
@@ -424,7 +421,7 @@ switch ($select) {
 	
 			$bauschleife = check_bauschleife_activ($spieler_id, $planet_id, "Tech");
 	
-			if ($bauschleife["ID"] > 0) { $kann_gebaut_werden = false; } else {
+			if ($bauschleife != NULL) { $kann_gebaut_werden = false; } else {
 	
 				$tech_id = $_POST["action-forschung-bauen"];
 				$ressource = get_ressource($spieler_id, $planet_id);

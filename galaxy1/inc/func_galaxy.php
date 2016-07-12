@@ -1289,74 +1289,80 @@ function set_bauschleife_deff_abbruch($spieler_id, $planet_id, $schleife_id) {
 function check_bauschleife_activ($spieler_id, $planet_id, $zweig) {
 	
 	require 'inc/connect_galaxy_1.php';
-	$bauschleife["Start"] = 99;
+	$bauschleife["ID"] = "0"; 
+
 	switch ($zweig) {
 		case "Structure":
-				$abfrage = "SELECT `Bauschleife_Gebaeude_ID`, `Bauschleife_Gebaeude_Bis`, `Bauschleife_Gebaeude_Start` FROM `planet` WHERE `Spieler_ID` = '$spieler_id' AND `Planet_ID` = $planet_id";
-				
-				$query = $abfrage;
-				$result = mysqli_query($link, $query) or sql_fehler(mysqli_error($link) , __FILE__ ,  __LINE__ );
-				
-				$row = mysqli_fetch_object($result);
-				
+			$abfrage = "SELECT `Bauschleife_Gebaeude_ID`, `Bauschleife_Gebaeude_Bis`, `Bauschleife_Gebaeude_Start` FROM `planet` WHERE `Spieler_ID` = '$spieler_id' AND `Planet_ID` = $planet_id";
+			
+			$query = $abfrage;
+			$result = mysqli_query($link, $query) or sql_fehler(mysqli_error($link) , __FILE__ ,  __LINE__ );
+			
+			$row = mysqli_fetch_object($result);
+
+			if($row->Bauschleife_Gebaeude_ID != "0") {
 				$bauschleife["ID"] = $row->Bauschleife_Gebaeude_ID;
 				$bauschleife["Start"] = $row->Bauschleife_Gebaeude_Start; //get_timestamp_in_was_sinnvolles($row->Bauschleife_Gebaeude_Bis - time());
 				$bauschleife["Bis"] = $row->Bauschleife_Gebaeude_Bis; //get_timestamp_in_was_sinnvolles($row->Bauschleife_Gebaeude_Bis - time());
 				$bauschleife["Countdown"] = $row->Bauschleife_Gebaeude_Bis - time();
+			
 				return $bauschleife;
-					
-			break;
+			}
+		break;
+		
 		case "Tech":
-				$abfrage = "SELECT `Tech_Schleife_ID`, `Tech_Schleife_Bauzeit_Bis` , `Tech_Schleife_Bauzeit_Start`  FROM `spieler` WHERE `Spieler_ID` = '$spieler_id'";
-				
-				$query = $abfrage;
-				$result = mysqli_query($link, $query) or sql_fehler(mysqli_error($link) , __FILE__ ,  __LINE__ );
-				
-				$row = mysqli_fetch_object($result);
-				
+			$abfrage = "SELECT `Tech_Schleife_ID`, `Tech_Schleife_Bauzeit_Bis` , `Tech_Schleife_Bauzeit_Start`  FROM `spieler` WHERE `Spieler_ID` = '$spieler_id'";
+			
+			$query = $abfrage;
+			$result = mysqli_query($link, $query) or sql_fehler(mysqli_error($link) , __FILE__ ,  __LINE__ );
+			
+			$row = mysqli_fetch_object($result);
+
+			if($row->Tech_Schleife_ID != "0") {
 				$bauschleife["ID"] = $row->Tech_Schleife_ID;
 				$bauschleife["Start"] = $row->Tech_Schleife_Bauzeit_Start; 
 				$bauschleife["Bis"] = $row->Tech_Schleife_Bauzeit_Bis; 
 				$bauschleife["Countdown"] = $row->Tech_Schleife_Bauzeit_Bis - time(); 
+			
 				return $bauschleife;
-					
-			break;
-		case "Ship":
-				$abfrage = "SELECT `ID`, `Bauzeit_Von`, `Bauzeit_Bis` FROM `bauschleifeflotte` WHERE `Bauzeit_Von` < " . time() . " AND `Spieler_ID` = '$spieler_id' AND `Planet_ID` = $planet_id";
-				
-				$query = $abfrage;
-				$result = mysqli_query($link, $query) or sql_fehler(mysqli_error($link) , __FILE__ ,  __LINE__ );
-				
-				$row = mysqli_fetch_object($result);
-				if(!empty($row)) {
-					
-				
-				$bauschleife["ID"] = $row->ID;
-				$bauschleife["Bis"] = $row->Bauzeit_Bis; //get_timestamp_in_was_sinnvolles($row->Bauschleife_Gebaeude_Bis - time());
-				$bauschleife["Countdown"] = $row->Bauzeit_Bis - time(); //get_timestamp_in_was_sinnvolles($row->Bauschleife_Gebaeude_Bis - time());
-				return $bauschleife;
-				
-				}	
-			break;
-		case "Deff":
-				$abfrage = "SELECT `ID`, `Bauzeit_Von`, `Bauzeit_Bis` FROM `bauschleifedeff` WHERE `Bauzeit_Von` < " . time() . " AND `Spieler_ID` = '$spieler_id' AND `Planet_ID` = $planet_id";
-				
-				$query = $abfrage;
-				$result = mysqli_query($link, $query) or sql_fehler(mysqli_error($link) , __FILE__ ,  __LINE__ );
-				
-				$row = mysqli_fetch_object($result);
-				if(!empty($row)) {
-					
-				
-				$bauschleife["ID"] = $row->ID;
-				$bauschleife["Bis"] = $row->Bauzeit_Bis; //get_timestamp_in_was_sinnvolles($row->Bauschleife_Gebaeude_Bis - time());
-				$bauschleife["Countdown"] = $row->Bauzeit_Bis - time(); //get_timestamp_in_was_sinnvolles($row->Bauschleife_Gebaeude_Bis - time());
-				return $bauschleife;
-				
-				}	
-			break;
-	}
+			}
+		break;
 	
+		case "Ship":
+			$abfrage = "SELECT `ID`, `Bauzeit_Von`, `Bauzeit_Bis` FROM `bauschleifeflotte` WHERE `Bauzeit_Von` < " . time() . " AND `Spieler_ID` = '$spieler_id' AND `Planet_ID` = $planet_id";
+			
+			$query = $abfrage;
+			$result = mysqli_query($link, $query) or sql_fehler(mysqli_error($link) , __FILE__ ,  __LINE__ );
+			
+			$row = mysqli_fetch_object($result);
+			if(!empty($row)) {
+				$bauschleife["ID"] = $row->ID;
+				$bauschleife["Start"] = $row->Bauzeit_Von;
+				$bauschleife["Bis"] = $row->Bauzeit_Bis; //get_timestamp_in_was_sinnvolles($row->Bauschleife_Gebaeude_Bis - time());
+				$bauschleife["Countdown"] = $row->Bauzeit_Bis - time(); //get_timestamp_in_was_sinnvolles($row->Bauschleife_Gebaeude_Bis - time());
+			
+				return $bauschleife;
+			}
+		break;
+				
+		case "Deff":
+			$abfrage = "SELECT `ID`, `Bauzeit_Von`, `Bauzeit_Bis` FROM `bauschleifedeff` WHERE `Bauzeit_Von` < " . time() . " AND `Spieler_ID` = '$spieler_id' AND `Planet_ID` = $planet_id";
+			
+			$query = $abfrage;
+			$result = mysqli_query($link, $query) or sql_fehler(mysqli_error($link) , __FILE__ ,  __LINE__ );
+			
+			$row = mysqli_fetch_object($result);
+			
+			if(!empty($row)) {
+				$bauschleife["ID"] = $row->ID;
+				$bauschleife["Start"] = $row->Bauzeit_Von;
+				$bauschleife["Bis"] = $row->Bauzeit_Bis; //get_timestamp_in_was_sinnvolles($row->Bauschleife_Gebaeude_Bis - time());
+				$bauschleife["Countdown"] = $row->Bauzeit_Bis - time(); //get_timestamp_in_was_sinnvolles($row->Bauschleife_Gebaeude_Bis - time());
+			
+				return $bauschleife;
+			}	
+		break;
+	}
 }
 
 function get_gebäude_nächste_stufe($spieler_id, $planet_id, $gebäude_id, $speed_mod) {
