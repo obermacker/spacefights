@@ -1289,7 +1289,6 @@ function set_bauschleife_deff_abbruch($spieler_id, $planet_id, $schleife_id) {
 function check_bauschleife_activ($spieler_id, $planet_id, $zweig) {
 	
 	require 'inc/connect_galaxy_1.php';
-	$bauschleife["ID"] = "0"; 
 
 	switch ($zweig) {
 		case "Structure":
