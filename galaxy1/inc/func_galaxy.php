@@ -2504,19 +2504,15 @@ function berechne_robot_zuwachs($spieler_id, $zeit) {
 	
 	set_robots_galaxy_db($spieler_id, $bots_vorhanden_planet, $planet_zuwachs);
 	set_produktions_zyklen_seit_letzter_aktualisierung($spieler_id);
-	
-	
+		
 }
 
 function get_produktions_zyklen_seit_letzter_aktualisierung($spieler_id, $zeit) {
 	
-	
-	
 	require 'inc/connect_galaxy_1.php';
 	
-	$abfrage = "SELECT `Bot_Produktion_Zeit` FROM `spieler` WHERE `Spieler_ID` = '$spieler_id'";
+	$query = "SELECT `Bot_Produktion_Zeit` FROM `spieler` WHERE `Spieler_ID` = '$spieler_id'";
 	
-	$query = $abfrage or die("Error in the consult.." . mysqli_error("Error: #0003 ".$link));
 	$result = mysqli_query($link, $query) or sql_fehler(mysqli_error($link) , __FILE__ ,  __LINE__ );
 	
 	$row = mysqli_fetch_object($result);
@@ -2533,9 +2529,8 @@ function set_produktions_zyklen_seit_letzter_aktualisierung($spieler_id) {
 	
 	$zeit = time();
 
-	$abfrage = "UPDATE `spieler` SET `Bot_Produktion_Zeit` = '$zeit' WHERE `Spieler_ID` = '$spieler_id'";
+	$query = "UPDATE `spieler` SET `Bot_Produktion_Zeit` = '$zeit' WHERE `Spieler_ID` = '$spieler_id'";
 
-	$query = $abfrage or die("Error in the consult.." . mysqli_error("Error: #0003 ".$link));
 	$result = mysqli_query($link, $query) or sql_fehler(mysqli_error($link) , __FILE__ ,  __LINE__ );
 	
 	if (mysqli_query($link, $query)) {
@@ -2551,21 +2546,16 @@ function get_robots_galaxy_db($spieler_id) {
 	
 	require 'inc/connect_galaxy_1.php';
 	
-	$abfrage = "SELECT SUM(`Ressource_Bot` + `Stationiert_Bot`) as Gesamt_Bot, `Planet_ID` FROM `planet` WHERE `Spieler_ID` = '$spieler_id'";
+	$query = "SELECT `Ressource_Bot`, `Stationiert_Bot`, `Planet_ID` FROM `planet` WHERE `Spieler_ID` = '$spieler_id'";
 	
-	$query = $abfrage or die("Error in the consult.." . mysqli_error("Error: #0003 ".$link));
-	$result = mysqli_query($link, $query) or die('Datei: ' . __FILE__ . ' - Funktion: ' . __FUNCTION__ . ' - Zeile: ' . __LINE__ . ' - SQL-Fehler: ' . mysqli_error($link));
+	$result = mysqli_query($link, $query) or sql_fehler(mysqli_error($link), __FILE__ , __LINE__);
 	
 	$bots_vorhanden_planet = array();
 	
 	while($row = mysqli_fetch_object($result)) {
-	
-		$Gesamt_Bot = $row->Gesamt_Bot + 0; 		
-		
-		$bots_vorhanden_planet[] = $Gesamt_Bot;
-
+		$Gesamt_Bot = $row->Ressource_Bot + $row->Stationiert_Bot + 0 ; 		
+		$bots_vorhanden_planet[$row->Planet_ID] = $Gesamt_Bot;
 	}
-		
 	
 	return($bots_vorhanden_planet);
 }
@@ -2577,12 +2567,9 @@ function set_robots_galaxy_db($spieler_id, $bots_vorhanden_planet, $planet_zuwac
 	
 	foreach ($bots_vorhanden_planet as $key => $value) {
 		
-	//	$sql = "UPDATE `planet` SET `Ressource_Bot` = `Ressource_Bot` +".$planet_zuwachs[$key].", `Gesamt_Bot` = `Gesamt_Bot` +".$planet_zuwachs[$key]." WHERE `Spieler_ID` = '$spieler_id' AND `Planet_ID` = '$i'";
-		$sql = "UPDATE `planet` SET `Ressource_Bot` = `Ressource_Bot` +".$planet_zuwachs[$key]." WHERE `Spieler_ID` = '$spieler_id' AND `Planet_ID` = '$i'";
+		$query = "UPDATE `planet` SET `Ressource_Bot` = `Ressource_Bot` +".$planet_zuwachs[$key]." WHERE `Spieler_ID` = '$spieler_id' AND `Planet_ID` = '$i'";
 		
-		$query = $sql or die("Error in the consult.." . mysqli_error("Error: #0003 ".$link));
 		$result = mysqli_query($link, $query) or sql_fehler(mysqli_error($link), __FILE__ , __LINE__);
-			
 		
 		$i++;
 	}
