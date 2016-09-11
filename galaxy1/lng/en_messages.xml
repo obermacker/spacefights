@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<language_strings><!-- ENGLISH -->
+	<string id="number_test" text="{#.##0,00@ressource['Eisen']}  {#@spieler_id}  {spieler_id}  -&gt; That is the ID" />
+	<string id="mail recipient" text="recipient" />
+	<string id="mail subject" text="subject" />
+	<string id="mail content" text="content" />
+	<string id="number_test" text="{#.##0,00@ressource['Eisen']}  {#@spieler_id}  {spieler_id}  -&gt; That is the ID" />
+	<string id="number_test" text="{#.##0,00@ressource['Eisen']}  {#@spieler_id}  {spieler_id}  -&gt; That is the ID" />
+	<string id="number_test" text="{#.##0,00@ressource['Eisen']}  {#@spieler_id}  {spieler_id}  -&gt; That is the ID" />
+</language_strings>

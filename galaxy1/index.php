@@ -47,7 +47,7 @@ if(isset($planet_wahl)) {
 }
 //prüf mal ob der Spieler überhaupt einen Planeten in der Gala hat
 
-if (get_anzahl_planeten($spieler_id, 1) == 0) { session_unset(); session_destroy(); $_SESSION = array(); header('Location: ../index.html'); exit(); }
+if (get_number_of_planets($spieler_id, 1) == 0) { session_unset(); session_destroy(); $_SESSION = array(); header('Location: ../index.html'); exit(); }
 
 //ENDE: prüf mal ob der Spieler überhaupt einen Planten in der Gala hat ;)
 
@@ -727,19 +727,25 @@ switch ($select) {
 								<form>
 									<table>
 										<tr>
-											<td>Planet</td>
-											<td>
-												<?php $anzahlPlaneten = get_anzahl_planeten($spieler_id, 1); ?>
-												<button class="bt" type="submit" name="zurueck" onclick = "p.value = zurueck.value" 
-													value="<?php if ($planet_id == 0) {echo $anzahlPlaneten;} else {echo $planet_id;}?>" ><</button>
-											</td>
-											<td>
-												<button class="bt" type="submit" name="vor" onclick = "p.value = vor.value" 
-													value="<?php if ($planet_id == $anzahlPlaneten -1) {echo ('1');} else {echo $planet_id + 2;} ?>" >></button>
+											<td style="padding-left:0.5em;">Planet</td>
+											<td align=right>
+												<?php $numberOfPlanets = get_number_of_planets($spieler_id, 1); ?>
+												<button class="btnNavigation" type="submit" name="first" onclick = "p.value =first.value" 
+													<?php 	echo 'value="1"';
+															if ($planet_id == 0) {echo ' disabled';}?> >|◄</button>
+												<button class="btnNavigation" type="submit" name="back" onclick = "p.value = back.value" 
+													<?php 	echo 'value="'.$planet_id.'"';
+															if ($planet_id == 0) {echo ' disabled';}?> >◄</button>
+												<button class="btnNavigation" type="submit" name="forward" onclick = "p.value = forward.value" 
+													<?php 	if ($planet_id < $numberOfPlanets -1) {echo 'value="'.($planet_id + 2).'"';}
+															if ($planet_id == $numberOfPlanets -1) {echo ' disabled';} ?> >►</button>
+												<button class="btnNavigation" type="submit" name="last" onclick = "p.value = last.value" 
+													<?php 	echo 'value="'.$numberOfPlanets.'"'; 
+															if ($planet_id == $numberOfPlanets -1) {echo ' disabled';} ?>>►| </button>
 											</td>
 										</tr>
 										<tr>
-											<td colspan=3>
+											<td colspan=2>
 												<select name="p"  style="width: 180px;" onchange="this.form.submit()" autofocus>
 													<?php echo get_list_of_all_planets($spieler_id, $planet_id); ?>
 												</select>
@@ -790,7 +796,7 @@ switch ($select) {
 		require 'inc/gebaeude.php';
 		break;
 	case "Nachrichten":
-		require 'inc/nachrichten.php';
+		require 'inc/messages.php';
 		break;
 	case "Forschung":
 		require 'inc/forschung.php';

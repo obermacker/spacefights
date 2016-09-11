@@ -37,6 +37,7 @@ a:active, a:hover
 }
 
 input,textarea,select, button { border-color:#000000; border-width:1px; background-color:#062636; color:#FFFFFF; }
+input, textarea {font-family: verdana, sans-serif; font-size: 100%;}
 
 .btn_main {  
   font-family: 'Open Sans';
@@ -286,6 +287,8 @@ a.kontakte {
 	
 }
 
+.wordBreak {word-break:break-all; word-wrap:break-word;}
+
 /* by ES 22.06.2016*/
 .pBar {width: 0%; position: absolute; top: 0px; height: 100%; z-index: 5; background-color: /*#004578*/#00cc00; transition: background-color 3s linear 0s;}
 .pBarG {Background-color: /*#4178a2*/ #008800;}
@@ -393,3 +396,11 @@ a.kontakte {
 .bauGUI2 .schieber {width:6em; vertical-align: middle;}
 .bauGUI2 .eingabeFeld {text-align:center; vertical-align:middle; width:1.5em; background-color:#50555C; border: none;  border-radius: 1px;}
 
+
+/* other button */
+.btnNavigation {vertical-align: top; width: 2.5em; text-align: center; font-size: 80%;}
+.btnNavigation input[type=submit]:disabled,button:disabled {color: rgba(255,255,255,0.5);}
+
+
+/*styles message.php */ 
+.messages .btn {font-size: 90%; font-weight: 900; width: 2.1em; vertical-align: middle; text-align: center; padding: 0;}
