@@ -1,5 +1,4 @@
 <?php 
-lng_echo ('number_test');
 
 if(isset($_POST["send-message"])) {
 	
@@ -21,33 +20,31 @@ if(isset($_POST["send-message"])) {
 			set_message($spieler_id, $username,$value['toID'],$value['toName'], $subject,  $text);
 		}
 	}
-	
 }
-
-
 ?>
+
 <script type="text/javascript">
-function empfänger_hinzufügen(empfänger) {
+function add_recipient(toName) {
 	if(document.getElementById("toName").value.length == 0) {
-		document.getElementById("toName").value = empfänger;
+		document.getElementById("toName").value = toName;
 	} else {
-		document.getElementById("toName").value = document.getElementById("toName").value + " " + empfänger;
+		document.getElementById("toName").value = document.getElementById("toName").value + " " + toName;
 	}
-	
 	document.getElementById("toName").focus(); 
 }
 </script>
+
 <form class="messages" action="index.php?s=Nachrichten" name="myform" method="post" autocomplete="off">
 <table id="default" class="übersicht" cellspacing="0" cellpadding="0" width=100%>
 	<tr>
 		<td class="tbchell tbchell_ohne_left_padding" style="width:20%;" >
-			<input tabindex="1" placeholder="<?php lng_echo('mail recipient');?>" name="toName" id="toName" style="width: 100%;" autofocus value="<?php // lng_echo('Empfänger'); ?>">
+			<input tabindex="1" placeholder="<?php lng_echo('mail recipients');?>" name="toName" id="toName" style="width: 100%;" autofocus>
 		</td>
 		<td class="tbchell tbchell_ohne_left_padding" >
 			<input tabindex="2" placeholder="<?php lng_echo('mail subject');?>" name="subject" id="subject" style="width: 100%;">
 		</td>
 		<td class="tbchell" style="text-align:right; width: 1%;">
-			<button tabindex="4"class="btn_main btn_main_senden" type="submit" name="send-message" value="send-message">Senden</button>
+			<button tabindex="4"class="btn_main btn_main_senden" type="submit" name="send-message" value="send-message"><?php lng_echo('send message');?></button>
 		</td>
 </tr>
 	<tr>
@@ -59,11 +56,11 @@ function empfänger_hinzufügen(empfänger) {
 
 <table id="default" class="übersicht" cellspacing="0" cellpadding="0" width=100%>
 	<select name="action" onchange="this.form.submit()">
-		<option selected value="0"><?php lng_echo('markierte Nachrichten ...'); ?></option>
-		<option value="1"><?php lng_echo('markierte Nachrichten exportieren'); ?></option>
-		<option value="2"><?php lng_echo('markierte Nachrichten löschen'); ?></option>
-		<option value="3"><?php lng_echo('Nachrichten archivieren'); ?></option>
-		<option value="4" disabled><?php lng_echo('melden'); ?></option>
+		<option selected value="0"><?php lng_echo('chose message action'); ?></option>
+		<option value="1"><?php lng_echo('export marked messages'); ?></option>
+		<option value="2"><?php lng_echo('delete marked messages'); ?></option>
+		<option value="3"><?php lng_echo('archive marked messages'); ?></option>
+		<option value="4" disabled><?php lng_echo('report marked messages'); ?></option>
 	</select>
 </table>
 

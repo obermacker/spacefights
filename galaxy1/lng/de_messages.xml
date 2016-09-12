@@ -1,8 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <language_strings> <!-- GERMAN -->
 	<string id="number_test" text="{#.##0,00@ressource['Eisen']}  {_SERVER}  {spieler_id}  -&gt; That is the ID" />
-	<string id="mail recipient" text="Empfänger" />
+	<string id="mail recipients" text="Empfänger" />
 	<string id="mail subject" text="Betreff" />
+	<string id="send message" text="Senden" />
 	<string id="mail content" text="Nachricht" />
-
+	<string id="chose message action" text="makierte Nachrichten ..." />
+	<string id="export marked messages" text="markierte Nachrichten exportieren" />
+	<string id="delete marked messages" text="markierte Nachrichten löschen" />
+	<string id="archive marked messages" text="markierte Nachrichten archivieren" />
+	<string id="report marked messages" text="markierte Nachrichten melden" />
 </language_strings>

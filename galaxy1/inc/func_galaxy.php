@@ -3454,73 +3454,101 @@ function get_language_pack ($lng_id, $filename) {
 	if (file_exists($lngFile)) {
 		$xml = simplexml_load_file($lngFile);
 		foreach ($xml->string as $string) {
-			$lng[$string['id']->__toString()]=$string['text']->__toString();
+			$lng['~~' . $filename . '~~ ' . $string['id']->__toString()]=$string['text']->__toString();
 		}
 		$lng['language file for ' . $filename. '.php loaded'] = true;
 	} else {
-		echo 'ERROR: ' . $lngFile . ' language file does not exits !';
+		echo '>>><b>ERROR:</b> language file: <b>' . $lngFile . '</b> don´t exits !<<<';
 	}
 }
 
-function lng_echo ($id){
-	
+
+function lng_echo ($id, $open_txt_file = false, $no_echo = false){
+	// return language string or file-content
+	// string lng_echo (string $id [, bool  $open_txt_file = false [, $no_echo = false]] )
+	// 						$id = string-id or filename
+	// if  only $id  is set, lng_echo search for string-id in 'lng/' . $selected_lng_id . '_' . $function_called_from_file . '.xml'  (for example: file: lng/de_messages.xml)
+	// if $open_txt_file is set, lng_echo search for file 'lng/' . $selected_lng_id . '_' . $id . '.txt'  (for example: file: lng/de_number_test.txt)
+	// in both case, {variable_name} will be replaced with global defined variables with variable_name, the value can be formated
+	// number format :  {#.#0,00@variable_name}  #.# set thousands_sep  / 0,00 set dezimal point and number of dezimals  
+
 	global $lng; 
 	global $selected_lng_id;
+
+	$error_reading_file = false;
 	
 	$function_called_from_file = pathinfo(debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS,1)[0]['file'])['filename'];
 
-	if (!isset ($lng['language file for ' . $function_called_from_file. '.php loaded'])) {get_language_pack ($selected_lng_id, $function_called_from_file);}
+	if (!$open_txt_file && !isset ($lng['language file for ' . $function_called_from_file. '.php loaded'])) {get_language_pack ($selected_lng_id, $function_called_from_file);}
 
-	if (!isset ($lng[$id])) {
+	if (!$open_txt_file && !isset ($lng['~~' . $function_called_from_file . '~~ ' . $id])) {
 		$string = '>>><b>Notice: </b>Undefined string-id:<b> ' . $id . '</b> in language file: <b>' . $selected_lng_id . '_' . $function_called_from_file . '.xml</b><<<';
 	} else {
-		$string = $lng[$id];
-		while (strpos($string, '{') !== false) {
-			$pos1 = strpos($string, '{');
-			$pos2 = strpos($string, '}');
-			if ($pos2 === false) {								// check only {  without } and delete lonley { 
-				$string = substr($string, 0, $pos1).substr($string, $pos1+1, strlen($string));
+		if ($open_txt_file) {
+			$txtFile = ('lng/' . $selected_lng_id . '_' . $id . '.txt');
+			if (file_exists($txtFile)) {
+				$string = file_get_contents($txtFile);
+				dVar ($string,'$string');
 			} else {
-				$var_name = substr ($string , $pos1 +1, $pos2 - $pos1 -1);
-				
-				$formatted_output  = strpos ($var_name, '@');  // check for formatted  output
-				if ($formatted_output !== false) {
-					$format = substr ($var_name, 0, $formatted_output);
-					$var_name = substr ($var_name, $formatted_output+1, strlen($var_name));
+				$error_reading_file = true;
+				$string = '>>><b>ERROR:</b> language file: <b>' . $selected_lng_id . '_' . $id . '.txt</b> don´t exits !<<<';
+			}
+		} else {
+			$string = $lng['~~' . $function_called_from_file . '~~ ' . $id];
+		}
 
-					$thousands_sep = strripos($format,'#');
-					if ($thousands_sep !== false) {
-						$temp = substr ($format, 0, $thousands_sep+1);
-						$format = substr ($format, $thousands_sep+1, strlen($format));
-						$thousands_sep = str_replace ( '#', '', $temp);
-					} else {
-						$thousands_sep = '';
-					}
+		if (!$error_reading_file) {
+			while (strpos($string, '{') !== false) {
+				$pos1 = strpos($string, '{');
+				$pos2 = strpos($string, '}');
+				if ($pos2 === false) {								// check only {  without } and delete lonley { 
+					$string = substr($string, 0, $pos1).substr($string, $pos1+1, strlen($string));
+				} else {
+					$var_name = substr ($string , $pos1 +1, $pos2 - $pos1 -1);
 					
-					$decimals = 0;
-					$decimal_point = strpos ($format, '0');
-					if ($decimal_point !== false) {
-						$decimal_point = str_replace ( '0', '', $format);
-						if ($decimal_point != '') {
-							$decimals = strlen ($format) - strpos ($format, $decimal_point) -1;
+					$formatted_output  = strpos ($var_name, '@');  // check for formatted  output
+					if ($formatted_output !== false) {
+						$format = substr ($var_name, 0, $formatted_output);
+						$var_name = substr ($var_name, $formatted_output+1, strlen($var_name));
+
+						$thousands_sep = strripos($format,'#');
+						if ($thousands_sep !== false) {
+							$temp = substr ($format, 0, $thousands_sep+1);
+							$format = substr ($format, $thousands_sep+1, strlen($format));
+							$thousands_sep = str_replace ( '#', '', $temp);
+						} else {
+							$thousands_sep = '';
+						}
+						
+						$decimals = 0;
+						$decimal_point = strpos ($format, '0');
+						if ($decimal_point !== false) {
+							$decimal_point = str_replace ( '0', '', $format);
+							if ($decimal_point != '') {
+								$decimals = strlen ($format) - strpos ($format, $decimal_point) -1;
+							}
+						}
+					}			
+					
+					$value = get_value_of_variable ($var_name);
+					
+					if ($formatted_output !== false && (strpos ($value,'Notice:') === false)) {
+						if (isset($decimals) && is_numeric($value)) {$value = number_format ($value,$decimals,$decimal_point,$thousands_sep);}
+					} else if (strpos ($value,'<b>Notice:</b>') !== false) {
+						if ($open_txt_file) {
+							$value .= ' in language file: <b>' . $selected_lng_id . '_' . $id . '.txt</b><<<';
+						} else {
+							$value .= ' in language file: <b>' . $selected_lng_id . '_' . $function_called_from_file . '.xml </b> string-id: <b>' . $id . '</b><<<';
 						}
 					}
-				}			
-				
-				$value = get_value_of_variable ($var_name);
-				
-				if ($formatted_output !== false && (strpos ($value,'Notice:') === false)) {
-					if (isset($decimals) && is_numeric($value)) {$value = number_format ($value,$decimals,$decimal_point,$thousands_sep);}
-				} else if (strpos ($value,'<b>Notice:</b>') !== false) {
-					$value .= ' in language file: <b>' . $selected_lng_id . '_' . $function_called_from_file . '.xml </b> string-id: <b>' . $id . '</b><<<';
+					$string = substr($string, 0, $pos1).$value.substr($string, $pos2+1, strlen($string)-$pos2-1);
 				}
-				$string = substr($string, 0, $pos1).$value.substr($string, $pos2+1, strlen($string)-$pos2-1);
 			}
 		}
 	}
-	echo $string;
+	if (!$no_echo) {echo $string;}
+	return $string;
 }
-
 
 function get_value_of_variable ($variable) {		// check for black / white listed variables
 				
@@ -3532,6 +3560,7 @@ function get_value_of_variable ($variable) {		// check for black / white listed 
 	if (!($block_variable_names_begin_with_underline && (substr($variable,0,1)=='_'))) {
 
 		$variable_blocked = false;
+		$index_undefined = false;
 		
 		$pos = strpos ($variable,'[');  // check for array
 		if ($pos !== false) {
@@ -3539,7 +3568,11 @@ function get_value_of_variable ($variable) {		// check for black / white listed 
 			if (isset($GLOBALS[substr ($variable, 0, $pos)])) {
 				$variable = substr ($variable, 0, $pos);
 				$array = $GLOBALS[$variable];
-				$value = $array[$index];
+				if (isset($array[$index])) {
+					$value = $array[$index];
+				} else {
+					$index_undefined = true;
+				}
 			} 
 		} else {
 			if (isset($GLOBALS[$variable])) {
@@ -3552,8 +3585,12 @@ function get_value_of_variable ($variable) {		// check for black / white listed 
 		$value = '>>><b>Notice:</b> Blocked variable: <b>' . $variable . '</b>';} 
 	
 	if ($value === false ) { 										// check variable name is defined in global scope
-		$value = '>>><b>Notice:</b> Undefined variable: <b>' . $variable . '</b>';} 
-
+		if ($index_undefined) {
+			$value = '>>><b>Notice:</b> Undefined index: <b>' . $variable . '["' . $index . '"]</b>';
+		} else {
+			$value = '>>><b>Notice:</b> Undefined variable: <b>' . $variable . '</b>';
+		} 
+	}
 	return $value;
 }
 ?>

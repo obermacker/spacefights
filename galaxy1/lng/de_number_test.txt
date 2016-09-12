@@ -1,0 +1,1 @@
+<font size=+2>test Ausgabe: {#.##0,00@ressource['Eisen']} die ist gesperrt: {_POST} !</font>

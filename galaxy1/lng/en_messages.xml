@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <language_strings><!-- ENGLISH -->
 	<string id="number_test" text="{#.##0,00@ressource['Eisen']}  {#@spieler_id}  {spieler_id}  -&gt; That is the ID" />
-	<string id="mail recipient" text="recipient" />
+	<string id="mail recipients" text="recipients" />
 	<string id="mail subject" text="subject" />
 	<string id="mail content" text="content" />
-	<string id="number_test" text="{#.##0,00@ressource['Eisen']}  {#@spieler_id}  {spieler_id}  -&gt; That is the ID" />
-	<string id="number_test" text="{#.##0,00@ressource['Eisen']}  {#@spieler_id}  {spieler_id}  -&gt; That is the ID" />
-	<string id="number_test" text="{#.##0,00@ressource['Eisen']}  {#@spieler_id}  {spieler_id}  -&gt; That is the ID" />
+	<string id="send message" text="Send" />
+	<string id="chose message action" text="with marked messages ..." />
+	<string id="export marked messages" text="export marked messages" />
+	<string id="delete marked messages" text="delete marked messages" />
+	<string id="archive marked messages" text="archive marked messages" />
+	<string id="report marked messages" text="report marked messages" />
 </language_strings>
