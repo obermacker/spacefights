@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <language_strings> <!-- GERMAN -->
-	<string id="number_test" text="{#.##0,00@ressource['Eisen']}  {_SERVER}  {spieler_id}  -&gt; That is the ID" />
+	<string id="number_test" text="{n@ressource['Eisen']}  {_SERVER}  {spieler_id}  -&gt; That is the ID" />
 	<string id="mail recipients" text="Empfänger" />
 	<string id="mail subject" text="Betreff" />
 	<string id="send message" text="Senden" />

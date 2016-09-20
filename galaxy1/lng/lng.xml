@@ -1,5 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- 
+	variables can be used by {variable_name} or for simple array {array_name['index']} in strings
+	to format variables use {format@variable_name}
+	possible formats are:
+		n@ - use standard number format
+		c@ - use standard countdown format
+		d@ - use standard date format
+		t@ - use standard time format
+		
+		use 'string' to insert string into format
+		for automatic single or plural ussage 'string single|string plural'
+		
+		time, date and countdown are php time() values  (hh:mm:ss 
+		
+		D		- day without leading zeros			M		- month without leading zeros		Y(Y)	- two digit representation of a year
+		DD		- day with leading zeros				MM		- month with leading zeros			YYY(Y)	- four digit representation of a year
+		DDD	- short name of day					MMM	- short name of month
+		DDDD	- long name of day					MMM	- long name of month				alternate you can use T for D  /  J for Y
+		
+		h		- hour without leading zeros			m		- minutes without leading zeros		s		- seconds without leading zeros
+		hh		- hour with leading zeros			mm		- minutes with leading zeros			ss		- seconds with leading zeros
+		
+		am/pm	- Lowercase Ante meridiem and Post meridiem am or pm
+		AM/PM	- Uppercase Ante meridiem and Post meridiem  AM or PM
+		
+		for countdown formats:
+		C 				- number of days				'day|days'	- if C used and following string is separated by | automatic first is single and second is for plural ussage
+		~C, ~h, ~m, ~s	- don't display zero values and the following string	
+		~hh, ~mm, ~ss	- don't display zero values and the following string , but with leading zeros
+		
+		number formats:	
+		#,###		- use thousands seperator				# or only 0 	- use no thousands seperator			
+		0.00 		- use decimal point und 2 decimals		0.0000		- use decimal point und 4 decimals (number of decimals are not limited)
+		0			- no decimals 							0000		- no decimals and 3 leading zeros (number of leading zeros are not limited)
+-->
+
 <installed_languages>
-	<language id="de" name="Deutsch"/>
-	<language id="en" name="English"/>
+	<language id="de" name="Deutsch" 
+		thousands_sep= "." decimal_point="," number_format="#.###0" countdown_format="~C 'Tag|Tage' hh:mm:ss" time_format="hh:mm:ss" date_format="TT.MM.JJJJ" 
+		monday="Mo|Montag" tuesday="Di|Dienstag" wednesday="Mi|Mittwoch" 	thursday="Do|Donnerstag" friday="Fr|Freitag" saturday="Sa|Samstag" sunday="So|Sonntag"
+		january="Jan|Jannuar" february="Feb|Februar" march="Mrz|März" april="Apr|April" may="Mai|Mai" june="Jun|Juni" 
+		july="Jul|Juli" august="Aug|August" september="Sep|September" october="Okt|Oktober" november="Nov|November" december="Dez|Dezember" />
+	
+	<language id="en" name="English" 
+		thousands_sep= "," decimal_point="." number_format="#,###0" time_format="hh:mm:ss AM/PM" countdown_format="~C 'day|days' hh:mm:ss" date_format="DD.MM.YYYY" 
+		monday="Mon|Monday" tuesday="Tue|Tuesday" wednesday="Wed|Wednesday" 	thursday="Thu|Thursday" friday="Fri|Friday" saturday="Sat|Saturday" sunday="Sun|Sunday"
+		january="Jan|January" february="Feb|February" march="Mar|March" april="Apr|April" may="May|May" june="Jun|June" 
+		july="Jul|July" august="Aug|August" september="Sep|September" october="Oct|October" november="Nov|November" december="Dec|December" />
 </installed_languages>

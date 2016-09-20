@@ -1,5 +1,5 @@
 <?php 
-
+// lng_echo('number_test'); 
 if(isset($_POST["send-message"])) {
 	
 	if ($_POST["send-message"] == "send-message" & $_POST["toName"] != '') {

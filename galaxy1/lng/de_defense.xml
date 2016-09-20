@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<language_strings> <!-- GERMAN -->
+	<!-- strings heading -->
+	<string id="defensive fortification" text="Verteidigungsanlage" />
+	<string id="construction time" text="Bauzeit" />
+	<string id="quantity" text="Anzahl" />
+	<string id="required resoures" text="Kosten" />
+	
+	<!-- strings table -->
+	<string id="max hold planet reached" text="Maximale Anzahl {name plural} auf dem Planeten bereits erreicht !" />
+	<string id="max hold galaxy reached" text="Maximale Anzahl {name plural} in der Galaxy bereits erreicht !" />
+	<string id="attack" text="Angriff: " />
+	<string id="defense" text="Verteidigung: " />
+	
+	<!-- strings footer -->
+	<string id="total building time / costs" text=" Gesamtbauzeit / -kosten" />
+	<string id="build" text="bauen" />
+	
+	<string id="please build weapons factory" text="Bitte zunächst Waffenfabrik bauen !" />
+</language_strings>

@@ -147,18 +147,18 @@ for($ship_id = 1; $ship_id <= 11; $ship_id++) {
 
 
 
-for($deff_id = 1; $deff_id <= 6; $deff_id++) {
-	$schiffe_anzahl = get_addiere_deff_stationiert($spieler_id, $deff_id);
-	$deff = get_def($deff_id);
-	$ress = $deff['Kosten_Eisen'] + $deff['Kosten_Silizium'] + $deff['Kosten_Wasser'];
-	$punkte_neu["Flotte"] = $punkte_neu["Flotte"] + ($ress / 1000 * $schiffe_anzahl);
+for($defense_id = 1; $defense_id <= get_defense_count(); $defense_id++) {
+	$defense_quantity = get_total_stationed_defense_in_galaxy ($spieler_id, $defense_id);
+	$defense = get_defense($defense_id);
+	$ress = $defense['required iron'] + $defense['required silicon'] + $defense['required water'];
+	$punkte_neu["Flotte"] = $punkte_neu["Flotte"] + ($ress / 1000 * $defense_quantity);
 	echo "<tr>";
-	echo "<td>" . $schiffe_anzahl . "</td>";
-	echo "<td>" . $deff["Name"] . "</td>";
-	echo "<td>" . round($deff["Kosten_Eisen"]) . "</td>";
-	echo "<td>" . round($deff["Kosten_Silizium"]) . "</td>";
-	echo "<td>" . round($deff["Kosten_Wasser"]) . "</td>";
-	echo "<td>" . $punkte_neu["Flotte"] . "</td>";
+	echo "<td>" . $defense_quantity . "</td>";
+	echo "<td>" . $defense["name"] . "</td>";
+	echo "<td>" . round($defense['required iron']) . "</td>";
+	echo "<td>" . round($defense['required silicon']) . "</td>";
+	echo "<td>" . round($defense['required water']) . "</td>";
+	echo "<td>" . $punkte_neu["Flotte"]. "</td>";
 	echo "</tr>";
 }
 
