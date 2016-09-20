@@ -23,23 +23,24 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
--- Tabellenstruktur für Tabelle `bauschleifedeff`
+-- Tabellenstruktur für Tabelle `construction_loops_defense`
 --
 
-CREATE TABLE IF NOT EXISTS `bauschleifedeff` (
-  `ID` int(11) NOT NULL,
-  `Spieler_ID` varchar(58) NOT NULL,
-  `Planet_ID` int(11) NOT NULL,
-  `Typ` int(11) NOT NULL,
-  `Eisen` bigint(20) NOT NULL,
-  `Silizium` bigint(20) NOT NULL,
-  `Wasser` bigint(20) NOT NULL,
-  `Karma` int(11) NOT NULL,
-  `Name` varchar(50) NOT NULL,
-  `Anzahl` int(11) NOT NULL,
-  `Bauzeit_Von` int(9) NOT NULL,
-  `Bauzeit_Einzel` int(9) NOT NULL,
-  `Bauzeit_Bis` int(11) NOT NULL
+CREATE TABLE IF NOT EXISTS `construction_loops_defense` (
+  `id` INT(11) NOT NULL,
+  `player_id` VARCHAR(58) NOT NULL,
+  `planet_id` int(11) NOT NULL,
+  `defense_id` int(11) NOT NULL,
+  `required_iron` bigint(20) NOT NULL,
+  `required_silicon` bigint(20) NOT NULL,
+  `required_water` bigint(20) NOT NULL,
+  `required_bots` INT(11) NOT NULL,
+  `required_karma` int(11) NOT NULL,
+  `name` varchar(50) NOT NULL,
+  `quantity` int(11) NOT NULL,
+  `construction_time_start` int(9) NOT NULL,
+  `construction_time` int(9) NOT NULL,
+  `construction_time_end` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
@@ -315,10 +316,10 @@ CREATE TABLE IF NOT EXISTS `spieler` (
 --
 
 --
--- Indizes für die Tabelle `bauschleifedeff`
+-- Indizes für die Tabelle `construction_loops_defense`
 --
-ALTER TABLE `bauschleifedeff`
-  ADD PRIMARY KEY (`ID`);
+ALTER TABLE `construction_loops_defense`
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indizes für die Tabelle `bauschleifeflotte`
@@ -373,10 +374,10 @@ ALTER TABLE `spieler`
 --
 
 --
--- AUTO_INCREMENT für Tabelle `bauschleifedeff`
+-- AUTO_INCREMENT für Tabelle `construction_loops_defense`
 --
-ALTER TABLE `bauschleifedeff`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT;
+ALTER TABLE `construction_loops_defense`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT für Tabelle `bauschleifeflotte`
 --
