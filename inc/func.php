@@ -1,4 +1,9 @@
 <?php
+function sql_error ($error){
+	$backtrace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS,2);
+	die ('<BR><BR><b>SQL-errror: </b>&nbsp&nbsp' . $error . '&nbsp -> <b>&nbsp' . $backtrace[0]['file'] . '</b>&nbsp function &nbsp<b>' . $backtrace[1]['function'] . '</b>&nbsp line &nbsp<b>' . $backtrace[0]['line'] . '</b><BR>');
+}
+
 function random_float ($min,$max) {
 	return ($min+lcg_value()*(abs($max-$min)));
 }
@@ -11,30 +16,22 @@ function create_first_planet($spieler_id, $x, $y, $z, $username, $galaxy_number)
 	
 	//Spieler
 	
-	$abfrage = "INSERT INTO `spieler`(`ID`, `Spieler_ID`, `Spieler_Name`, `Typ`, `Bot_Produktion_Zeit`, `Tech_1`, `Tech_2`, `Tech_3`, `Tech_4`, `Tech_5`, `Tech_6`, `Tech_7`, `Tech_8`, `Tech_9`, `Tech_10`, `Tech_11`, `Tech_12`, `Tech_Schleife_ID`, `Tech_Schleife_Eisen`, `Tech_Schleife_Name`, `Tech_Schleife_Silizium`, `Tech_Schleife_Wasser`, `Tech_Schleife_Bauzeit`, `Tech_Schleife_Planet`) VALUES ('','$spieler_id','$username','human',".time().",0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0)";
-	
-	$query = $abfrage or die("Error in the consult.." . mysqli_error("Error: #0003 ".$link));
-	$result = mysqli_query($link, $query);
+	$query = "INSERT INTO `spieler`(`Spieler_ID`, `Spieler_Name`, `Typ`, `Bot_Produktion_Zeit`) VALUES ('$spieler_id','$username','human',".time().")";
+	$result = mysqli_query($link, $query) or sql_error(mysqli_error($link));
 	
 	//Planet
 	
 	$planetname = $username."s Kolonie";
 	$jetzt = time() - (48 * 60 * 60);
-	$abfrage = "INSERT INTO `planet`(`Spieler_ID`, `Spieler_Name`, `Planet_Name`, `x`, `y`, `z`, `Grund_Prod_Eisen`, `Grund_Prod_Silizium`, `Grund_Prod_Wasser`, `Produktion_Zeit`) VALUES ('$spieler_id', '$username','$planetname', $x, $y, $z, 20,10,5, $jetzt)";
-	
-	
-	
-	$query = $abfrage or die("Error in the consult.." . mysqli_error("Error: #0003b ".$link));
-	$result = mysqli_query($link, $query);
+	$query = "INSERT INTO `planet`(`Spieler_ID`, `Spieler_Name`, `Planet_Name`, `x`, `y`, `z`, `Grund_Prod_Eisen`, `Grund_Prod_Silizium`, `Grund_Prod_Wasser`, `Produktion_Zeit`) VALUES ('$spieler_id', '$username','$planetname', $x, $y, $z, 20,10,5, $jetzt)";
+	$result = mysqli_query($link, $query) or sql_error(mysqli_error($link));
 
 	//spielername in der gala
 	require 'inc/connect_spieler.php';
 	$link->set_charset("utf8");
 	
-	$abfrage = "UPDATE `spieler` SET `name_galaxy_$galaxy_number`= '$username' WHERE `spieler_ID` = '$spieler_id'";
-	
-	$query = $abfrage or die("Error in the consult.." . mysqli_error("Error: #0003c ".$link));
-	$result = mysqli_query($link, $query);
+	$query = "UPDATE `spieler` SET `name_galaxy_$galaxy_number`= '$username' WHERE `spieler_ID` = '$spieler_id'";
+	$result = mysqli_query($link, $query) or sql_error(mysqli_error($link));
 	
 	
 }
@@ -49,8 +46,8 @@ function get_timestamp_in_datum_und_zeit($value) {
 function get_in_galaxy_name($spieler_id, $galaxy_number){
 	require 'inc/connect_spieler.php';
 	$link->set_charset("utf8");
-	$query = "SELECT `spieler_ID`, `name_galaxy_1`, `name_galaxy_2`, `name_galaxy_3` FROM `spieler` WHERE `spieler_ID` = '".$spieler_id."'" or die("Error in the consult.." . mysqli_error("Error: #0003 ".$link));
-	$result = mysqli_query($link, $query);
+	$query = "SELECT `spieler_ID`, `name_galaxy_1`, `name_galaxy_2`, `name_galaxy_3` FROM `spieler` WHERE `spieler_ID` = '".$spieler_id."'" ;
+	$result = mysqli_query($link, $query) or sql_error(mysqli_error($link));
 
 
 	$row = mysqli_fetch_object($result);
@@ -231,10 +228,9 @@ function login($username, $passwort){
 	
 	require 'inc/connect_spieler.php';
 
-	$abfrage = "SELECT `ID`, `spieler_ID`, `spieler_name`, `passwort`, `letzter_login`, `spieler_geloescht`, `name_gala_1`, `aktiv_gala_1`, `letzter_Planet`, `max_Planeten` FROM `spieler` WHERE spieler_name = '$username' LIMIT 1";
-	$query = $abfrage or die("Error: #0002 " . mysqli_error($link));
+	$query = "SELECT `ID`, `spieler_ID`, `spieler_name`, `passwort`, `letzter_login`, `spieler_geloescht`, `name_gala_1`, `aktiv_gala_1`, `letzter_Planet`, `max_Planeten` FROM `spieler` WHERE spieler_name = '$username' LIMIT 1";
+	$result = mysqli_query($link, $query) or sql_error(mysqli_error($link));
 	
-	$result = mysqli_query($link, $query);
 	if ($row = mysqli_fetch_array($result)) {
 		
 		if(hash_equals($row["passwort"], crypt($passwort, $row["passwort"])) AND $username == $row["spieler_name"])
@@ -245,8 +241,7 @@ function login($username, $passwort){
 			
 			$query = "UPDATE spieler SET session_id = '".$_SESSION["session_id"]."', letzter_login = ".time().", HTTP_USER_AGENT = '".$varHTTP_USER_AGENT."' WHERE spieler_ID = '".$_SESSION["spieler_ID"]."'" or die("Error: #0007 " . mysqli_error($link));
 			
-			$ergebnis =  mysqli_query($link, $query)
-			OR die("Error: #0001 <br>".mysqli_error($link));
+			$ergebnis =  mysqli_query($link, $query) or sql_error(mysqli_error($link));
 			
 			return "ok";
 		}
@@ -261,7 +256,7 @@ function check_auth($spieler_id, $session_id) {
 	mysqli_select_db($link, "spieler");
 	
 	$query = "SELECT `ID`, `spieler_ID`, `session_id`, `HTTP_USER_AGENT` FROM `spieler` WHERE `spieler_ID` = '".$spieler_id."' AND `session_id` = '".$session_id."' LIMIT 1" or die("Error: #0009 " . mysqli_error($link));
-	$result = mysqli_query($link, $query);
+	$result = mysqli_query($link, $query) or sql_error(mysqli_error($link));
 	$row = mysqli_fetch_array($result);
 	
 	if($row["HTTP_USER_AGENT"] == md5($_SERVER['HTTP_USER_AGENT']))
@@ -295,11 +290,10 @@ function registrieren($username, $password) {
 	
 	
 	
-	$sql = "INSERT INTO `spieler`(`spieler_ID`, `spieler_name`, `passwort`) VALUES ('$unique', '$username', '$hash')";
+	$query = "INSERT INTO `spieler`(`spieler_ID`, `spieler_name`, `passwort`) VALUES ('$unique', '$username', '$hash')";
+	$result = mysqli_query($link, $query) or sql_error(mysqli_error($link));
 	
-	$query = $sql or die("Error in the consult.." . mysqli_error("Error: zeile 298 ".$link));
-
-	if (mysqli_query($link, $query)) {
+	if ($result) {
 		return "Yeahh!";
 		
 	} else {
