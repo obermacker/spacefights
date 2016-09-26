@@ -25,7 +25,11 @@ function create_first_planet($spieler_id, $x, $y, $z, $username, $galaxy_number)
 	$jetzt = time() - (48 * 60 * 60);
 	$query = "INSERT INTO `planet`(`Spieler_ID`, `Spieler_Name`, `Planet_Name`, `x`, `y`, `z`, `Grund_Prod_Eisen`, `Grund_Prod_Silizium`, `Grund_Prod_Wasser`, `Produktion_Zeit`) VALUES ('$spieler_id', '$username','$planetname', $x, $y, $z, 20,10,5, $jetzt)";
 	$result = mysqli_query($link, $query) or sql_error(mysqli_error($link));
-
+	
+	// planet erkundet
+	$query = "INSERT INTO `sonnensystem` (`Spieler_ID`, `x`, `y`, `Entdeckt`, `locked`) VALUES ('$spieler_id', '$x', '$y', '" . date("Y-m-d\TH:i:s\Z", time()) . "', '1')";
+	$result = mysqli_query($link, $query) or sql_error (mysqli_error($link));
+		
 	//spielername in der gala
 	require 'inc/connect_spieler.php';
 	$link->set_charset("utf8");
