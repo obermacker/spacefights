@@ -27,12 +27,16 @@ if (isset($_SESSION["username"])) { $username = $_SESSION["username"]; } else { 
 
 //var_dump('$_GET ',$_GET, '  -- $_POST ', $_POST);
 
+//  need settings !
 if (!isset($_GET['lng'])) {$lng_defaults = get_language_defaults('de'); } else { $lng_defaults = get_language_defaults($_GET['lng']);}
 if (!isset($lng_defaults['id'])) {$lng_defaults = get_language_defaults('en');}
+$load_pictures = true; 				   // for future versions:  must be set in preferences  to load / not load images
+// seetings END
 
 if(!isset($_POST["s"])){ 
 	if(!isset($_GET["s"])){ $select = "index";} else { $select = $_GET["s"]; }
 } else { $select = $_POST["s"]; }
+
 
 
 if(!isset($_POST["p"])){
@@ -179,6 +183,9 @@ switch ($select) {
 </head>
 <body>
 <?php
+
+// define global variables for seperate JavaScripts
+echo '<span  id="globalJsVariables" select="' . $select . '>" />';
 
 //--- Flotte Aktion & Rückkehr
 	$notfall_break = 0;	
