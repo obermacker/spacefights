@@ -185,7 +185,7 @@ switch ($select) {
 <?php
 
 // define global variables for seperate JavaScripts
-echo '<span  id="globalJsVariables" select="' . $select . '>" />';
+echo '<span  id="globalJsVariables" select="' . $select . '" />';
 
 //--- Flotte Aktion & Rückkehr
 	$notfall_break = 0;	
