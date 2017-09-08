@@ -15,8 +15,22 @@ include (dirname(__FILE__) . '/inc/debug.php');
 
 $spieler_id = ""; $session_id = ""; $username = "";
 
-if (isset($_SESSION["spieler_ID"])) { $spieler_id = $_SESSION["spieler_ID"]; } 
-if (isset($_SESSION["session_id"])) { $session_id = $_SESSION["session_id"]; }
+//rememberme cookie check
+
+	if($_COOKIE["rememberme"] == "yes"){
+		$spieler_id = $_COOKIE["user_id"];
+		$session_id = $_COOKIE["auth_token"];
+		
+	} else {
+		
+		if (isset($_SESSION["spieler_ID"])) { $spieler_id = $_SESSION["spieler_ID"]; }
+		if (isset($_SESSION["session_id"])) { $session_id = $_SESSION["session_id"]; }
+		
+		
+	}
+
+//end: rememberme cookie check
+
 
 if (check_auth($spieler_id, $session_id) == "nein"){
 	    session_unset(); session_destroy(); $_SESSION = array(); header('Location: ../index.html'); exit();
@@ -45,11 +59,11 @@ if(isset($planet_wahl)) {
 		}		
 	}	
 }
-//prÃ¼f mal ob der Spieler Ã¼berhaupt einen Planeten in der Gala hat
+//prüf mal ob der Spieler überhaupt einen Planeten in der Gala hat
 
-if (get_number_of_planets($spieler_id, 1) == 0) { session_unset(); session_destroy(); $_SESSION = array(); header('Location: ../index.html'); exit(); }
+if (get_anzahl_planeten($spieler_id, 1) == 0) { session_unset(); session_destroy(); $_SESSION = array(); header('Location: ../index.html'); exit(); }
 
-//ENDE: prÃ¼f mal ob der Spieler Ã¼berhaupt einen Planten in der Gala hat ;)
+//ENDE: prüf mal ob der Spieler überhaupt einen Planten in der Gala hat ;)
 
 switch ($select) {
 	case "hypersprung": //hypersprung.php
@@ -177,7 +191,7 @@ switch ($select) {
 <body>
 <?php
 
-//--- Flotte Aktion & RÃ¼ckkehr
+//--- Flotte Aktion & Rückkehr
 	$notfall_break = 0;	
 	while($flotte_abarbeiten = get_flotte_in_der_luft($spieler_id, time(), true)) {			
 		if($flotte_abarbeiten != "leer") {
@@ -189,8 +203,8 @@ switch ($select) {
 					
 					case "erkunden": 
 						if(mission_erkunden($flotte_abarbeiten[$key], $spieler_id) == true) {
-							if(mission_rÃ¼ckkehr_set($flotte_abarbeiten[$key], $spieler_id) == false) {
-								echo "Fehler mission_rÃ¼ckkehr index.php Zeile 154";
+							if(mission_rückkehr_set($flotte_abarbeiten[$key], $spieler_id) == false) {
+								echo "Fehler mission_rückkehr index.php Zeile 154";
 								echo "Wenn das hier jemand liest, sagt mal bitte bescheid.";
 								exit;
 							}
@@ -199,8 +213,8 @@ switch ($select) {
 					
 					case "Sicherungsflug":
 						if(mission_erkunden($flotte_abarbeiten[$key], $spieler_id) == true) {
-							if(mission_rÃ¼ckkehr_set($flotte_abarbeiten[$key], $spieler_id) == false) {
-								echo "Fehler mission_rÃ¼ckkehr index.php Zeile 164";
+							if(mission_rückkehr_set($flotte_abarbeiten[$key], $spieler_id) == false) {
+								echo "Fehler mission_rückkehr index.php Zeile 164";
 								echo "Wenn das hier jemand liest, sagt mal bitte bescheid.";
 								exit;
 							}
@@ -208,8 +222,8 @@ switch ($select) {
 						break;
 					case "Angriff":
 						if(mission_erkunden($flotte_abarbeiten[$key], $spieler_id) == true) {
-							if(mission_rÃ¼ckkehr_set($flotte_abarbeiten[$key], $spieler_id) == false) {
-								echo "Fehler mission_rÃ¼ckkehr index.php Zeile 164";
+							if(mission_rückkehr_set($flotte_abarbeiten[$key], $spieler_id) == false) {
+								echo "Fehler mission_rückkehr index.php Zeile 164";
 								echo "Wenn das hier jemand liest, sagt mal bitte bescheid.";
 								exit;
 							}
@@ -217,14 +231,14 @@ switch ($select) {
 						break;
 					case "Kolonisierung":
 						if(mission_kolonisieren($flotte_abarbeiten[$key], $spieler_id, $username) == true) {
-							if(mission_rÃ¼ckkehr_auflÃ¶sen($flotte_abarbeiten[$key], $spieler_id) == false) {
-								echo "Fehler mission_rÃ¼ckkehr index.php Zeile 164";
+							if(mission_rückkehr_auflösen($flotte_abarbeiten[$key], $spieler_id) == false) {
+								echo "Fehler mission_rückkehr index.php Zeile 164";
 								echo "Wenn das hier jemand liest, sagt mal bitte bescheid.";
 								exit;
 							}
 						} else {
-							if(mission_rÃ¼ckkehr_set($flotte_abarbeiten[$key], $spieler_id) == false) {
-								echo "Fehler mission_rÃ¼ckkehr index.php Zeile 164";
+							if(mission_rückkehr_set($flotte_abarbeiten[$key], $spieler_id) == false) {
+								echo "Fehler mission_rückkehr index.php Zeile 164";
 								echo "Wenn das hier jemand liest, sagt mal bitte bescheid.";
 								exit;
 							}
@@ -232,8 +246,8 @@ switch ($select) {
 						break;
 					case "Spionage":
 						if(mission_erkunden($flotte_abarbeiten[$key], $spieler_id) == true) {
-							if(mission_rÃ¼ckkehr_set($flotte_abarbeiten[$key], $spieler_id) == false) {
-								echo "Fehler mission_rÃ¼ckkehr index.php Zeile 164";
+							if(mission_rückkehr_set($flotte_abarbeiten[$key], $spieler_id) == false) {
+								echo "Fehler mission_rückkehr index.php Zeile 164";
 								echo "Wenn das hier jemand liest, sagt mal bitte bescheid.";
 								exit;
 							}
@@ -246,18 +260,18 @@ switch ($select) {
 						break;							
 					case "Transport":
 						if(mission_transport($flotte_abarbeiten[$key], $spieler_id) == true) {							
-							if(mission_rÃ¼ckkehr_set($flotte_abarbeiten[$key], $spieler_id) == false) {
-								echo "Fehler mission_rÃ¼ckkehr index.php Zeile 251";
+							if(mission_rückkehr_set($flotte_abarbeiten[$key], $spieler_id) == false) {
+								echo "Fehler mission_rückkehr index.php Zeile 251";
 								echo "Wenn das hier jemand liest, sagt mal bitte bescheid.";
 								exit;
 							}
 						}
 						break;
-					case "rÃ¼ckkehr":						
-						if(mission_rÃ¼ckkehr_auflÃ¶sen($flotte_abarbeiten[$key], $spieler_id) == true) {
+					case "rückkehr":						
+						if(mission_rückkehr_auflösen($flotte_abarbeiten[$key], $spieler_id) == true) {
 							
 						} else {
-							echo "Fehler mission_rÃ¼ckkehr index.php Zeile 147";
+							echo "Fehler mission_rückkehr index.php Zeile 147";
 							echo "Wenn das hier jemand liest, sagt mal bitte bescheid.";
 							exit;
 								
@@ -271,19 +285,19 @@ switch ($select) {
 			break;
 		}
 		$notfall_break++;
-		if($notfall_break > 30) { break; } //Notfall break wenn Flotte nicht aufgelÃ¶st werden kann 
+		if($notfall_break > 30) { break; } //Notfall break wenn Flotte nicht aufgelöst werden kann 
 	}	
 	
 
 
 //---- Abgelaufene Bauschleifen fertigstellen
 
-	//--- GebÃ¤ude
+	//--- Gebäude
 	$bauschleife = check_bauschleife_activ($spieler_id, $planet_id, "Structure");
 	if ($bauschleife != NULL) {
 		if ($bauschleife["Bis"] <= time()) {
-			$gebÃ¤ude_id = $bauschleife["ID"];		
-			set_bauschleife_struckture_fertig($spieler_id, $planet_id, $gebÃ¤ude_id, $username);
+			$gebäude_id = $bauschleife["ID"];		
+			set_bauschleife_struckture_fertig($spieler_id, $planet_id, $gebäude_id, $username);
 		}
 	}
 
@@ -315,7 +329,7 @@ switch ($select) {
 
 //---- Bauschleife abbrechen
 
-	//--- GebÃ¤ude
+	//--- Gebäude
 	if(isset($_POST["action-gebaeude-abbrechen"])) {
 	
 		if (is_numeric($_POST["action-gebaeude-abbrechen"])) {
@@ -324,9 +338,9 @@ switch ($select) {
 			
 			if ($bauschleife != NULL) { 
 				
-				$gebÃ¤ude_id = $_POST["action-gebaeude-abbrechen"];				
+				$gebäude_id = $_POST["action-gebaeude-abbrechen"];				
 
-				set_bauschleife_structure_abbruch($spieler_id, $planet_id, $gebÃ¤ude_id, $username);			
+				set_bauschleife_structure_abbruch($spieler_id, $planet_id, $gebäude_id, $username);			
 			}
 		}
 	}
@@ -368,7 +382,7 @@ switch ($select) {
 	
 //---- Ende: Bauschleife abbrechen 
 	
-//---- GebÃ¤ude bauen
+//---- Gebäude bauen
 
 	if(isset($_POST["action-gebaeude-bauen"])) {
 	
@@ -381,21 +395,21 @@ switch ($select) {
 				
 			if ($bauschleife != NULL) { $kann_gebaut_werden = false; } else {
 				
-				$gebÃ¤ude_id = $_POST["action-gebaeude-bauen"];
+				$gebäude_id = $_POST["action-gebaeude-bauen"];
 				$ressource = get_ressource($spieler_id, $planet_id);
-				$GebÃ¤ude = get_gebÃ¤ude_nÃ¤chste_stufe($spieler_id, $planet_id, $gebÃ¤ude_id, 1);
+				$Gebäude = get_gebäude_nächste_stufe($spieler_id, $planet_id, $gebäude_id, 1);
 		
-				if($ressource["Eisen"] < $GebÃ¤ude["Kosten_Eisen"]) { $kann_gebaut_werden = false; }
-				if($ressource["Silizium"] < $GebÃ¤ude["Kosten_Silizium"]) { $kann_gebaut_werden = false; }
-				if($ressource["Wasser"] < $GebÃ¤ude["Kosten_Wasser"]) { $kann_gebaut_werden = false; }
-				if($ressource["Energie"] < $GebÃ¤ude["Kosten_Energie"]) { $kann_gebaut_werden = false; }
-				if($ressource["Karma"] < $GebÃ¤ude["Kosten_Karma"]) { $kann_gebaut_werden = false; }
+				if($ressource["Eisen"] < $Gebäude["Kosten_Eisen"]) { $kann_gebaut_werden = false; }
+				if($ressource["Silizium"] < $Gebäude["Kosten_Silizium"]) { $kann_gebaut_werden = false; }
+				if($ressource["Wasser"] < $Gebäude["Kosten_Wasser"]) { $kann_gebaut_werden = false; }
+				if($ressource["Energie"] < $Gebäude["Kosten_Energie"]) { $kann_gebaut_werden = false; }
+				if($ressource["Karma"] < $Gebäude["Kosten_Karma"]) { $kann_gebaut_werden = false; }
 				
 				if ($kann_gebaut_werden == true) {
 					
-					$bauzeit = time() + $GebÃ¤ude["Bauzeit"];
+					$bauzeit = time() + $Gebäude["Bauzeit"];
 					
-					set_bauschleife_struckture($spieler_id, $planet_id, $gebÃ¤ude_id, $GebÃ¤ude["Name"], $bauzeit, $ressource["Eisen"], $ressource["Silizium"], $ressource["Wasser"], $ressource["Energie"], $ressource["Karma"], $GebÃ¤ude["Kosten_Eisen"], $GebÃ¤ude["Kosten_Silizium"], $GebÃ¤ude["Kosten_Wasser"], $GebÃ¤ude["Kosten_Energie"], $GebÃ¤ude["Kosten_Karma"], $username);
+					set_bauschleife_struckture($spieler_id, $planet_id, $gebäude_id, $Gebäude["Name"], $bauzeit, $ressource["Eisen"], $ressource["Silizium"], $ressource["Wasser"], $ressource["Energie"], $ressource["Karma"], $Gebäude["Kosten_Eisen"], $Gebäude["Kosten_Silizium"], $Gebäude["Kosten_Wasser"], $Gebäude["Kosten_Energie"], $Gebäude["Kosten_Karma"], $username);
 					
 				} else {
 					
@@ -407,7 +421,7 @@ switch ($select) {
 	}
 
 
-//---ENDE: GebÃ¤ude bauen
+//---ENDE: Gebäude bauen
 
 //--- Forschung einreihen
 	
@@ -425,7 +439,7 @@ switch ($select) {
 	
 				$tech_id = $_POST["action-forschung-bauen"];
 				$ressource = get_ressource($spieler_id, $planet_id);
-				$Tech = get_tech_nÃ¤chste_stufe($spieler_id, $planet_id, $tech_id, 1);
+				$Tech = get_tech_nächste_stufe($spieler_id, $planet_id, $tech_id, 1);
 	
 				if($ressource["Eisen"] < $Tech["Kosten_Eisen"]) { $kann_gebaut_werden = false; }
 				if($ressource["Silizium"] < $Tech["Kosten_Silizium"]) { $kann_gebaut_werden = false; }
@@ -437,7 +451,7 @@ switch ($select) {
 					$bauStart = time(); 
 					$bauzeit = $bauStart + $Tech["Bauzeit"];
 											
-					//set_bauschleife_struckture($spieler_id, $planet_id, $gebÃ¤ude_id, $GebÃ¤ude["Name"], $bauzeit, $ressource["Eisen"], $ressource["Silizium"], $ressource["Wasser"], $ressource["Energie"], $ressource["Karma"], $Tech["Kosten_Eisen"], $Tech["Kosten_Silizium"], $Tech["Kosten_Wasser"], $Tech["Kosten_Energie"], $Tech["Kosten_Karma"]);
+					//set_bauschleife_struckture($spieler_id, $planet_id, $gebäude_id, $Gebäude["Name"], $bauzeit, $ressource["Eisen"], $ressource["Silizium"], $ressource["Wasser"], $ressource["Energie"], $ressource["Karma"], $Tech["Kosten_Eisen"], $Tech["Kosten_Silizium"], $Tech["Kosten_Wasser"], $Tech["Kosten_Energie"], $Tech["Kosten_Karma"]);
 
 					set_bauschleife_tech($spieler_id, $planet_id, $tech_id, $Tech["Name"], $bauStart, $bauzeit, $ressource["Eisen"], $ressource["Silizium"], $ressource["Wasser"], $ressource["Karma"], $Tech["Kosten_Eisen"], $Tech["Kosten_Silizium"], $Tech["Kosten_Wasser"], $Tech["Kosten_Karma"], $username);
 					
@@ -467,7 +481,7 @@ switch ($select) {
 				$ressource = get_ressource($spieler_id, $planet_id);
 				$Ship = get_ship($_POST["action-schiffe-bauen"]);
 				$anzahl = usereingabe_cleaner ($_POST["vanzahl" . $_POST["action-schiffe-bauen"]]);
-				$raumschiffwerft_stufe = get_gebÃ¤ude_aktuelle_stufe($spieler_id, $planet_id, 7);
+				$raumschiffwerft_stufe = get_gebäude_aktuelle_stufe($spieler_id, $planet_id, 7);
 
 				if($anzahl <= 0 OR empty($anzahl) OR !is_numeric($anzahl)) { $kann_gebaut_werden = false; }
 				if($Ship["Stufe_Werft"] > $raumschiffwerft_stufe) { $kann_gebaut_werden = false; }
@@ -529,7 +543,7 @@ switch ($select) {
 
 	
 		$ressource = get_ressource($spieler_id, $planet_id);
-		$waffenfabrik_stufe = get_gebÃ¤ude_aktuelle_stufe($spieler_id, $planet_id, 8);
+		$waffenfabrik_stufe = get_gebäude_aktuelle_stufe($spieler_id, $planet_id, 8);
 
 		for ($i = 1; $i <= $deffCount; $i++) {
 		
@@ -591,17 +605,17 @@ switch ($select) {
 // ENDE: Robots produzieren
 
 	
-// Flotte Abbrechen wenn gewÃ¼nscht
+// Flotte Abbrechen wenn gewünscht
 
 	if(isset($_POST["action-flotte-abbrechen"])) {
 
 		$id = intval($_POST["action-flotte-abbrechen"], 10);
 		if(is_numeric($id)) {			
-			mission_rÃ¼ckkehr_set_manuell($id, $spieler_id);
+			mission_rückkehr_set_manuell($id, $spieler_id);
 		}
 	}
 	
-// ENDE: Flotte Abbrechen wenn gewÃ¼nscht
+// ENDE: Flotte Abbrechen wenn gewünscht
 ?>
 
 
@@ -670,13 +684,13 @@ switch ($select) {
 <table border="0" width="100%">
 <tr>
 <td valign="top" width="150">
-<!-- MenÃ¼ -->
+<!-- Menü -->
 <table id="hauptmenue" width="100%"  cellspacing="0" cellpadding="1" style="margin-top: 2px;">
-				 <tr><td><a class="navi" href="index.php">Ãœbersicht</a></td></tr>
+				 <tr><td><a class="navi" href="index.php">Übersicht</a></td></tr>
 				 <tr><td><s>Imperium</td></tr>
 				 <tr><td><a class="navi" href="index.php?s=Rohstoffe">Rohstoffe</a></td></tr>
 				 <tr><td><hr></td></tr>
-				 <tr><td><a class="navi" href="index.php?s=Gebaeude">GebÃ¤ude</a></td></tr>
+				 <tr><td><a class="navi" href="index.php?s=Gebaeude">Gebäude</a></td></tr>
 				 <tr><td><a class="navi" href="index.php?s=Raumschiffe">Raumschiffe</a></td></tr>
 				 <tr><td><a class="navi" href="index.php?s=Verteidigung">Verteidigung</a></td></tr>
 				 <tr><td><a class="navi" href="index.php?s=Forschung">Forschung</a></td></tr>
@@ -700,7 +714,7 @@ switch ($select) {
 				 
 				  <tr><td><a class="navi" href="../logout.php">Ausloggen</a></td></tr>
 			</table>
-<!-- ENDE: MenÃ¼ -->
+<!-- ENDE: Menü -->
 </td>
 <td valign="top">					
 <table border="0" width="100%"  cellspacing="0" cellpadding="2">
@@ -727,25 +741,19 @@ switch ($select) {
 								<form>
 									<table>
 										<tr>
-											<td style="padding-left:0.5em;">Planet</td>
-											<td align=right>
-												<?php $numberOfPlanets = get_number_of_planets($spieler_id, 1); ?>
-												<button class="btnNavigation" type="submit" name="first" onclick = "p.value =first.value" 
-													<?php 	echo 'value="1"';
-															if ($planet_id == 0) {echo ' disabled';}?> >|â—„</button>
-												<button class="btnNavigation" type="submit" name="back" onclick = "p.value = back.value" 
-													<?php 	echo 'value="'.$planet_id.'"';
-															if ($planet_id == 0) {echo ' disabled';}?> >â—„</button>
-												<button class="btnNavigation" type="submit" name="forward" onclick = "p.value = forward.value" 
-													<?php 	if ($planet_id < $numberOfPlanets -1) {echo 'value="'.($planet_id + 2).'"';}
-															if ($planet_id == $numberOfPlanets -1) {echo ' disabled';} ?> >â–º</button>
-												<button class="btnNavigation" type="submit" name="last" onclick = "p.value = last.value" 
-													<?php 	echo 'value="'.$numberOfPlanets.'"'; 
-															if ($planet_id == $numberOfPlanets -1) {echo ' disabled';} ?>>â–º| </button>
+											<td>Planet</td>
+											<td>
+												<?php $anzahlPlaneten = get_anzahl_planeten($spieler_id, 1); ?>
+												<button class="bt" type="submit" name="zurueck" onclick = "p.value = zurueck.value" 
+													value="<?php if ($planet_id == 0) {echo $anzahlPlaneten;} else {echo $planet_id;}?>" ><</button>
+											</td>
+											<td>
+												<button class="bt" type="submit" name="vor" onclick = "p.value = vor.value" 
+													value="<?php if ($planet_id == $anzahlPlaneten -1) {echo ('1');} else {echo $planet_id + 2;} ?>" >></button>
 											</td>
 										</tr>
 										<tr>
-											<td colspan=2>
+											<td colspan=3>
 												<select name="p"  style="width: 180px;" onchange="this.form.submit()" autofocus>
 													<?php echo get_list_of_all_planets($spieler_id, $planet_id); ?>
 												</select>
@@ -796,7 +804,7 @@ switch ($select) {
 		require 'inc/gebaeude.php';
 		break;
 	case "Nachrichten":
-		require 'inc/messages.php';
+		require 'inc/nachrichten.php';
 		break;
 	case "Forschung":
 		require 'inc/forschung.php';

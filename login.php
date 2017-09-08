@@ -9,8 +9,10 @@ $fehler = "";
 if(isset($_POST["sf_username"])) {
 	if(isset($_POST["sf_password"])) {
 		
-		if (login(check_username_cleaner ($_POST["sf_username"], 0), $_POST["sf_password"]) == "ok"){
-		    header('Location: galaxy.php');    
+		if(isset($_POST["remember"])) { $remember = true; } else { $remember = false; }
+		
+		if (login(check_username_cleaner ($_POST["sf_username"], 0), $_POST["sf_password"], $remember) == "ok"){
+		    	header('Location: galaxy.php');    
 		    }
 		else
 		    {
@@ -18,7 +20,6 @@ if(isset($_POST["sf_username"])) {
 		    }
 
     }
-    
 }
     
 ?>
