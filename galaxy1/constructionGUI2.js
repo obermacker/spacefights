@@ -1,21 +1,28 @@
-
 function timeToUsefullOutput(time){
-		var tg = parseInt(time/(24*60*60)); 	time -= (tg*(24*60*60));		
-		var h = parseInt(time/(60*60));		time -= (h*(60*60));
-		var m = parseInt(time/(60));			time -= (m*(60));
-		var s = parseInt(time);
-		
-		if (h<10) h = "0"+h;  	if (m<10) m = "0"+m;	if (s<10) s="0"+s;
-		
-		var timeStr = "";  
-		if (tg > 0) timeStr = tg;
-		if (tg > 1) timeStr += " Tage "; else if (tg > 0) timeStr+= " Tag ";
-		timeStr += h+":"+m+":"+s;
-		
-		return timeStr;
+	// written by ES  Sep 2016
+
+	var tg = parseInt(time/(24*60*60)); 	time -= (tg*(24*60*60));		
+	var h = parseInt(time/(60*60));		time -= (h*(60*60));
+	var m = parseInt(time/(60));			time -= (m*(60));
+	var s = parseInt(time);
+	
+	if (h<10) h = "0"+h;  	if (m<10) m = "0"+m;	if (s<10) s="0"+s;
+	
+	var timeStr = "";  
+	if (tg > 0) timeStr = tg;
+	if (tg > 1) timeStr += ' ' + document.getElementById("lng_defaults").attributes.cd_plural.value + ' ';  
+		else if (tg > 0) timeStr+= ' ' + document.getElementById("lng_defaults").attributes.cd_single.value + ' ';
+	timeStr += h+":"+m+":"+s;
+	
+	return timeStr;
 }
 
-function formatNumber(number, maxDecimals, dSep, tSep ) {
+function formatNumber(number, maxDecimals ) {
+	// written by ES  Sep 2016
+
+	tSep = document.getElementById("lng_defaults").attributes.thousands_sep.value;
+	dSep = document.getElementById("lng_defaults").attributes.decimal_point.value;
+	if(maxDecimals == 0) dSep = ''; 
 	number = Math.round( number * Math.pow(10, maxDecimals) ) / Math.pow(10, maxDecimals);
 	strNumber = number+"";
 	arrInt = strNumber.split(".");
@@ -40,6 +47,8 @@ function formatNumber(number, maxDecimals, dSep, tSep ) {
 }
 
 function getMaxNumberOfPossibleConstructions (idNumber, rI, rS, rW, rB, rK) {
+	// written by ES  Sep 2016
+
 	maxQuantity = 99;  tempQuantity = 0;
 	
 	resI = document.getElementById("totalResI" ).attributes.availableRes.value - rI;
@@ -79,6 +88,8 @@ function getMaxNumberOfPossibleConstructions (idNumber, rI, rS, rW, rB, rK) {
 }
 
 function totalResCalculateAndOutput (idNumber){
+	// written by ES  Sep 2016
+
 	var quantityOfConstructions = document.getElementById("varTransfer").attributes.quantityOfConstructions.value;
 	var totalResI = 0; 	var totalResS = 0;	var totalResW = 0;
 	var totalResB = 0;	var totalResK = 0;	var totalConstructionTime = 0;
@@ -110,18 +121,19 @@ function totalResCalculateAndOutput (idNumber){
 	totalResK += document.getElementById("resK" + idNumber).attributes.rateForOneItem.value * quantity;
 	totalConstructionTime += document.getElementById("constructionTime" + idNumber).attributes.rateForOneItem.value * quantity;
 
-	document.getElementById("totalResI" ).textContent = formatNumber(totalResI,0,'','.');
-	document.getElementById("totalResS").textContent = formatNumber(totalResS,0,'','.');
-	document.getElementById("totalResW").textContent = formatNumber(totalResW,0,'','.');
-	document.getElementById("totalResB").textContent = formatNumber(totalResB,0,'','.');
-	document.getElementById("totalResK").textContent = formatNumber(totalResK,0,'','.');
+	document.getElementById("totalResI" ).textContent = formatNumber(totalResI,0);
+	document.getElementById("totalResS").textContent = formatNumber(totalResS,0);
+	document.getElementById("totalResW").textContent = formatNumber(totalResW,0);
+	document.getElementById("totalResB").textContent = formatNumber(totalResB,0);
+	document.getElementById("totalResK").textContent = formatNumber(totalResK,0);
 	document.getElementById("totalConstructionTime").textContent = timeToUsefullOutput(totalConstructionTime);
 	
 	return quantity;
 }
 
 function slideAndCalculate(id) {
-	
+	// written by ES  Sep 2016
+
 	var idNumber = 0;
 	
 	if (id.search("slider") != -1 ) { 
@@ -150,18 +162,18 @@ function slideAndCalculate(id) {
 	quantity = totalResCalculateAndOutput  (idNumber, quantity);
 
 	if (quantity > 1) {
-		document.getElementById("resI" + idNumber).textContent = formatNumber(quantity * resI,0,'','.');
-		document.getElementById("resS" + idNumber).textContent = formatNumber(quantity * resS,0,'','.');
-		document.getElementById("resW" + idNumber).textContent = formatNumber(quantity * resW,0,'','.');
-		document.getElementById("resB" + idNumber).textContent = formatNumber(quantity * resB,0,'','.');
-		document.getElementById("resK" + idNumber).textContent = formatNumber(quantity * resK,0,'','.');
+		document.getElementById("resI" + idNumber).textContent = formatNumber(quantity * resI,0);
+		document.getElementById("resS" + idNumber).textContent = formatNumber(quantity * resS,0);
+		document.getElementById("resW" + idNumber).textContent = formatNumber(quantity * resW,0);
+		document.getElementById("resB" + idNumber).textContent = formatNumber(quantity * resB,0);
+		document.getElementById("resK" + idNumber).textContent = formatNumber(quantity * resK,0);
 		document.getElementById("constructionTime" + idNumber).textContent = timeToUsefullOutput(quantity * constructionTime);
 	} else {
-		document.getElementById("resI" + idNumber).textContent = formatNumber(resI,0,'','.');
-		document.getElementById("resS" + idNumber).textContent = formatNumber(resS,0,'','.');
-		document.getElementById("resW" + idNumber).textContent = formatNumber(resW,0,'','.');
-		document.getElementById("resB" + idNumber).textContent = formatNumber(resB,0,'','.');
-		document.getElementById("resK" + idNumber).textContent = formatNumber(resK,0,'','.');
+		document.getElementById("resI" + idNumber).textContent = formatNumber(resI,0);
+		document.getElementById("resS" + idNumber).textContent = formatNumber(resS,0);
+		document.getElementById("resW" + idNumber).textContent = formatNumber(resW,0);
+		document.getElementById("resB" + idNumber).textContent = formatNumber(resB,0);
+		document.getElementById("resK" + idNumber).textContent = formatNumber(resK,0);
 		document.getElementById("constructionTime" + idNumber).textContent = timeToUsefullOutput(constructionTime);
 	}
  }

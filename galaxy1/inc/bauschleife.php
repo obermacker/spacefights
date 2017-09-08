@@ -34,9 +34,8 @@ if (isset($ship_construction_loops)) {
 		</table>
 		<?php 
 		$i++;
-	}
-}
-
+	} 
+} 
 
 $defense_construction_loops = get_list_of_defense_construction_activity ($spieler_id, $planet_id);
 
@@ -74,4 +73,22 @@ if (isset($defense_construction_loops)) {
 		<?php 
 		$i++;
 	}
-} ?>
+}
+
+// if there are no loops, show placeholder in construction gui
+if (!isset($ship_construction_loops) && !isset($defense_construction_loops) 
+	&& ($select == 'defense' || $select == 'Raumschiffe')) {?>
+
+		
+		<table id="default" cellspacing="0" cellpadding="0" class="übersicht" height=100% width=100%>
+			<tr>
+				<td class="tbtb tbtb_ohne_rechts">
+					Keine Bauaufträge
+				</td>
+			</tr>
+			<tr>
+				<td align="right" class="tbchell tbchell_rechts">
+				&nbsp;</td>
+			</tr>
+		</table>
+<?php }?>

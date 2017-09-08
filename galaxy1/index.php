@@ -739,18 +739,19 @@ switch ($select) {
 											<td style="padding-left:0.5em;">Planet</td>
 											<td align=right>
 												<?php $numberOfPlanets = get_number_of_planets($spieler_id, 1); ?>
-<!-- 												<button class="btnNavigation" type="submit" name="first" onclick = "p.value =first.value" 
-													<?php 	echo 'value="1"';
-															if ($planet_id == 0) {echo ' disabled';}?> >|◄</button>
- -->												<button class="btnNavigation" type="submit" name="back" onclick = "p.value = back.value" 
-													<?php 	echo 'value="'.$planet_id.'"';
-															if ($planet_id == 0) {echo ' disabled';}?> ><</button>
-												<button class="btnNavigation" type="submit" name="forward" onclick = "p.value = forward.value" 
-													<?php 	if ($planet_id < $numberOfPlanets -1) {echo 'value="'.($planet_id + 2).'"';}
-															if ($planet_id == $numberOfPlanets -1) {echo ' disabled';} ?> >></button>
-<!-- 												<button class="btnNavigation" type="submit" name="last" onclick = "p.value = last.value" 
-													<?php 	echo 'value="'.$numberOfPlanets.'"'; 
-															if ($planet_id == $numberOfPlanets -1) {echo ' disabled';} ?>>►| </button> -->
+												<!-- <button class="btnNavigation" type="submit" name="first" onclick = "p.value =first.value" 
+														<?php 	echo 'value="1"';
+																if ($planet_id == 0) {echo ' disabled';}?> >|◄</button>
+												 -->
+												<button class="btnNavigation" type="submit" onclick = "p.value = <?php echo $planet_id;?>" 
+													<?php 	if ($planet_id == 0) {echo ' disabled';}?> ><</button>
+												<button class="btnNavigation" type="submit"  
+													<?php 	if ($planet_id < $numberOfPlanets -1) {echo 'onclick = "p.value =' . ($planet_id + 2). '"';}
+															if ($planet_id == $numberOfPlanets -1) {echo ' disabled';} ?> />></button>
+												<!-- <button class="btnNavigation" type="submit" name="last" onclick = "p.value = last.value" 
+														<?php 	echo 'value="'.$numberOfPlanets.'"'; 
+																if ($planet_id == $numberOfPlanets -1) {echo ' disabled';} ?>>►| </button> 
+												-->
 												&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<button class="btnNavigation" type="submit" name="lng"  
 													<?php  	if ($lng_defaults['id'] == 'de') {echo 'value="en"';} else {echo 'value="de"';} ?>>
 															<?php if ($lng_defaults['id'] == 'de') {echo 'DE';} else {echo 'EN';}?></button> 

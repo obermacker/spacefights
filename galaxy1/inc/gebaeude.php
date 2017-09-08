@@ -66,7 +66,7 @@ $bilderEinblenden = true;
 				<td  width=1% class="tbchell tbConstructionTime <?php echo $classStr; ?> " >
 					<?php
 					if($baut_gerade["ID"] != $i) {
-						echo get_timestamp_in_was_sinnvolles($objekt["Bauzeit"]); 				
+						echo lng_number_format($objekt["Bauzeit"],'c'); 				
 					} else {
 						if ($baut_gerade["ID"] == $i) {?>
 							<span id="cdKopf<?php echo $baut_gerade["ID"]; ?>">

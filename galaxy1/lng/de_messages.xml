@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<language_strings> <!-- GERMAN -->
-	<string id="number_test" text="{n@ressource['Eisen']}  {_SERVER}  {spieler_id}  -&gt; That is the ID" />
+<language_strings> <!-- GERMAN by ES  Sep 2016 -->
+	<string id="number_test" text="{n@ressource['Eisen']}  {_SERVER}  {spieler_id}  &lt;br&gt; That is the ID" />
 	<string id="mail recipients" text="Empfänger" />
 	<string id="mail subject" text="Betreff" />
 	<string id="send message" text="Senden" />
@@ -10,4 +10,6 @@
 	<string id="delete marked messages" text="markierte Nachrichten löschen" />
 	<string id="archive marked messages" text="markierte Nachrichten archivieren" />
 	<string id="report marked messages" text="markierte Nachrichten melden" />
+	
+	<string id="{DD.MM.YYYY hh:mm:ss@timestamp}" text="{DDD DD.MM.YYYY hh:mm:ss@timestamp}" />
 </language_strings>

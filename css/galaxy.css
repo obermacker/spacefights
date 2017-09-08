@@ -319,17 +319,17 @@ a.kontakte {
 .bauGUI .bildDetails, .constructionGUI2 .bildDetails {height:21.5em;  display: block;  margin: 1em auto;}
 .bauGUI .notEnoughRes, .constructionGUI2 .notEnoughRes {color:red;}
 .bauGUI .stufenPfeil {color:#0f0; padding-right: .3em; text-align: right; width: 2em;}
- .constructionGUI2 .stufenPfeil {color:#0f0; padding-right: .3em; text-align: right; width: 8em;}
+
 
 /*.bauGUI, .constructionGUI2 .btTdWidth {width: 3.5em;}*/
 
 .bauGUI .pBar, .constructionGUI2 .pBar {margin-top: -6px; margin-left: 0.5%; height: 3px;}
 .bauGUI .pBarBkGrd, .constructionGUI2 .pBarBkGrd {margin-top: -6px; margin-left: 0.5%; height: 3px; width: 99%; opacity:0.6; z-index: 3; background-color: red;}
 
-.bauGUI .tbConstructionTime {text-align: right; width: 12em;}						.constructionGUI2 .tbConstructionTime {text-align: right; width: 10em; padding-left: 0;}
+.bauGUI .tbConstructionTime {text-align: right; width: 12em;}						.constructionGUI2 .tbConstructionTime {text-align: right; width: 11em; padding-left: 0;}
 .bauGUI .tbMaxFS, .constructionGUI2 .tbMaxFS {text-align:center; /*font-weight:bold;*/ color:red}
 .bauGUI .tbMaxFS.passive, .constructionGUI2 .tbMaxFS.passive {color: rgba(255,0,0,0.75);}
-.bauGUI .tbBezeichnung {width: 18em;}											.constructionGUI2 .tbBezeichnung {width: 12em;}
+.bauGUI .tbBezeichnung {width: 18em;}											.constructionGUI2 .tbBezeichnung {width: 14em; padding-top: 1em; padding-bottom: 1em;}
 .bauGUI .tbStufe, .constructionGUI2 .tbStufe {text-align: right;  width: 1.3em;}
 .bauGUI .tbVierStellig, .constructionGUI2 .tbVierStellig {width: 5.6em;}
 .bauGUI .tbSechsStellig, .constructionGUI2 .tbSechsStellig {width: 7em;}
@@ -338,8 +338,9 @@ a.kontakte {
 .bauGUI .trMitPBar {height: 2.6em; vertical-align: baseline;}
 
 .bauGUI .tbBeschreibungLang, .constructionGUI2 .tbBeschreibungLang {padding:0; margin: 0 auto 1em auto;}
-.bauGUI .tbBeschreibungLangText, .constructionGUI2 .tbBeschreibungLangText {margin: 0.5em; vertical-align: baseline;}
+.bauGUI .tbBeschreibungLangText, .constructionGUI2 .tbBeschreibungLangText {margin: 0.5em; vertical-align: baseline; width: 100%;}
 
+.constructionGUI2 .tbSlider {color:#0f0; padding-right: .3em; text-align: right; width: 10em;}
 .constructionGUI2 .img_ress {padding: 0 .225em;}
 .constructionGUI2 .tbVierStellig, .constructionGUI2 .tbSechsStellig, .constructionGUI2 .tbAchtStellig {text-align:right;}
 
@@ -393,7 +394,7 @@ a.kontakte {
 .constructionGUI2 input[type=range]:focus::-ms-fill-lower {background: #50555C;}
 .constructionGUI2 input[type=range]:focus::-ms-fill-upper {background: #50555C;}
 
-.constructionGUI2 .slider {width:6em; vertical-align: middle;}
+.constructionGUI2 .slider {width:8em; vertical-align: middle;}
 .constructionGUI2 .inputField {text-align:center; vertical-align:middle; width:1.5em; background-color:#50555C; border: none;  border-radius: 1px;}
 
 .constructionGUI2 .inputField::-moz-selection { background: #70757C;} 

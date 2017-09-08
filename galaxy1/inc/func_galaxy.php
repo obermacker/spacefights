@@ -1273,8 +1273,8 @@ function get_tech_level_player ($player_id) {			// ex-function: get_tech_stufe_s
 	
 	$query = "SELECT `Tech_1`, `Tech_2`, `Tech_3`, `Tech_4`, `Tech_5`, `Tech_6`, `Tech_7`, `Tech_8`, `Tech_9`, `Tech_10`, `Tech_11`, `Tech_12`, `Tech_Schleife_ID` FROM `spieler` WHERE `Spieler_ID` = '$player_id'";
 	$result = mysqli_query($link, $query) or sql_error(mysqli_error($link));
-	
-	$tech_level_player = mysqli_fetch_array($result);
+
+	$tech_level_player = json_decode(json_encode(mysqli_fetch_object($result)), true);
 	
 	return $tech_level_player;
 }
@@ -1552,7 +1552,7 @@ function get_Schiffe_stationiert($spieler_id, $planet_id) {
 		
 		$anzahl = $row->$tabelle;
 		
-		$anzahl = number_format($anzahl, 0, '.', '.');
+		//$anzahl = number_format($anzahl, 0, '.', '.');
 		
 		if ($row->$tabelle > 0) {			
 			if ($row->$tabelle == 1) {
@@ -2343,9 +2343,7 @@ function get_erkundete_systeme($spieler_id, $x1, $y1, $x2, $y2) {
 	//INSERT INTO `galaxy1`.`sonnensystem` (`ID`, `Spieler_ID`, `X`, `Y`, `Entdeckt`, `locked`) VALUES (NULL, '571f0c61b59c602d44604ab830375186', '30', '28', CURRENT_TIMESTAMP, '1');
 	require 'inc/connect_galaxy_1.php';
 	
-	$sql = "SELECT `Spieler_ID`, `x`, `y`, `Entdeckt`, `locked` FROM `sonnensystem` WHERE `Entdeckt` >= NOW() - INTERVAL 14 DAY and `Spieler_ID` = '". $spieler_id ."' and (`x` BETWEEN ".$x1." AND ".$x2.") and (`y` BETWEEN ".$y1." AND ".$y2.") OR `locked` = 1 and `Spieler_ID` = '". $spieler_id ."' and (`x` BETWEEN ".$x1." AND ".$x2.") and (`y` BETWEEN ".$y1." AND ".$y2.") ORDER BY y, x";
-	
-	$query = $sql or die("Error in the consult.." . mysqli_error("Error: #0002302 ".$link));
+	$query = "SELECT `Spieler_ID`, `x`, `y`, `Entdeckt`, `locked` FROM `sonnensystem` WHERE `Entdeckt` >= NOW() - INTERVAL 14 DAY and `Spieler_ID` = '". $spieler_id ."' and (`x` BETWEEN ".$x1." AND ".$x2.") and (`y` BETWEEN ".$y1." AND ".$y2.") OR `locked` = 1 and `Spieler_ID` = '". $spieler_id ."' and (`x` BETWEEN ".$x1." AND ".$x2.") and (`y` BETWEEN ".$y1." AND ".$y2.") ORDER BY y, x";
 	
 	$result = mysqli_query($link, $query) or sql_error(mysqli_error($link));
 	$i = 0;
@@ -2938,10 +2936,10 @@ function mission_kolonisieren($flotte_abarbeiten, $spieler_id, $username) {
 	if($tech_spieler["Tech_10"] <= $anzahl_planeten - 1) { return false; }	
 	if (check_koordinaten_besetzt($x2, $y2, $z2) == false) { //Schauen ob der Planet besetzt ist
 		
-		$sql = "INSERT INTO `sonnensystem` (`ID`, `Spieler_ID`, `x`, `y`, `Entdeckt`, `locked`) VALUES (NULL, '$spieler_id', '$x2', '$y2', '" . date("Y-m-d\TH:i:s\Z", $Ankunft) . "', '1')";
-		$query = $sql or die("Error in the consult.." . mysqli_error("Error: #0002302 ".$link));
+		$query = "INSERT INTO `sonnensystem` (`ID`, `Spieler_ID`, `x`, `y`, `Entdeckt`, `locked`) VALUES (NULL, '$spieler_id', '$x2', '$y2', '" . date("Y-m-d\TH:i:s\Z", $Ankunft) . "', '1')";
+		$result = mysqli_query($link, $query) or sql_error (mysqli_error($link));
 		
-		if($result = mysqli_query($link, $query)) { //Sonnensystem als permanent Entdeckt setzen
+		if($result) { //Sonnensystem als permanent Entdeckt setzen
 			
 			if(create_next_planet($spieler_id, $x2, $y2, $z2, $username) == true) {
 				
@@ -2981,28 +2979,28 @@ function mission_stationiere($flotte_abarbeiten, $spieler_id) {
 	
 	$sql_part_schiffe[] = "`Stationiert_Bot` = `Stationiert_Bot` + " . $anzahl_bots_in_fleet;
 	
-	$sql = "UPDATE `planet` SET " . implode(", ", $sql_part_schiffe) . " WHERE `Spieler_ID` = '$spieler_id' AND `Planet_ID` = $planet_id";	
-	$query = $sql or die("Error in the consult.." . mysqli_error("Error: #0002302 ".$link));
+	$query = "UPDATE `planet` SET " . implode(", ", $sql_part_schiffe) . " WHERE `Spieler_ID` = '$spieler_id' AND `Planet_ID` = $planet_id";	
+	$result = mysqli_query($link, $query) or sql_error (mysqli_error($link));
 	
-	if($result = mysqli_query($link, $query)) {
+	if($result) {
 
 		//Bots auf dem Startplaneten abziehen
 		$planet_id_start = $flotte_abarbeiten["Start_Planet_ID"];
-		$sql = "UPDATE `planet` SET `Stationiert_Bot` = `Stationiert_Bot` - " . $anzahl_bots_in_fleet . " WHERE `Spieler_ID` = '$spieler_id' AND `Planet_ID` = $planet_id_start";
-		$query = $sql or die("Error in the consult.." . mysqli_error("Error: #0002302 ".$link));
-		if($result = mysqli_query($link, $query)) {
+		$query = "UPDATE `planet` SET `Stationiert_Bot` = `Stationiert_Bot` - " . $anzahl_bots_in_fleet . " WHERE `Spieler_ID` = '$spieler_id' AND `Planet_ID` = $planet_id_start";
+		$result = mysqli_query($link, $query) or sql_error (mysqli_error($link));
+		if($result) {
 
 			//Flotte löschen
-			$sql = "DELETE FROM `flotten` WHERE `ID` = " . $flotte_id;
-			$query = $sql or die("Error in the consult.." . mysqli_error("Error: #0002302 ".$link));
+			$query = "DELETE FROM `flotten` WHERE `ID` = " . $flotte_id;
+			$result = mysqli_query($link, $query) or sql_error (mysqli_error($link));
 			
-			if($result = mysqli_query($link, $query)) {
+			if($result) {
 				return true;
-			} else { echo "Flotte wurde nicht gelöscht ->" . $sql; return false; }
+			} else { echo "Flotte wurde nicht gelöscht ->" . $query; return false; }
 			return true;
 			} else { echo "Bots auf dem Startplaneten löschen failed"; return false;	}
 				
-		} else {echo "Flotte wurde nicht auf den neuen Planeten übertragen ->" . $sql; return false; }
+		} else {echo "Flotte wurde nicht auf den neuen Planeten übertragen ->" . $query; return false; }
 		
 }
 
@@ -3043,11 +3041,11 @@ function mission_rückkehr_set($flotte_abarbeiten, $spieler_id) {
 	
 	$mission = "rückkehr";
 	
-	$sql = "UPDATE `flotten` SET `Ankunft` = $ankunft, `Start` = $start, `x1` = $x1, `y1` = $y1, `z1` = $z1, `x2` = $x2, `y2` = $y2, `z2` = $z2, `Mission` = '$mission', `Ziel_Spieler_ID` = '$Ziel_Spieler_ID', `Start_Planet_ID` = '$Start_Planet_ID', `Ziel_Planet_ID` = '$Ziel_Planet_ID', `Startplanet_Name` = '$Startplanet_Name', `Zielplanet_Name` = '$Zielplanet_Name' WHERE `ID` = " . $flotte_abarbeiten["ID"];
+	$query = "UPDATE `flotten` SET `Ankunft` = $ankunft, `Start` = $start, `x1` = $x1, `y1` = $y1, `z1` = $z1, `x2` = $x2, `y2` = $y2, `z2` = $z2, `Mission` = '$mission', `Ziel_Spieler_ID` = '$Ziel_Spieler_ID', `Start_Planet_ID` = '$Start_Planet_ID', `Ziel_Planet_ID` = '$Ziel_Planet_ID', `Startplanet_Name` = '$Startplanet_Name', `Zielplanet_Name` = '$Zielplanet_Name' WHERE `ID` = " . $flotte_abarbeiten["ID"];
 	
-	$query = $sql or die("Error in the consult.." . mysqli_error("Error: #mission_rückkehr ".$link));
-	
-	if($result = mysqli_query($link, $query)) {
+	$result = mysqli_query($link, $query) or sql_error (mysqli_error($link));
+
+	if($result) {
 		return true;
 	} else {
 		return false;
@@ -3083,11 +3081,11 @@ function mission_rückkehr_set_manuell($flotte_id, $spieler_id) {
 
 	$mission = "rückkehr";
 
-	$sql = "UPDATE `flotten` SET `Ankunft` = $ankunft, `Start` = $start, `x1` = $x1, `y1` = $y1, `z1` = $z1, `x2` = $x2, `y2` = $y2, `z2` = $z2, `Mission` = '$mission', `Ziel_Spieler_ID` = '$Ziel_Spieler_ID', `Start_Planet_ID` = '$Start_Planet_ID', `Ziel_Planet_ID` = '$Ziel_Planet_ID', `Startplanet_Name` = '$Startplanet_Name', `Zielplanet_Name` = '$Zielplanet_Name' WHERE `ID` = " . $flotte_mit_id["ID"];
+	$query = "UPDATE `flotten` SET `Ankunft` = $ankunft, `Start` = $start, `x1` = $x1, `y1` = $y1, `z1` = $z1, `x2` = $x2, `y2` = $y2, `z2` = $z2, `Mission` = '$mission', `Ziel_Spieler_ID` = '$Ziel_Spieler_ID', `Start_Planet_ID` = '$Start_Planet_ID', `Ziel_Planet_ID` = '$Ziel_Planet_ID', `Startplanet_Name` = '$Startplanet_Name', `Zielplanet_Name` = '$Zielplanet_Name' WHERE `ID` = " . $flotte_mit_id["ID"];
 
-	$query = $sql or die("Error in the consult.." . mysqli_error("Error: #mission_rückkehr ".$link));
+	$result = mysqli_query($link, $query) or sql_error (mysqli_error($link));
 
-	if($result = mysqli_query($link, $query)) {
+	if($result) {
 		return true;
 	} else {
 		return false;
@@ -3098,11 +3096,10 @@ function mission_rückkehr_set_manuell($flotte_id, $spieler_id) {
 
 function flotte_erkunden($px, $py, $spieler_id) {
 	require 'inc/connect_galaxy_1.php';
-	$sql = "SELECT `Spieler_ID`, `x2`, `y2`, `Mission` FROM `flotten` WHERE `x2` = $px AND `y2` = $py AND `Mission` = 'erkunden' AND `Spieler_ID` = '$spieler_id'";
+	$query = "SELECT `Spieler_ID`, `x2`, `y2`, `Mission` FROM `flotten` WHERE `x2` = $px AND `y2` = $py AND `Mission` = 'erkunden' AND `Spieler_ID` = '$spieler_id'";
+	$result = mysqli_query($link, $query) or sql_error (mysqli_error($link));
 	
-	$query = $sql or die("Error in the consult.." . mysqli_error("Error: #0002302 ".$link));
-	
-	if($result = mysqli_query($link, $query)) {
+	if($result) {
 		if($result->num_rows > 0) {
 			return true;
 		} else {
@@ -3136,7 +3133,7 @@ function mission_rückkehr_auflösen($fa, $spieler_id) {
 	$Schiff_Typ_11 = $fa["Schiff_Typ_11"];
 	$Schiff_Typ_12 = $fa["Schiff_Typ_12"];
 	
-	$sql ="UPDATE `planet` SET 
+	$query ="UPDATE `planet` SET 
 	`Ressource_Eisen` = `Ressource_Eisen` + $Ausladen_Eisen, 
 	`Ressource_Silizium` = `Ressource_Silizium` + $Ausladen_Silizium, 
 	`Ressource_Wasser` = `Ressource_Wasser` + $Ausladen_Wasser, 
@@ -3152,14 +3149,14 @@ function mission_rückkehr_auflösen($fa, $spieler_id) {
 	`Schiff_Typ_10` = `Schiff_Typ_10` + $Schiff_Typ_10,
 	`Schiff_Typ_11` = `Schiff_Typ_11` + $Schiff_Typ_11 WHERE `Spieler_ID` = '$spieler_id' AND `Planet_ID` = $Ziel_Planet_ID";
 	
-	$query = $sql or die("Error in the consult.." . mysqli_error("Error: #0002302 ".$link));
+	$result = mysqli_query($link, $query) or sql_error (mysqli_error($link));
 	
-	if($result = mysqli_query($link, $query)) {
+	if($result) {
 		
-		$sql = "DELETE FROM `flotten` WHERE `ID` = $ID";
-		$query = $sql or die("Error in the consult.." . mysqli_error("Error: #0002302 ".$link));
-
-		if($result = mysqli_query($link, $query)) {
+		$query = "DELETE FROM `flotten` WHERE `ID` = $ID";
+		$result = mysqli_query($link, $query) or sql_error (mysqli_error($link));
+		
+		if($result) {
 			return true;
 		} else { return false; } 
 
@@ -3175,9 +3172,7 @@ function create_next_planet($spieler_id, $x, $y, $z, $username) {
 	//Planet
 	$planetname = $username."s Kolonie";
 	$nächste_id = get_number_of_planets($spieler_id, 1);
-	$abfrage = "INSERT INTO `planet`(`Spieler_ID`, `Spieler_Name`, `Planet_Name`, `x`, `y`, `z`, `Grund_Prod_Eisen`, `Grund_Prod_Silizium`, `Grund_Prod_Wasser`, `Planet_ID`, `Produktion_Zeit`) VALUES ('$spieler_id', '$username','$planetname', $x, $y, $z, 20,10,5, " . $nächste_id . ", '" . time() . "')";
-
-	$query = $abfrage or die("Error in the consult.." . mysqli_error("Error: #0003b ".$link));
+	$query = "INSERT INTO `planet`(`Spieler_ID`, `Spieler_Name`, `Planet_Name`, `x`, `y`, `z`, `Grund_Prod_Eisen`, `Grund_Prod_Silizium`, `Grund_Prod_Wasser`, `Planet_ID`, `Produktion_Zeit`) VALUES ('$spieler_id', '$username','$planetname', $x, $y, $z, 20,10,5, " . $nächste_id . ", '" . time() . "')";
 	$result = mysqli_query($link, $query) or sql_error(mysqli_error($link));
 
 	return true;
@@ -3188,8 +3183,7 @@ function get_planet_id_by_koordinaten($spieler_id, $x, $y, $p) {
 	require 'inc/connect_galaxy_1.php';
 	$link->set_charset("utf8");
 
-	$abfrage = "SELECT `Planet_ID` FROM `planet` WHERE `Spieler_ID` = '" . $spieler_id. "' AND `x` = " . $x . " AND `y` = " . $y . " AND `z` = " . $p . " ORDER BY `Planet_ID` DESC LIMIT 1";	
-	$query = $abfrage or die("Error in the consult.." . mysqli_error("Error: #get_lastet_planet ".$link));
+	$query = "SELECT `Planet_ID` FROM `planet` WHERE `Spieler_ID` = '" . $spieler_id. "' AND `x` = " . $x . " AND `y` = " . $y . " AND `z` = " . $p . " ORDER BY `Planet_ID` DESC LIMIT 1";	
 	$result = mysqli_query($link, $query) or sql_error(mysqli_error($link));
 
 	$row = mysqli_fetch_object($result);
@@ -3217,27 +3211,41 @@ function get_timestamp_in_was_sinnvolles($value) {
 }
 
 
-//$selected_lng_id = 'en';
 
 function get_possible_languages () {}
 
 
 
-function get_language_defaults ($lng_id) {
-	$file = 'lng/lng.xml';
+function get_language_defaults ($lng_id = null) {
+	// written by ES  Sep 2016
 	
-	if (file_exists($file)) {
-		$xml = simplexml_load_file($file);
+	static $last_call_lng_id;
+	static $lng_defaults;
+	$file = 'lng/lng.xml';
 
-		foreach ($xml->language as $language) {
-			if ($language['id']->__toString() == $lng_id) {
-				foreach ($language->attributes() as $key => $value) {
-					$lng_defaults[$key] = $value->__toString();
+	// if first call of function and $lng_id is not set  use  english for default
+	if (!isset($last_call_lng_id) && !isset($lng_id)) { $last_call_lng_id = 'en'; }  
+
+	if (!isset($lng_id)) {$lng_id = $last_call_lng_id;};
+	
+	$last_call_lng_id = $lng_id;
+	
+	if (isset($lng_defaults['id'])) {if ($lng_defaults['id'] <> $lng_id) {$lng_defaults['id'] = null;}}
+
+	if (!isset($lng_defaults['id'])) {
+		if (file_exists($file)) {
+			$xml = simplexml_load_file($file);
+
+			foreach ($xml->language as $language) {
+				if ($language['id']->__toString() == $lng_id) {
+					foreach ($language->attributes() as $key => $value) {
+						$lng_defaults[$key] = $value->__toString();
+					}
 				}
 			}
+		} else {
+			error_log ('>>><b>ERROR:</b> language file: <b>' . $file . '</b> don´t exits !<<<');
 		}
-	} else {
-		error_log ('>>><b>ERROR:</b> language file: <b>' . $file . '</b> don´t exits !<<<');
 	}
 	return $lng_defaults;
 }
@@ -3273,7 +3281,8 @@ function lng_echo ($id, $open_txt_file = false, $echo_on = true, $var_array = nu
 	// number format :  {#.#0,00@variable_name}  #.# set thousands_sep  / 0,00 set dezimal point and number of dezimals  
 
 	static $lng; 
-	global $lng_defaults;
+
+	$lng_defaults = get_language_defaults();
 
 	$error_reading_file = false;
 	
@@ -3297,35 +3306,37 @@ function lng_echo ($id, $open_txt_file = false, $echo_on = true, $var_array = nu
 		} else {
 			$string = $lng['~~' . $function_called_from_file . '~~ ' . $id];
 		}
+	}
 
-		if (!$error_reading_file) {
-			while (strpos($string, '{') !== false) {
-				$pos1 = strpos($string, '{');
-				$pos2 = strpos($string, '}');
-				if ($pos2 === false) {								// check only {  without } and delete lonley { 
-					$string = substr($string, 0, $pos1).substr($string, $pos1+1, strlen($string));
+	if (!$error_reading_file) {
+		while (strpos($string, '{') !== false) {
+			$pos1 = strpos($string, '{');
+			$pos2 = strpos($string, '}');
+			if ($pos2 === false) {								// check only {  without } and delete lonley { 
+				$string = substr($string, 0, $pos1).substr($string, $pos1+1, strlen($string));
+			} else {
+				$var_name = substr ($string , $pos1 +1, $pos2 - $pos1 -1);
+				
+				$formatted_output  = stripos ($var_name, '@');  // check for formatted  output
+				if ($formatted_output !== false) {
+					$format = substr ($var_name, 0, $formatted_output);
+					$var_name = substr ($var_name, $formatted_output+1, strlen($var_name));
 				} else {
-					$var_name = substr ($string , $pos1 +1, $pos2 - $pos1 -1);
-					
-					$formatted_output  = stripos ($var_name, '@');  // check for formatted  output
-					if ($formatted_output !== false) {
-						$format = substr ($var_name, 0, $formatted_output);
-						$var_name = substr ($var_name, $formatted_output+1, strlen($var_name));
-					}			
-					$value = get_value_of_variable ($var_name, $var_array);
-					if (is_numeric($value)) {$value = lng_format_number ($value, $format);}
-					
-					if ($formatted_output !== false && (strpos ($value,'Notice:') === false)) {
-						//if (is_numeric($value)) {$value = lng_format_number ($value, $format);}
-					} else if (strpos ($value,'<b>Notice:</b>') !== false) {
-						if ($open_txt_file) {
-							$value .= ' in language file: <b>' . $lng_defaults['id'] . '_' . $id . '.txt</b><<<';
-						} else {
-							$value .= ' in language file: <b>' . $lng_defaults['id'] . '_' . $function_called_from_file . '.xml </b> string-id: <b>' . $id . '</b><<<';
-						}
-					}
-					$string = substr($string, 0, $pos1).$value.substr($string, $pos2+1, strlen($string)-$pos2-1);
+					$format = 'n';
 				}
+				$value = get_value_of_variable ($var_name, $var_array);
+				if (is_numeric($value)) {$value = lng_number_format ($value, $format);}
+				
+				if ($formatted_output !== false && (strpos ($value,'Notice:') === false)) {
+					//if (is_numeric($value)) {$value = lng_format_number ($value, $format);}
+				} else if (strpos ($value,'<b>Notice:</b>') !== false) {
+					if ($open_txt_file) {
+						$value .= ' in language file: <b>' . $lng_defaults['id'] . '_' . $id . '.txt</b><<<';
+					} else {
+						$value .= ' in language file: <b>' . $lng_defaults['id'] . '_' . $function_called_from_file . '.xml </b> string-id: <b>' . $id . '</b><<<';
+					}
+				}
+				$string = substr($string, 0, $pos1).$value.substr($string, $pos2+1, strlen($string)-$pos2-1);
 			}
 		}
 	}
@@ -3405,6 +3416,8 @@ function german_res_to_english_res ($resources) {
 }
 
 function round_down($number) {
+	// written by ES  Sep 2016
+	
 	$rounded_number = round($number);
 	if ($rounded_number > $number) {$rounded_number--;}
 	return $rounded_number;
@@ -3412,8 +3425,10 @@ function round_down($number) {
 
 
 
-function lng_format_number ($number, $format = 'n') {
-	global $lng_defaults;
+function lng_number_format ($number, $format = 'n') {
+	// written by ES  Sep 2016
+
+	$lng_defaults = get_language_defaults();
 	$number = floatval ($number);
 	$formated_number = '';
 	$last_number = 0;
@@ -3438,7 +3453,7 @@ function lng_format_number ($number, $format = 'n') {
 
 	switch (true) {
 		case (strpos($typ_check,'C') !== false) :		// typ is countdown
-			$timestamp = $number;
+			$timestamp = round_down($number);
 			$days = round_down($timestamp/(24*60*60)); 		$timestamp -= ($days*(24*60*60));		
 			$hours = round_down($timestamp/(60*60));		$timestamp -= ($hours*(60*60));
 			$min = round_down($timestamp/(60));				$timestamp -= ($min*(60));
@@ -3511,7 +3526,7 @@ function lng_format_number ($number, $format = 'n') {
 						break;
 				}
 				$format = substr($format,$pos,strlen($format));	
-			}			
+			}	
 			break;
 		
 		case (strpos($typ_check,'#') !== false) :	// typ is formated number

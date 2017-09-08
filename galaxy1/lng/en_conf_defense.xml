@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<language_strings> <!-- ENGLISH -->
+<language_strings> <!-- ENGLISH by ES  Sep 2016 -->
 	<string id="rocket launcher name" text="rocket launcher" />
 	<string id="rocket launcher name plural" text="rocket launcher" />
 	<string id="rocket launcher description" text="rocket launcher description" />
@@ -14,7 +14,7 @@
 	
 	<string id="small protective shield name" text="small protective shield" />
 	<string id="small protective shield name plural" text="small protective shields" />
-	<string id="small protective shield description" text="small protective shield description" />
+	<string id="small protective shield description" text="small protective shield description  &lt;br&gt;Only one per planet !" />
 	
 	<string id="big protective shield name" text="big protective shield" />
 	<string id="big protective shield name plural" text="big protective shields" />

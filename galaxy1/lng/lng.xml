@@ -35,15 +35,17 @@
 		0			- no decimals 							0000		- no decimals and 3 leading zeros (number of leading zeros are not limited)
 -->
 
-<installed_languages>
+<installed_languages> <!-- by ES  Sep 2016 -->
 	<language id="de" name="Deutsch" 
-		thousands_sep= "." decimal_point="," number_format="#.###0" countdown_format="~C 'Tag|Tage' hh:mm:ss" time_format="hh:mm:ss" date_format="TT.MM.JJJJ" 
+		thousands_sep= "." decimal_point="," decimals="0" countdown_single="Tag" countdown_plural="Tage" 
+		number_format="#.###0" countdown_format="~C 'Tag|Tage' hh:mm:ss" time_format="hh:mm:ss" date_format="TT.MM.JJJJ" 
 		monday="Mo|Montag" tuesday="Di|Dienstag" wednesday="Mi|Mittwoch" 	thursday="Do|Donnerstag" friday="Fr|Freitag" saturday="Sa|Samstag" sunday="So|Sonntag"
 		january="Jan|Jannuar" february="Feb|Februar" march="Mrz|März" april="Apr|April" may="Mai|Mai" june="Jun|Juni" 
 		july="Jul|Juli" august="Aug|August" september="Sep|September" october="Okt|Oktober" november="Nov|November" december="Dez|Dezember" />
 	
 	<language id="en" name="English" 
-		thousands_sep= "," decimal_point="." number_format="#,###0" time_format="hh:mm:ss AM/PM" countdown_format="~C 'day|days' hh:mm:ss" date_format="DD.MM.YYYY" 
+		thousands_sep= "," decimal_point="." decimals="0" countdown_single="day" countdown_plural="days" 
+		number_format="#,###0" time_format="hh:mm:ss AM/PM" countdown_format="~C 'day|days' hh:mm:ss" date_format="DD.MM.YYYY" 
 		monday="Mon|Monday" tuesday="Tue|Tuesday" wednesday="Wed|Wednesday" 	thursday="Thu|Thursday" friday="Fri|Friday" saturday="Sat|Saturday" sunday="Sun|Sunday"
 		january="Jan|January" february="Feb|February" march="Mar|March" april="Apr|April" may="May|May" june="Jun|June" 
 		july="Jul|July" august="Aug|August" september="Sep|September" october="Oct|October" november="Nov|November" december="Dec|December" />

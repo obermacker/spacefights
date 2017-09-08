@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<language_strings> <!-- GERMAN -->
+<language_strings> <!-- GERMAN by ES  Sep 2016 -->
 	<string id="rocket launcher name" text="Raketenwerfer" />
 	<string id="rocket launcher name plural" text="Raketenwerfer" />
 	<string id="rocket launcher description" text="Ein Werfer der Rakenten wirft." />

@@ -2,11 +2,11 @@
 //Flotte starten
 
 if(isset($_POST["action-flotte-starten"])) {
-	
+		   
 	$out = str_replace('.', '', $_POST);
 	$out = str_replace(',', '', $out);
 	$out = str_replace('-', '', $out);
-	
+		    
 	$flotte_kann_abheben = true;
 	
 	if(!isset($out["x"])) { $flotte_kann_abheben = false; }
@@ -147,6 +147,7 @@ if(isset($_GET["x"]) AND isset($_GET["y"]) AND isset($_GET["z"])) {
 			$anzahl = $schiffe[$key]["Anzahl"];
 			$name = $schiffe[$key]["Name"];
 			$id = $schiffe[$key]["ID"];
+			dVar($anzahl);
 		?>
 		<tr>	
 			<td class="tbc" style="width: 12em;"><?php echo $name; ?></td>
@@ -248,7 +249,7 @@ if(isset($_GET["x"]) AND isset($_GET["y"]) AND isset($_GET["z"])) {
 	<input id="DistanzB" type="" placeholder="Diszanz Excel"><br>
 </form>
 	<?php 
-	$tech_spieler = get_tech_stufe_spieler($spieler_id);
+	$tech_spieler = get_tech_level_player($spieler_id);
 	$i = 0;
 	$js_schiffe_id = array();
 	$js_schiffe_anzahl = array();

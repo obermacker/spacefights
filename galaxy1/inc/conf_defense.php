@@ -249,8 +249,8 @@ function get_config_defense($id) {
 				'required tech level typ 11' => 10,
 				'required tech level typ 12' => 10,
 
-				'max hold planet' => 1,
-				'max hold' => 1,
+				'max hold planet' => 10,
+				'max hold' => 10,
 
 				'attack strength' => 100000000,
 				'defense strength' => 20

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<language_strings> <!-- GERMAN -->
+<language_strings> <!-- GERMAN by ES  Sep 2016 -->
 	<!-- strings heading -->
 	<string id="defensive fortification" text="Verteidigungsanlage" />
 	<string id="construction time" text="Bauzeit" />
@@ -13,7 +13,7 @@
 	<string id="defense" text="Verteidigung: " />
 	
 	<!-- strings footer -->
-	<string id="total building time / costs" text=" Gesamtbauzeit / -kosten" />
+	<string id="total building time / costs" text="Gesamtbauzeit / -kosten" />
 	<string id="build" text="bauen" />
 	
 	<string id="please build weapons factory" text="Bitte zunächst Waffenfabrik bauen !" />
