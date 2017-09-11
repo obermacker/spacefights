@@ -1,4 +1,4 @@
--- phpMyAdmin SQL Dump
+﻿-- phpMyAdmin SQL Dump
 -- version 4.3.11
 -- http://www.phpmyadmin.net
 --
@@ -304,9 +304,9 @@ CREATE TABLE IF NOT EXISTS `spieler` (
   `Tech_Schleife_Bauzeit_Start` int(11) NOT NULL,
   `Tech_Schleife_Bauzeit_Bis` int(11) NOT NULL,
   `Tech_Schleife_Planet` int(11) NOT NULL,
-  `punkte_structur` decimal(11,5) NOT NULL,
-  `punkte_flotte` decimal(11,5) NOT NULL,
-  `punkte_forschung` decimal(11,5) NOT NULL,
+  `punkte_structur` int(20) NOT NULL,
+  `punkte_flotte` int(20) NOT NULL,
+  `punkte_forschung` int(20) NOT NULL,
   `avatar` varchar(58) NOT NULL,
   `Letzter_Planet` int(11) NOT NULL
 ) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=latin1;
