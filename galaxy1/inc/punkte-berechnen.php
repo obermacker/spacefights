@@ -12,16 +12,14 @@ $number_of_planets = get_number_of_planets($spieler_id, 1);
 for ($planet_id = 0 ; $planet_id < $number_of_planets ; $planet_id++ ) {
 	for($gebäude_id = 1; $gebäude_id <= 10; $gebäude_id++) {
 	 		
-		$gebäude = get_gebäude_aktuelle_stufe($spieler_id, $planet_id, $gebäude_id);
+		$gebäude = get_gebäude_aktuelle_stufe($spieler_id, $planet_id, $gebäude_id); 
 		$row_kosten_nächstes_Gebäude = get_config_structure($gebäude_id);
 		
 		$Gebäude["Kosten_Eisen"] = $row_kosten_nächstes_Gebäude["Kosten_Eisen"];
 		$Gebäude["Kosten_Silizium"] = $row_kosten_nächstes_Gebäude["Kosten_Silizium"];
 		$Gebäude["Kosten_Wasser"] = $row_kosten_nächstes_Gebäude["Kosten_Wasser"];
 		$Gebäude["Name"] = $row_kosten_nächstes_Gebäude["Name"];
-//		$mod_ress = 0;
-//		if ($gebäude_id <= 3 ) { $mod_ress = 1.41; }	
-// 		if ($gebäude_id >= 4) { $mod_ress = 1.5; }	
+
 		echo "<th colspan=4><BR>" . $Gebäude["Name"] . " / Planet ". get_koordinaten_planet($spieler_id, $planet_id)["Anzeige"] . "</th>";
 		echo "<tr><td>Stufe</td>";
 		echo "<td>Eisen</td>";
@@ -73,7 +71,7 @@ for($tech_id = 1; $tech_id <= 12; $tech_id++) {
 	$tech_temp = get_tech_nächste_stufe($spieler_id, 0, $tech_id, 1);
 	$stufe = $tech_temp["Stufe"];
 
-	if ($tech_temp["Forschung"] == "OK") {
+	if ($tech_temp["Forschung"] == "OK" || $tech_temp["Forschung"] == "MAX") {
 		$Tech = get_config_tech($tech_id, 1) ;
 		$mod_ress = 1.5;
 		
