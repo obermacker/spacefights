@@ -70,11 +70,12 @@ $punkte_neu["Forschung"] = 0;
 
 for($tech_id = 1; $tech_id <= 12; $tech_id++) {
 	
-	$Tech = get_tech_nächste_stufe($spieler_id, 0, $tech_id, 1);
-	
-	$mod_ress = 1.5;
-	if ($Tech["Forschung"] == "OK") {
-		$stufe = $Tech["Stufe"];
+	$tech_temp = get_tech_nächste_stufe($spieler_id, 0, $tech_id, 1);
+	$stufe = $tech_temp["Stufe"];
+
+	if ($tech_temp["Forschung"] == "OK") {
+		$Tech = get_config_tech($tech_id, 1) ;
+		$mod_ress = 1.5;
 		
 		echo "<th colspan=4>" . $Tech["Name"] . "</th>";
 		echo "<tr><td>Stufe</td>";
