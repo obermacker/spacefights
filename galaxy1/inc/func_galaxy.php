@@ -2218,7 +2218,7 @@ dvar ($newVal,  'nach: user_message_cleaner');
 
 }
 
-function get_number_of_planets($spieler_id, $galaxy_number){
+function get_anzahl_planeten($spieler_id, $galaxy_number){
 	if ($galaxy_number == 1) { require 'inc/connect_galaxy_1.php';}
 	//if ($galaxy_number == 2) { require 'inc/connect_galaxy_2.php'; mysql_select_db("galaxy2");}
 	
@@ -3160,7 +3160,7 @@ function mission_kolonisieren($flotte_abarbeiten, $spieler_id, $username) {
 	$Ankunft = $flotte_abarbeiten["Ankunft"];
 	
 	$tech_spieler = get_tech_stufe_spieler($spieler_id); //Kolotech: Tech_10
-	$anzahl_planeten = get_number_of_planets($spieler_id, 1);
+	$anzahl_planeten = get_anzahl_planeten($spieler_id, 1);
 	if($tech_spieler["Tech_10"] <= $anzahl_planeten - 1) { return false; }	
 	if (check_koordinaten_besetzt($x2, $y2, $z2) == false) { //Schauen ob der Planet besetzt ist
 		
@@ -3400,7 +3400,7 @@ function create_next_planet($spieler_id, $x, $y, $z, $username) {
 
 	//Planet
 	$planetname = $username."s Kolonie";
-	$nächste_id = get_number_of_planets($spieler_id, 1);
+	$nächste_id = get_anzahl_planeten($spieler_id, 1);
 	$abfrage = "INSERT INTO `planet`(`Spieler_ID`, `Spieler_Name`, `Planet_Name`, `x`, `y`, `z`, `Grund_Prod_Eisen`, `Grund_Prod_Silizium`, `Grund_Prod_Wasser`, `Planet_ID`, `Produktion_Zeit`) VALUES ('$spieler_id', '$username','$planetname', $x, $y, $z, 20,10,5, " . $nächste_id . ", '" . time() . "')";
 
 	$query = $abfrage or die("Error in the consult.." . mysqli_error("Error: #0003b ".$link));

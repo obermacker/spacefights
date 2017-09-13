@@ -10,7 +10,7 @@ if (isset($_SESSION["spieler_ID"])) { $spieler_ID = $_SESSION["spieler_ID"]; }
 if (isset($_SESSION["session_id"])) { $session_id = $_SESSION["session_id"]; }
 
 if (check_auth($spieler_ID, $session_id) == "nein"){
-	    session_unset(); session_destroy(); $_SESSION = array(); header('Location: index.html'); exit();	
+	    session_unset(); session_destroy(); $_SESSION = array(); header('Location: index.php'); exit();	
 }
 
 if(!isset($_POST["s"])){ $select = "hypersprung";} else { $select = $_POST["s"]; } 
