@@ -24,7 +24,6 @@ while ($weiter){
 		}
 	} 
 	echo "<table>";
-	dVar($spieler_id);
 	$punkte_neu = array();
 	$punkte_neu["Gebäude"] = 0;
 
