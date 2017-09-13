@@ -1,6 +1,6 @@
 <?php 
 //#######################################
-//Galaxy.php im Homeverzeichnis fÃ¼r die Initsialisierung
+//Galaxy.php im Homeverzeichnis für die Initsialisierung
 //#######################################
 session_start();
 require 'inc/func.php';
@@ -78,10 +78,10 @@ switch ($select) {
     <navbar style="<?php echo $nav_bar_planet; ?>">
     <nav>
     <ul class="nav inline-items">
-    <li><a class="menu" href="#">Ãœbersicht</a></li>
+    <li><a class="menu" href="#">Übersicht</a></li>
     <li><a class="menu" href="#">Taverne</a></li>
     <li><a class="menu" href="#">Handel</a></li>
-    <li><a class="menu" href="#">GebÃ¤ude</a></li>
+    <li><a class="menu" href="#">Gebäude</a></li>
     <li><a class="menu" href="#">Forschung</a></li>
     <li><a class="menu" href="#">Raumschiffe</a></li>
     <li><a class="menu" href="#">Flotte</a> </li>
