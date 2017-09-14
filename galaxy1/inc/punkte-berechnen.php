@@ -27,7 +27,7 @@ while ($weiter){
 	$punkte_neu = array();
 	$punkte_neu["Gebäude"] = 0;
 
-	$number_of_planets = get_number_of_planets($spieler_id, 1);
+	$number_of_planets = get_anzahl_planeten($spieler_id, 1);
 
 	for ($planet_id = 0 ; $planet_id < $number_of_planets ; $planet_id++ ) {
 		for($gebäude_id = 1; $gebäude_id <= 10; $gebäude_id++) {

@@ -741,20 +741,24 @@ switch ($select) {
 								<form>
 									<table>
 										<tr>
-											<td>Planet</td>
+											<td>&nbsp;Planet</td>
 											<td>
-												<?php $anzahlPlaneten = get_anzahl_planeten($spieler_id, 1); ?>
-												<button class="bt" type="submit" name="zurueck" onclick = "p.value = zurueck.value" 
-													value="<?php if ($planet_id == 0) {echo $anzahlPlaneten;} else {echo $planet_id;}?>" ><</button>
+												<?php $number_of_planets = get_anzahl_planeten($spieler_id, 1); ?>
+												<button class="btnNavigation" type="submit" 
+													onclick = "p.value = <?php echo $planet_id;?>"
+													<?php 	if ($planet_id == 0) {echo ' disabled';}?> ><
+												</button>
 											</td>
 											<td>
-												<button class="bt" type="submit" name="vor" onclick = "p.value = vor.value" 
-													value="<?php if ($planet_id == $anzahlPlaneten -1) {echo ('1');} else {echo $planet_id + 2;} ?>" >></button>
+												<button class="btnNavigation" type="submit"  
+													<?php 	if ($planet_id < $number_of_planets -1) {echo 'onclick = "p.value =' . ($planet_id + 2). '"';}
+															if ($planet_id == $number_of_planets -1) {echo ' disabled';} ?> />>
+												</button>
 											</td>
 										</tr>
 										<tr>
 											<td colspan=3>
-												<select name="p"  style="width: 180px;" onchange="this.form.submit()" autofocus>
+												<select class="slctNavigation" name="p"  style="width: 180px;" onchange="this.form.submit()" autofocus>
 													<?php echo get_list_of_all_planets($spieler_id, $planet_id); ?>
 												</select>
 												<input type="hidden" name="s" value="<?php echo $select; ?>">

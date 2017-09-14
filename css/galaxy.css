@@ -396,11 +396,14 @@ a.kontakte {
 .bauGUI2 .schieber {width:6em; vertical-align: middle;}
 .bauGUI2 .eingabeFeld {text-align:center; vertical-align:middle; width:1.5em; background-color:#50555C; border: none;  border-radius: 1px;}
 
-
-/* other button */
-.btnNavigation {vertical-align: top; width: 2.5em; text-align: center; font-size: 80%;}
-.btnNavigation input[type=submit]:disabled,button:disabled {color: rgba(255,255,255,0.5);}
-
+/* other elements */
+.btnNavigation {vertical-align: top; height: 1.7em; width: 3em; margin-left: 2.5em; text-align: center; font-size: 90%; font-weight: bold; border:0; background-color: #004a7a; border-radius: 2px;}
+.btnNavigation input[type=submit]:disabled, button:disabled {filter: grayscale(100%); color: rgba(255,255,255,0.65);}
+.btnNavigation:active:enabled {transform: translateY(2px); background-color: #69c;}
+.btnNavigation:hover {background-color: #369;}
+.slctNavigation {padding: .13em 2em 0.2em 0.2em; border: none;  border-radius: 2px; background-size: .9em; height:1.7em;
+		background-color: #004a7a; background-image: url(/galaxy1/img/select_arrow.png); background-position: 97% center;
+		background-repeat: no-repeat; -webkit-appearance: none; -moz-appearance: none; appearance: none;}
 
 /*styles message.php */ 
 .messages .btn {font-size: 90%; font-weight: 900; width: 2.1em; vertical-align: middle; text-align: center; padding: 0;}
