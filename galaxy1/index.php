@@ -893,7 +893,11 @@ switch ($select)
 <tr>
 <td colspan="2">
 <div class="time_elapsed">
-<span ><?php $time_elapsed_secs = microtime(true) - $start; echo "Total execution time " . round($time_elapsed_secs * 1000) . " milliseconds. (" . $username . " // $planet_id)"; ?></span>
+	<span >
+		<?php include(dirname(__FILE__) . "/inc/version.txt");
+			$time_elapsed_secs = microtime(true) - $start; 
+			echo " . . . . . Total execution time " . round($time_elapsed_secs * 1000) . " milliseconds"; ?>
+	</span>
 </div>
 
 </td>
