@@ -191,6 +191,9 @@ switch ($select) {
 <body>
 <?php
 
+// define global variables for seperate JavaScripts
+echo '<span  id="globalJsVariables" select="' . $select . '" />';
+
 //--- Flotte Aktion & Rückkehr
 	$notfall_break = 0;	
 	while($flotte_abarbeiten = get_flotte_in_der_luft($spieler_id, time(), true)) {			

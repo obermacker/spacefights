@@ -2198,12 +2198,12 @@ function usereingabe_cleaner ($value)
 }
 
 function user_message_cleaner ($value)
-{dVar ($value,  'vor: user_message_cleaner' );
+{
 	$newVal = trim($value);
-//	$regex ='/[^.:a-zA-ZäüöÄÜÖß@ 0-9-\/]/';
-//	$regex ='/[^\n<>{}.:a-zA-ZäüöÄÜÖß@ 0-9-\/]/';
-//	$newVal = preg_replace($regex,"", $newVal);
-dvar ($newVal,  'nach: user_message_cleaner');
+	$regex ='/[^.:a-zA-ZäüöÄÜÖß@ 0-9-\/]/';
+	$regex ='/[^\n<>{}.:a-zA-ZäüöÄÜÖß@ 0-9-\/]/';
+	$newVal = preg_replace($regex,"", $newVal);
+
 	$newVal = htmlspecialchars($newVal);
 	#$newVal = htmlentities($newVal);
 	$newVal = stripslashes($newVal);
@@ -2406,7 +2406,7 @@ function set_message($fromId, $fromName, $toId, $toName, $subject, $text="", $ch
 	$text = mysqli_real_escape_string($link, $text);
 	
 	$query = "INSERT INTO `nachrichten`(`Zeit`, `Absender_ID`, `Absender_Name`, `Empfaenger_ID`, `Empfaenger_Name`,  `Betreff`, `Text`,`Logbuch`,`Chatbot`) VALUES ($time, '$fromId', '$fromName', '$toId', '$toName', '$subject', '$text', '$logbook', $chatbot)";
-	dVar ($query);
+	
 	mysqli_query($link, $query) or sql_error(mysqli_error($link));
 	
 }
@@ -3487,7 +3487,6 @@ function lng_echo ($id, $open_txt_file = false, $no_echo = false){
 			$txtFile = ('lng/' . $selected_lng_id . '_' . $id . '.txt');
 			if (file_exists($txtFile)) {
 				$string = file_get_contents($txtFile);
-				dVar ($string,'$string');
 			} else {
 				$error_reading_file = true;
 				$string = '>>><b>ERROR:</b> language file: <b>' . $selected_lng_id . '_' . $id . '.txt</b> don´t exits !<<<';

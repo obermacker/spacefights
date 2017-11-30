@@ -32,10 +32,10 @@ function detailsT2(name) {
 	
 	if (eButton[0].className=="detailsGeschlossen") {
 		eButton[0].className="detailsOffen";
-		eButton[0].innerHTML = "▼";
+		eButton[0].innerHTML = "â–¼";
 	} else {
 		eButton[0].className="detailsGeschlossen";
-		eButton[0].innerHTML = "▶";
+		eButton[0].innerHTML = "â–¶";
 	}
 
 	for(var i=0; i<elemente.length; i++) {
@@ -101,7 +101,7 @@ function countdown_progress(sec, name, start, ende, beschriftung,maxWidth,ohnePB
 		e.innerHTML = tstr;
 		window.setTimeout("countdown_progress("+sec+",'"+name+"',"+start+","+ende+",'"+beschriftung+"',"+maxWidth+","+ohnePBar+")",500);
 	} else{
-		e.innerHTML = "<a href='index.php?s=<?php echo $select; ?>'>" + beschriftung + "</a>";
+		e.innerHTML = "<a href='index.php?s="+document.getElementById("globalJsVariables" ).attributes.select.value+"'>" + beschriftung + "</a>";			
 		if (!ohnePBar){mPBar(100,100,maxWidth,"mPBar_"+name)};
 	}
 }
@@ -126,7 +126,7 @@ function countdown(sec, name){
 		e.innerHTML = tstr;
 		window.setTimeout("countdown("+sec+",'"+name+"')",500);
 	} else{
-		e.innerHTML = "<a href='index.php?s=<?php echo $select; ?>'>" + "abgelaufen" + "</a>";			
+		e.innerHTML = "<a href='index.php?s="+document.getElementById("globalJsVariables" ).attributes.select.value+"'>" + beschriftung + "</a>";			
 	}
 }
 
