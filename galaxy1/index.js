@@ -32,10 +32,10 @@ function detailsT2(name) {
 	
 	if (eButton[0].className=="detailsGeschlossen") {
 		eButton[0].className="detailsOffen";
-		eButton[0].innerHTML = "â–¼";
+		eButton[0].innerHTML = "▼";
 	} else {
 		eButton[0].className="detailsGeschlossen";
-		eButton[0].innerHTML = "â–¶";
+		eButton[0].innerHTML = "▶";
 	}
 
 	for(var i=0; i<elemente.length; i++) {
