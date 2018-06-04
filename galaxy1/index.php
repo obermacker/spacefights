@@ -191,6 +191,9 @@ switch ($select) {
 <body>
 <?php
 
+// define global variables for seperate JavaScripts
+echo '<span  id="globalJsVariables" select="' . $select . '" />';
+
 //--- Flotte Aktion & Rückkehr
 	$notfall_break = 0;	
 	while($flotte_abarbeiten = get_flotte_in_der_luft($spieler_id, time(), true)) {			
@@ -741,20 +744,24 @@ switch ($select) {
 								<form>
 									<table>
 										<tr>
-											<td>Planet</td>
+											<td>&nbsp;Planet</td>
 											<td>
-												<?php $anzahlPlaneten = get_anzahl_planeten($spieler_id, 1); ?>
-												<button class="bt" type="submit" name="zurueck" onclick = "p.value = zurueck.value" 
-													value="<?php if ($planet_id == 0) {echo $anzahlPlaneten;} else {echo $planet_id;}?>" ><</button>
+												<?php $number_of_planets = get_anzahl_planeten($spieler_id, 1); ?>
+												<button class="btnNavigation" type="submit" 
+													onclick = "p.value = <?php echo $planet_id;?>"
+													<?php 	if ($planet_id == 0) {echo ' disabled';}?> ><
+												</button>
 											</td>
 											<td>
-												<button class="bt" type="submit" name="vor" onclick = "p.value = vor.value" 
-													value="<?php if ($planet_id == $anzahlPlaneten -1) {echo ('1');} else {echo $planet_id + 2;} ?>" >></button>
+												<button class="btnNavigation" type="submit"  
+													<?php 	if ($planet_id < $number_of_planets -1) {echo 'onclick = "p.value =' . ($planet_id + 2). '"';}
+															if ($planet_id == $number_of_planets -1) {echo ' disabled';} ?> />>
+												</button>
 											</td>
 										</tr>
 										<tr>
 											<td colspan=3>
-												<select name="p"  style="width: 180px;" onchange="this.form.submit()" autofocus>
+												<select class="slctNavigation" name="p"  style="width: 180px;" onchange="this.form.submit()" autofocus>
 													<?php echo get_list_of_all_planets($spieler_id, $planet_id); ?>
 												</select>
 												<input type="hidden" name="s" value="<?php echo $select; ?>">
@@ -889,7 +896,11 @@ switch ($select)
 <tr>
 <td colspan="2">
 <div class="time_elapsed">
-<span ><?php $time_elapsed_secs = microtime(true) - $start; echo "Total execution time " . round($time_elapsed_secs * 1000) . " milliseconds. (" . $username . " // $planet_id)"; ?></span>
+	<span >
+		<?php include(dirname(__FILE__) . "/inc/version.txt");
+			$time_elapsed_secs = microtime(true) - $start; 
+			echo " . . . . . Total execution time " . round($time_elapsed_secs * 1000) . " milliseconds"; ?>
+	</span>
 </div>
 
 </td>

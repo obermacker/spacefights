@@ -863,24 +863,23 @@ function set_bauschleife_struckture_fertig($spieler_id, $planet_id, $gebäude_id
 	$Gebäude = get_gebäude_nächste_stufe($spieler_id, $planet_id, $gebäude_id, 1);
 	
 	$tabelle = "Stufe_Gebaeude_" . $gebäude_id;
-	
-	if($gebäude_id == 1 AND $Gebäude["Gewinn_Ress"] > 0) { $produktion["Eisen"] = $produktion["Eisen"] + $Gebäude["Gewinn_Ress"]; }	
-	if($gebäude_id == 2 AND $Gebäude["Gewinn_Ress"] > 0) { $produktion["Silizium"] = $produktion["Silizium"] + $Gebäude["Gewinn_Ress"]; }
-	if($gebäude_id == 2 AND $Gebäude["Gewinn_Ress"] > 0) { $produktion["Wasser"] = $produktion["Wasser"] + $Gebäude["Gewinn_Ress"]; }
+
+	if($gebäude_id == 1 AND $Gebäude["Gewinn_Ress"] > 0) { $produktion["Eisen_Produktion"] = $produktion["Eisen_Produktion"] + $Gebäude["Gewinn_Ress"]; }	
+	if($gebäude_id == 2 AND $Gebäude["Gewinn_Ress"] > 0) { $produktion["Silizium_Produktion"] = $produktion["Silizium_Produktion"] + $Gebäude["Gewinn_Ress"]; }
+	if($gebäude_id == 3 AND $Gebäude["Gewinn_Ress"] > 0) { $produktion["Wasser_Produktion"] = $produktion["Wasser_Produktion"] + $Gebäude["Gewinn_Ress"]; }
 
 	if($Gebäude["Gewinn_Energie"] > 0) { $produktion["Energie"] = $produktion["Energie"] + $Gebäude["Gewinn_Energie"]; }
 	
 	if ($gebäude_id == 6) { $produktion["Bunker_Kapa"] = $produktion["Bunker_Kapa"] + $Gebäude["Kapazitaet"]; }
 	if ($gebäude_id == 10) { $produktion["Handel_Kapa"] = $produktion["Handel_Kapa"] + $Gebäude["Kapazitaet"]; }
 	
-	
 	//$punkte["punkte_structur"] = $punkte + (($Gebäude["Kosten_Eisen"] + $Gebäude["Kosten_Silizium"] + $Gebäude["Kosten_Wasser"]) / 1000);
 	
 	$abfrage = "UPDATE `planet` SET
 	`$tabelle` = " . $Gebäude["Stufe"] . ",
-	`Prod_Eisen` = " . $produktion["Eisen"] . ", 
-	`Prod_Silizium` = " .  $produktion["Silizium"] . ",
-	`Prod_Wasser` = " . $produktion["Wasser"] . ",
+	`Prod_Eisen` = " . $produktion["Eisen_Produktion"] . ", 
+	`Prod_Silizium` = " .  $produktion["Silizium_Produktion"] . ",
+	`Prod_Wasser` = " . $produktion["Wasser_Produktion"] . ",
 	`Ressource_Energie` = " . $produktion["Energie"] . ",
 	`Bunker_Kapa` = " .  $produktion["Bunker_Kapa"] . ",
 	`Handel_Kapa` = " . $produktion["Handel_Kapa"] . ",
@@ -889,7 +888,7 @@ function set_bauschleife_struckture_fertig($spieler_id, $planet_id, $gebäude_id
 	`Bauschleife_Gebaeude_Bis` = 0, 
 	`Bauschleife_Gebaeude_Name` = ''
 	WHERE `Spieler_ID` = '$spieler_id' AND `Planet_ID` = $planet_id";
-	
+
 	$query = $abfrage or die("Error in the consult.." . mysqli_error("Error: set_bauschleife_struckture #1 ".$link));
 	
 	if (mysqli_query($link, $query)) {
@@ -2199,12 +2198,12 @@ function usereingabe_cleaner ($value)
 }
 
 function user_message_cleaner ($value)
-{dVar ($value,  'vor: user_message_cleaner' );
+{
 	$newVal = trim($value);
-//	$regex ='/[^.:a-zA-ZäüöÄÜÖß@ 0-9-\/]/';
-//	$regex ='/[^\n<>{}.:a-zA-ZäüöÄÜÖß@ 0-9-\/]/';
-//	$newVal = preg_replace($regex,"", $newVal);
-dvar ($newVal,  'nach: user_message_cleaner');
+	$regex ='/[^.:a-zA-ZäüöÄÜÖß@ 0-9-\/]/';
+	$regex ='/[^\n<>{}.:a-zA-ZäüöÄÜÖß@ 0-9-\/]/';
+	$newVal = preg_replace($regex,"", $newVal);
+
 	$newVal = htmlspecialchars($newVal);
 	#$newVal = htmlentities($newVal);
 	$newVal = stripslashes($newVal);
@@ -2407,7 +2406,7 @@ function set_message($fromId, $fromName, $toId, $toName, $subject, $text="", $ch
 	$text = mysqli_real_escape_string($link, $text);
 	
 	$query = "INSERT INTO `nachrichten`(`Zeit`, `Absender_ID`, `Absender_Name`, `Empfaenger_ID`, `Empfaenger_Name`,  `Betreff`, `Text`,`Logbuch`,`Chatbot`) VALUES ($time, '$fromId', '$fromName', '$toId', '$toName', '$subject', '$text', '$logbook', $chatbot)";
-	dVar ($query);
+	
 	mysqli_query($link, $query) or sql_error(mysqli_error($link));
 	
 }
@@ -3488,7 +3487,6 @@ function lng_echo ($id, $open_txt_file = false, $no_echo = false){
 			$txtFile = ('lng/' . $selected_lng_id . '_' . $id . '.txt');
 			if (file_exists($txtFile)) {
 				$string = file_get_contents($txtFile);
-				dVar ($string,'$string');
 			} else {
 				$error_reading_file = true;
 				$string = '>>><b>ERROR:</b> language file: <b>' . $selected_lng_id . '_' . $id . '.txt</b> don´t exits !<<<';
