@@ -1,6 +1,4 @@
 <?php
-use phpbb\notification\method\email;
-
 function sql_error ($error){
 	$backtrace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS,2);
 	die ('<BR><BR><b>SQL-errror: </b>&nbsp&nbsp' . $error . '&nbsp -> <b>&nbsp' . $backtrace[0]['file'] . '</b>&nbsp function &nbsp<b>' . $backtrace[1]['function'] . '</b>&nbsp line &nbsp<b>' . $backtrace[0]['line'] . '</b><BR>');
@@ -2404,7 +2402,7 @@ function set_message($fromId, $fromName, $toId, $toName, $subject, $text="", $ch
 	$fromName = mysqli_real_escape_string($link, $fromName);
 	$toName = mysqli_real_escape_string($link, $toName);
 	$text = mysqli_real_escape_string($link, $text);
-	
+	$subject = substr($subject, 0, 80);
 	$query = "INSERT INTO `nachrichten`(`Zeit`, `Absender_ID`, `Absender_Name`, `Empfaenger_ID`, `Empfaenger_Name`,  `Betreff`, `Text`,`Logbuch`,`Chatbot`) VALUES ($time, '$fromId', '$fromName', '$toId', '$toName', '$subject', '$text', '$logbook', $chatbot)";
 	
 	mysqli_query($link, $query) or sql_error(mysqli_error($link));
@@ -2764,7 +2762,7 @@ function flotte_senden($spieler_id, $planet_id, $flotte, $ziel_x, $ziel_y, $ziel
 			$sql = "INSERT INTO `flotten` (`ID`, `Ankunft`, `Start`, `Spieler_ID`, `x1`, `y1`, `z1`, `x2`, `y2`, `z2`, `Ziel_Spieler_ID`, `Start_Planet_ID`, `Ziel_Planet_ID`, `Startplanet_Name`, `Zielplanet_Name`, `Besitzer_Spieler_Name`, `Ziel_Spieler_Name`, `Mission`, `Kapazitaet`, `Ausladen_Eisen`, `Ausladen_Silizium`, `Ausladen_Wasser`, `Einladen_Eisen`, `Einladen_Silizium`, `Einladen_Wasser` $tabelle_schiffe_id) 
 					VALUES (NULL, '$ankunft', '" . $startzeit . "', '$spieler_id', '" . $koordinaten["X"] . "', '" . $koordinaten["Y"] . "', '" . $koordinaten["Z"] . "', '$ziel_x', '$ziel_y', '$ziel_z', '0', '$planet_id', '0', '" . $koordinaten["Planet_Name"] ."', 'unbekanntes System', '" . $_SESSION["username"] . "', '', '$mission_str', $kapazität, " . $ress_mitnehmen["0"] . ", " . $ress_mitnehmen["1"] . ", " . $ress_mitnehmen["2"] . ", " . $ress_abholen["0"] . ", " . $ress_abholen["1"] . ", " . $ress_abholen["2"] . " $tabelle_schiffe_anzahl)";
 			$query = $sql or die("Error in the consult.." . mysqli_error("Error: #0002302 ".$link));
-			//echo $sql;
+			
 			if($result = mysqli_query($link, $query)) {
 				
 				//$tempString = ',`Ressource_Eisen`='.$ressource["Eisen"].', `Ressource_Silizium`= '.$ressource["Silizium"].', `Ressource_Wasser`= '.$ressource["Wasser"].', `Ressource_Bot`= '.$ressource["Bot"];
@@ -2778,7 +2776,8 @@ function flotte_senden($spieler_id, $planet_id, $flotte, $ziel_x, $ziel_y, $ziel
 					return "ist eingereiht";
 				}
 				
-			} else { return "fehler Zeile 2808"; }
+			} else { 			    
+			    return mysqli_error($link); }
 			
 		} else { return "keine Slots frei"; }	// war an falscher Stelle ES 24.06.2016  15:03					
 	} else { return "ungenügen Schiffe für den vorgang!"; }
