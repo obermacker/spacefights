@@ -5,6 +5,7 @@ SET time_zone = '+00:00';
 SET foreign_key_checks = 0;
 SET sql_mode = 'NO_AUTO_VALUE_ON_ZERO';
 
+DROP TABLE IF EXISTS `bauschleifedeff`;
 CREATE TABLE `bauschleifedeff` (
   `ID` int(11) NOT NULL AUTO_INCREMENT,
   `Spieler_ID` varchar(58) NOT NULL,
@@ -23,6 +24,7 @@ CREATE TABLE `bauschleifedeff` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 
+DROP TABLE IF EXISTS `bauschleifeflotte`;
 CREATE TABLE `bauschleifeflotte` (
   `ID` int(11) NOT NULL AUTO_INCREMENT,
   `Spieler_ID` varchar(58) NOT NULL,
@@ -41,6 +43,7 @@ CREATE TABLE `bauschleifeflotte` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 
+DROP TABLE IF EXISTS `flotten`;
 CREATE TABLE `flotten` (
   `ID` int(11) NOT NULL AUTO_INCREMENT,
   `Ankunft` int(9) NOT NULL,
@@ -59,14 +62,14 @@ CREATE TABLE `flotten` (
   `Zielplanet_Name` varchar(50) NOT NULL,
   `Besitzer_Spieler_Name` varchar(18) NOT NULL,
   `Ziel_Spieler_Name` varchar(18) NOT NULL,
-  `Mission` varchar(58) NOT NULL,
-  `Kapazitaet` int(9) NOT NULL,
-  `Ausladen_Eisen` bigint(20) NOT NULL,
-  `Ausladen_Silizium` bigint(20) NOT NULL,
-  `Ausladen_Wasser` bigint(20) NOT NULL,
-  `Einladen_Eisen` bigint(20) NOT NULL,
-  `Einladen_Silizium` bigint(20) NOT NULL,
-  `Einladen_Wasser` bigint(20) NOT NULL,
+  `Mission` varchar(58) NOT NULL DEFAULT '0',
+  `Kapazitaet` int(9) NOT NULL DEFAULT 0,
+  `Ausladen_Eisen` bigint(20) NOT NULL DEFAULT 0,
+  `Ausladen_Silizium` bigint(20) NOT NULL DEFAULT 0,
+  `Ausladen_Wasser` bigint(20) NOT NULL DEFAULT 0,
+  `Einladen_Eisen` bigint(20) NOT NULL DEFAULT 0,
+  `Einladen_Silizium` bigint(20) NOT NULL DEFAULT 0,
+  `Einladen_Wasser` bigint(20) NOT NULL DEFAULT 0,
   `Schiff_Typ_1` int(11) NOT NULL DEFAULT 0,
   `Schiff_Typ_2` int(11) NOT NULL DEFAULT 0,
   `Schiff_Typ_3` int(11) NOT NULL DEFAULT 0,
@@ -83,6 +86,7 @@ CREATE TABLE `flotten` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 
+DROP TABLE IF EXISTS `handelsangebot`;
 CREATE TABLE `handelsangebot` (
   `ID` int(9) NOT NULL AUTO_INCREMENT,
   `Spieler_ID` int(9) NOT NULL,
@@ -102,6 +106,7 @@ CREATE TABLE `handelsangebot` (
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_german2_ci;
 
 
+DROP TABLE IF EXISTS `login`;
 CREATE TABLE `login` (
   `ID` int(11) NOT NULL AUTO_INCREMENT,
   `username` varchar(20) NOT NULL,
@@ -112,6 +117,7 @@ CREATE TABLE `login` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 
+DROP TABLE IF EXISTS `message`;
 CREATE TABLE `message` (
   `Spieler_ID` varchar(58) NOT NULL,
   `Planet_ID` int(11) NOT NULL,
@@ -122,6 +128,7 @@ CREATE TABLE `message` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 
+DROP TABLE IF EXISTS `nachrichten`;
 CREATE TABLE `nachrichten` (
   `ID` int(11) NOT NULL AUTO_INCREMENT,
   `Zeit` int(11) NOT NULL,
@@ -138,6 +145,7 @@ CREATE TABLE `nachrichten` (
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_german2_ci;
 
 
+DROP TABLE IF EXISTS `planet`;
 CREATE TABLE `planet` (
   `ID` int(11) NOT NULL AUTO_INCREMENT,
   `Spieler_ID` varchar(58) NOT NULL,
@@ -208,17 +216,19 @@ CREATE TABLE `planet` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 
+DROP TABLE IF EXISTS `sonnensystem`;
 CREATE TABLE `sonnensystem` (
   `ID` int(11) NOT NULL AUTO_INCREMENT,
   `Spieler_ID` varchar(58) COLLATE latin1_german2_ci NOT NULL,
   `x` int(11) NOT NULL,
   `y` int(11) NOT NULL,
-  `Entdeckt` timestamp NULL DEFAULT NULL,
+  `Entdeckt` datetime NOT NULL,
   `locked` int(11) NOT NULL,
   PRIMARY KEY (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_german2_ci;
 
 
+DROP TABLE IF EXISTS `spieler`;
 CREATE TABLE `spieler` (
   `ID` int(11) NOT NULL AUTO_INCREMENT,
   `Spieler_ID` varchar(58) NOT NULL,
@@ -254,4 +264,4 @@ CREATE TABLE `spieler` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 
--- 2021-01-23 20:32:17
+-- 2021-01-26 20:04:15

@@ -3037,12 +3037,18 @@ function mission_erkunden($flotte_abarbeiten, $spieler_id) {
 	$y2 = $flotte_abarbeiten["y2"]; 
 	$Ankunft = $flotte_abarbeiten["Ankunft"]; 
 	
-	$sql = "INSERT INTO `sonnensystem` (`ID`, `Spieler_ID`, `x`, `y`, `Entdeckt`, `locked`) VALUES (NULL, '$spieler_id', '$x2', '$y2', '" . date("Y-m-d\TH:i:s\Z", $Ankunft) . "', '0')";
+	$sql = "INSERT INTO `sonnensystem` (`ID`, `Spieler_ID`, `x`, `y`, `Entdeckt`, `locked`) VALUES (NULL, '$spieler_id', '$x2', '$y2','" . date("Y-m-d\TH:i:s", $Ankunft) . "', '0')";
+	
+	echo $sql;
+	
 	$query = $sql or die("Error in the consult.." . mysqli_error("Error: #0002302 ".$link));
 	
 	if($result = mysqli_query($link, $query)) {
-		return true;
-	} else { return false; }
+		
+	    return true;
+	} else { 
+	    
+	    return false; }
 }
 
 function mission_transport($flotte_abarbeiten, $spieler_id) {
