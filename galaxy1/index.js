@@ -126,7 +126,7 @@ function countdown(sec, name){
 		e.innerHTML = tstr;
 		window.setTimeout("countdown("+sec+",'"+name+"')",500);
 	} else{
-		e.innerHTML = "<a href='index.php?s="+document.getElementById("globalJsVariables" ).attributes.select.value+"'>" + beschriftung + "</a>";			
+		e.innerHTML = "<a href='index.php?s=<?php echo $select; ?>'>" + "abgelaufen" + "</a>";			
 	}
 }
 
