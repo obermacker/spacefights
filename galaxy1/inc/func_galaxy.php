@@ -2305,12 +2305,12 @@ function set_news($spieler_id, $planet_id, $typ, $text) {
 	NOW()
 	)";
 
-	$query = $abfrage or die("Error in the consult.." . mysqli_error("Fehler im Nachrichtensystem #1 ".$link));
+	$query = $abfrage or die("Error in the consult.." . mysqli_error("Fehler im Nachrichtensystem #1 " . $abfrage . " / " .$link));
 
 	if (mysqli_query($link, $query)) {
 
 	} else {
-		die("Fehler im Nachrichtensystem " . mysqli_error($link));
+	    die("Fehler im Nachrichtensystem " . $query . " / " . mysqli_error($link));
 	}
 
 
@@ -3039,8 +3039,6 @@ function mission_erkunden($flotte_abarbeiten, $spieler_id) {
 	
 	$sql = "INSERT INTO `sonnensystem` (`ID`, `Spieler_ID`, `x`, `y`, `Entdeckt`, `locked`) VALUES (NULL, '$spieler_id', '$x2', '$y2','" . date("Y-m-d\TH:i:s", $Ankunft) . "', '0')";
 	
-	echo $sql;
-	
 	$query = $sql or die("Error in the consult.." . mysqli_error("Error: #0002302 ".$link));
 	
 	if($result = mysqli_query($link, $query)) {
@@ -3168,7 +3166,7 @@ function mission_kolonisieren($flotte_abarbeiten, $spieler_id, $username) {
 	if($tech_spieler["Tech_10"] <= $anzahl_planeten - 1) { return false; }	
 	if (check_koordinaten_besetzt($x2, $y2, $z2) == false) { //Schauen ob der Planet besetzt ist
 		
-		$sql = "INSERT INTO `sonnensystem` (`ID`, `Spieler_ID`, `x`, `y`, `Entdeckt`, `locked`) VALUES (NULL, '$spieler_id', '$x2', '$y2', '" . date("Y-m-d\TH:i:s\Z", $Ankunft) . "', '1')";
+		$sql = "INSERT INTO `sonnensystem` (`ID`, `Spieler_ID`, `x`, `y`, `Entdeckt`, `locked`) VALUES (NULL, '$spieler_id', '$x2', '$y2', '" . date("Y-m-d\TH:i:s", $Ankunft) . "', '1')";
 		$query = $sql or die("Error in the consult.." . mysqli_error("Error: #0002302 ".$link));
 		
 		if($result = mysqli_query($link, $query)) { //Sonnensystem als permanent Entdeckt setzen
@@ -3185,7 +3183,7 @@ function mission_kolonisieren($flotte_abarbeiten, $spieler_id, $username) {
 					
 				} else { echo "Flotte nicht stationiert"; return false; }				
 			} else { echo "Planet nicht erstellt"; return false; }			
-		} else { echo "Fehler beim Sonnensystem auf locked setzen"; return false; }		
+		} else { echo "Fehler beim Sonnensystem auf locked setzen" . $query; return false; }		
 	} else { echo "Planet bereist besetzt"; return false; }
 
 }
