@@ -1,8 +1,8 @@
 <?php
 //error_reporting(E_ALL);
-$link = mysqli_connect("localhost","root","", "galaxy1") or die("Fehler id-cg-1-main001 // "  . mysqli_connect_error($link));
+$link = mysqli_connect("localhost","root","","galaxy1") or die("Fehler id-cg-1-main001 // "  . mysqli_connect_error($link));
 
-if (mysqli_connect_errno($link)) {
+if (mysqli_connect_errno()) {
   echo '... '.mysqli_connect_error($mysqli);
 }
 

@@ -16,15 +16,43 @@ function create_first_planet($spieler_id, $x, $y, $z, $username, $galaxy_number)
 	
 	//Spieler
 	
-	$query = "INSERT INTO `spieler`(`Spieler_ID`, `Spieler_Name`, `Typ`, `Bot_Produktion_Zeit`) VALUES ('$spieler_id','$username','human',".time().")";
-	$result = mysqli_query($link, $query) or sql_error(mysqli_error($link));
+	$sql = "INSERT INTO `spieler`(`Spieler_ID`, `Spieler_Name`, `Typ`, `Bot_Produktion_Zeit`, `Tech_1`, `Tech_2`, `Tech_3`, `Tech_4`, `Tech_5`, `Tech_6`, `Tech_7`, `Tech_8`, `Tech_9`, `Tech_10`, `Tech_11`, `Tech_12`, `Tech_Schleife_ID`, `Tech_Schleife_Eisen`, `Tech_Schleife_Name`, `Tech_Schleife_Silizium`, `Tech_Schleife_Wasser`, `Tech_Schleife_Bauzeit_Start`, `Tech_Schleife_Bauzeit_Bis`, `Tech_Schleife_Planet`, `punkte_structur`, `punkte_flotte`, `punkte_forschung`, `Letzter_Planet`, `avatar`) 
+	VALUES ('$spieler_id','$username',0,'".time()."',0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'')";
+	
+	$result = mysqli_query($link, $sql) or sql_error(mysqli_error($link));
 	
 	//Planet
 	
 	$planetname = $username."s Kolonie";
 	$jetzt = time() - (48 * 60 * 60);
-	$query = "INSERT INTO `planet`(`Spieler_ID`, `Spieler_Name`, `Planet_Name`, `x`, `y`, `z`, `Grund_Prod_Eisen`, `Grund_Prod_Silizium`, `Grund_Prod_Wasser`, `Produktion_Zeit`) VALUES ('$spieler_id', '$username','$planetname', $x, $y, $z, 20,10,5, $jetzt)";
-	$result = mysqli_query($link, $query) or sql_error(mysqli_error($link));
+	
+
+	$sql = "INSERT INTO `planet`(
+		`Spieler_ID`, `Spieler_Name`, `Planet_Name`, `x`, `y`, `z`, `Planet_ID`, 
+		`Ressource_Eisen`, `Ressource_Silizium`, `Ressource_Wasser`, `Ressource_Bot`, `Stationiert_Bot`, 
+		`Stufe_Gebaeude_1`, `Stufe_Gebaeude_2`, `Stufe_Gebaeude_3`, `Stufe_Gebaeude_4`, `Stufe_Gebaeude_5`, `Stufe_Gebaeude_6`, `Stufe_Gebaeude_7`, `Stufe_Gebaeude_8`, `Stufe_Gebaeude_9`, `Stufe_Gebaeude_10`, `Stufe_Gebaeude_11`, 
+		`Grund_Prod_Eisen`, `Grund_Prod_Silizium`, `Grund_Prod_Wasser`, `Prod_Eisen`, `Prod_Silizium`, `Prod_Wasser`, `Produktion_Zeit`, `Ressource_Energie`, `Ressource_Karma`, 
+		`Bauschleife_Gebaeude_ID`, `Bauschleife_Gebaeude_Start`, `Bauschleife_Gebaeude_Bis`, `Bauschleife_Gebaeude_Name`, 
+		`Bunker_Kapa`, `Bunker_Eisen`, `Bunker_Silizium`, `Bunker_Wasser`, 
+		`Bauschleife_Flotte_ID`, 
+		`Schiff_Typ_1`, `Schiff_Typ_2`, `Schiff_Typ_3`, `Schiff_Typ_4`, `Schiff_Typ_5`, `Schiff_Typ_6`, `Schiff_Typ_7`, `Schiff_Typ_8`, `Schiff_Typ_9`, `Schiff_Typ_10`, `Schiff_Typ_11`, `Schiff_Typ_12`, 
+		`Deff_Typ_1`, `Deff_Typ_2`, `Deff_Typ_3`, `Deff_Typ_4`, `Deff_Typ_5`, `Deff_Typ_6`, 
+		`Handel_Kapa`, `Handel_Eisen`, `Handel_Silizium`, `Handel_Wasser`, 
+		`punkte`, `Gesamt_Bot`) 
+	VALUES 
+		('$spieler_id','$username','$planetname',$x, $y, $z, 0,
+		20,10,5,0,0,
+		0,0,0,0,0,0,0,0,0,0,0,
+		20,10,5,0,0,0,$jetzt,0,0,
+		0,0,0,0,
+		0,0,0,0,
+		0,
+		0,0,0,0,0,0,0,0,0,0,0,0,
+		0,0,0,0,0,0,
+		0,0,0,0,
+		0,0)";
+		
+	$result = mysqli_query($link, $sql) or sql_error(mysqli_error($link));
 
 	//spielername in der gala
 	require 'inc/connect_spieler.php';
@@ -79,8 +107,6 @@ function check_username_cleaner($value, $spieler_id){
 	
 	if($spieler_id == 0) { return $newVal;}
 	
-	mysqli_select_db($link, "spieler");
-	
 	$abfrage = "FROM `spieler` WHERE `spieler_ID` <> '$spieler_id' AND (`spieler_name` = '$newVal' OR `name_galaxy_1` =  '$newVal' OR `name_galaxy_2` =  '$newVal' OR `name_galaxy_3` = '$newVal')";
 	
 	
@@ -117,10 +143,6 @@ function check_username_cleaner_register($value){
 	$newVal = htmlspecialchars($newVal);
 	$newVal = stripslashes($newVal);
 	//$newVal = filter_var($newVal, FILTER_SANITIZE_SPECIAL_CHARS, FILTER_FLAG_STRIP_LOW | FILTER_FLAG_STRIP_HIGH);
-
-
-
-	mysqli_select_db($link, "spieler");
 	
 	$abfrage = "FROM `spieler` WHERE `spieler_name` = '$newVal' OR `name_galaxy_1` =  '$newVal' OR `name_galaxy_2` =  '$newVal' OR `name_galaxy_3` = '$newVal'";
 
@@ -263,8 +285,7 @@ function check_auth($spieler_id, $session_id) {
 	if(!$spieler_id || !$session_id) { return "nein"; }
 	
 	require 'inc/connect_spieler.php'; 
-	mysqli_select_db($link, "spieler");
-	
+		
 	$query = "SELECT `ID`, `spieler_ID`, `session_id`, `HTTP_USER_AGENT` FROM `spieler` WHERE `spieler_ID` = '".$spieler_id."' AND `session_id` = '".$session_id."' LIMIT 1" or die("Error: #0009 " . mysqli_error($link));
 	$result = mysqli_query($link, $query) or sql_error(mysqli_error($link));
 	$row = mysqli_fetch_array($result);
@@ -281,37 +302,66 @@ function check_auth($spieler_id, $session_id) {
 
 
 function registrieren($username, $password) {
+	require 'inc/connect_spieler.php';
+
 	$username = check_username_cleaner_register($username);
-	$password = $password;
-	
+	$_password = mysqli_real_escape_string($link, $password);
 	
 	if ($username == "fehler") { return "fehler"; } 
 
-	$cost = 10;
-	
-	$salt = strtr(base64_encode(mcrypt_create_iv(16, MCRYPT_DEV_URANDOM)), '+', '.');
+	echo preg_match("/^(?=.*\d)(?=.*[@#\-_$%^&+=§!\?])(?=.*[a-z])(?=.*[A-Z])[0-9A-Za-z@#\-_$%^&+=§!\?]{8,20}$/", $_password);
 
-	$salt = sprintf("$2a$%02d$", $cost) . $salt;
-	$hash = crypt($password, $salt);
+	if(preg_match("/^(?=.*\d)(?=.*[@#\-_$%^&+=§!\?])(?=.*[a-z])(?=.*[A-Z])[0-9A-Za-z@#\-_$%^&+=§!\?]{8,20}$/", $_password)) {
 
-	$unique = md5( uniqid( mt_rand( ), TRUE ) );
 
-	require 'inc/connect_spieler.php';
+		$password_hash = password_hash($password, PASSWORD_BCRYPT);		
+		$unique = md5(uniqid(mt_rand(), TRUE));
 	
+		$sql = "INSERT INTO `spieler`(			
+			`spieler_ID`, 
+			`spieler_name`, 
+			`name_galaxy_1`, 
+			`name_galaxy_2`, 
+			`name_galaxy_3`, 
+			`passwort`, 
+			`letzter_login`, 
+			`session_id`, 
+			`HTTP_USER_AGENT`, 
+			`spieler_geloescht`, 
+			`name_gala_1`, 
+			`aktiv_gala_1`, 
+			`letzter_Planet`, 
+			`max_Planeten`) 
+			VALUES (				
+				'$unique',
+				'$username',
+				'',
+				'',
+				'',
+				'$password_hash',
+				0,
+				0,
+				'',
+				0,
+				'',
+				0,
+				0,
+				0)";
 	
-	
-	$query = "INSERT INTO `spieler`(`spieler_ID`, `spieler_name`, `passwort`) VALUES ('$unique', '$username', '$hash')";
-	$result = mysqli_query($link, $query) or sql_error(mysqli_error($link));
-	
-	if ($result) {
-		return "Yeahh!";
 		
-	} else {
+		$result = mysqli_query($link, $sql) or sql_error(mysqli_error($link));
 		
-		return "Nope.";
+		if ($result) {
+			return "Yeahh!";
+			
+		} else {
+			
+			return "Nope.";
+			
+		}
 		
+
 	}
-	
 	
 
 }

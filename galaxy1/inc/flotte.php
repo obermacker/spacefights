@@ -2,10 +2,10 @@
 //Flotte starten
 
 if(isset($_POST["action-flotte-starten"])) {
-	
-	$out = str_replace('.', '', $_POST);
-	$out = str_replace(',', '', $out);
-	$out = str_replace('-', '', $out);
+	//var_dump($_POST);
+	//$out = str_replace('.', '', $_POST);
+	//$out = str_replace(',', '', $out);
+	//$out = str_replace('-', '', $out);
 	
 	$flotte_kann_abheben = true;
 	

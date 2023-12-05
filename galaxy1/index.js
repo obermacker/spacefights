@@ -101,7 +101,7 @@ function countdown_progress(sec, name, start, ende, beschriftung,maxWidth,ohnePB
 		e.innerHTML = tstr;
 		window.setTimeout("countdown_progress("+sec+",'"+name+"',"+start+","+ende+",'"+beschriftung+"',"+maxWidth+","+ohnePBar+")",500);
 	} else{
-		e.innerHTML = "<a href='index.php?s="+document.getElementById("globalJsVariables" ).attributes.select.value+"'>" + beschriftung + "</a>";			
+		e.innerHTML = "<a href='index.php?s=<?php echo $select; ?>'>" + beschriftung + "</a>";
 		if (!ohnePBar){mPBar(100,100,maxWidth,"mPBar_"+name)};
 	}
 }

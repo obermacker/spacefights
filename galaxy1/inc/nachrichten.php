@@ -30,7 +30,7 @@ function empfänger_hinzufügen(empfänger) {
 }
 </script>
 <form action="index.php?s=Nachrichten" name="myform" method="post" autocomplete="off">
-<table id="default" cellspacing="0" cellpadding="0" class="Ã¼bersicht" width=100%>
+<table id="default" cellspacing="0" cellpadding="0" class="übersicht" width=100%>
 	<tr>
 		<td class="tbchell tbchell_ohne_left_padding" style="width: 50px;">
 			<input name="Nachricht" id="Nachricht" size="" style="width: 100%;" autofocus >
@@ -53,7 +53,7 @@ if($nachrichten["Error"] == false) {
 	
 	foreach($nachrichten["result"] as $key => $value) {		
 		?>
-		<table id="default" cellspacing="0" cellpadding="0" class="Ã¼bersicht" width=100%>
+		<table id="default" cellspacing="0" cellpadding="0" class="übersicht" width=100%>
 			<tr>
 				<?php 
 					$image = "img/default_user_50x50.png";

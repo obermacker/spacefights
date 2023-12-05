@@ -7,7 +7,7 @@ require 'inc/func.php';
 
 if (isset($_POST["regeln"])) {
 	
-	if ((registrieren($_POST["sf_reg_username"], $_POST["sf_reg_password"]) == "Yeahh!") AND $_POST["regeln"] == "verstanden" AND $_POST["sf_reg_invite"] == "SF4EVER") {
+	if ((registrieren($_POST["sf_reg_username"], $_POST["sf_reg_password"]) == "Yeahh!") AND $_POST["regeln"] == "verstanden") {
 		
 		$fehler = 0;
 		$meldung = "Herzlich Willkommen!";

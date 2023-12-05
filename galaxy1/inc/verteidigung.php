@@ -137,7 +137,7 @@ function getMaxAnzahlBauV ($objekt, $ressVorhanden) {
 								<input class="eingabeFeld" type="text" size=2 maxlength=2 id="eingabeFeld<?php echo $i; ?>" name="vanzahl<?php echo $i; ?>" value="0" tabindex=<?php echo $i; ?> oninput="schiebenUndBerechnen('eingabeFeld<?php echo $i; ?>')" onClick="this.form.eingabeFeld<?php echo $i; ?>.select()">
 							</td>
 							<td class="tbchell tbSechsStellig <?php echo $classStr . ' ' . $farbeE; ?>" align="right">
-								<span  id="ressE<?php echo $i; ?>" title="<?php echo $objekt["Kosten_Eisen"]; ?>" <?php // document.getElementById("ressE3").attributes.blablacar.value - blablacar ="bla"?>> 
+								<span  id="ressE<?php echo $i; ?>" title="<?php echo $objekt["Kosten_Eisen"]; ?>">
 									<?php echo number_format($objekt["Kosten_Eisen"], 0, '.', '.'); ?>
 								</span>
 								<img src="img/eisen.png" class="img_ress">

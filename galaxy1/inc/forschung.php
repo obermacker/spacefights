@@ -43,6 +43,7 @@ $bilderEinblenden = true;
 				
 				// $classStr für Statuszeile ausgrauen , bzw. hervorhebensetzen
 				$classStr = "";
+				if (is_null($baut_gerade)) {$baut_gerade["ID"] = 0;}
 				if ($baut_gerade["ID"] == 0) {if (!$kann_gebaut_werden || $maxBaustufe) { $classStr='passiv';}} else if ($baut_gerade["ID"] != $i) {$classStr='passiv';} else {$classStr='imBau';}
 				?>
 				

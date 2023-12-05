@@ -6,10 +6,8 @@ function get_config_tech($id, $var_spieler_stufe) {
 	
 	$Tech["Beschreibung"] = "/lost_id/";
 	$Tech["Wirkung"] = "/lost_id/";
-	$Tech["Kosten_Karma"] = "";
+	$Tech["Kosten_Karma"] = 0;
 	$Tech["Kosten_Energie"] = 0;
-	
-	//print_r ($var_spieler_stufe);
 	
 	$Tech["Erw_Bedingung"] = "bestanden"; //Beispiel in Case 8 Lasertechnik
 	
@@ -146,8 +144,9 @@ function get_config_tech($id, $var_spieler_stufe) {
 			//Erweiterte Bedingung
 				
 			//Vorraussetzung für Lasertechnik ist Raketentechnik mind. Stufe 5
-			if($var_spieler_stufe["2"] >= 5) { $Tech["Erw_Bedingung"] = "bestanden"; } else { $Tech["Erw_Bedingung"] = "nicht bestanden"; }
-
+			//if($var_spieler_stufe["2"] >= 5) { $Tech["Erw_Bedingung"] = "bestanden"; } else { $Tech["Erw_Bedingung"] = "nicht bestanden"; }
+			if(!is_int($var_spieler_stufe)) {if($var_spieler_stufe["2"] >= 5) { $Tech["Erw_Bedingung"] = "bestanden"; } else { $Tech["Erw_Bedingung"] = "nicht bestanden"; }}
+							
 			break;
 	
 		case 9:

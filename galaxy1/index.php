@@ -11,7 +11,6 @@ require (dirname(__FILE__) . '/inc/conf_structure.php');
 require (dirname(__FILE__) . '/inc/conf_tech.php');
 include (dirname(__FILE__) . '/inc/conf_ship.php');
 include (dirname(__FILE__) . '/inc/conf_def.php');
-include (dirname(__FILE__) . '/inc/ks_v002.php');
 include (dirname(__FILE__) . '/inc/debug.php');
 
 $spieler_id = ""; $session_id = ""; $username = "";
@@ -192,9 +191,6 @@ switch ($select) {
 <body>
 <?php
 
-// define global variables for seperate JavaScripts
-echo '<span  id="globalJsVariables" select="' . $select . '" />';
-
 //--- Flotte Aktion & Rückkehr
 	$notfall_break = 0;	
 	while($flotte_abarbeiten = get_flotte_in_der_luft($spieler_id, time(), true)) {			
@@ -225,38 +221,14 @@ echo '<span  id="globalJsVariables" select="' . $select . '" />';
 						}
 						break;
 					case "Angriff":
-					    if (mission_erkunden($flotte_abarbeiten[$key], $flotte_abarbeiten[$key]["Spieler_ID"]) == true) {
-					        
-					        $battle_result = run_combat($flotte_abarbeiten[$key]);
-					        var_dump($flotte_abarbeiten);
-					        $attacker_ships = array();
-					        
-					        foreach ($battle_result[1] as $key3 => $value) {
-					            $attacker_ships[$value["ID"]] = array(
-					                "ID" => $value["ID"],
-					                "Count" => $attacker_ships[$value["ID"]]["Count"] + 1,
-					                "Name" => $value["Name"]
-					            );
-					        }
-					        
-					        foreach ($attacker_ships as $key2 => $value) {
-					            echo $flotte_abarbeiten[$key]["Schiff_Typ_" . $value["ID"]];
-					            $flotte_abarbeiten[$key]["Schiff_Typ_" . $value["ID"]] = $value["Count"];
-					        }
-					        
-					        echo "<hr>";
-					        var_dump($flotte_abarbeiten);
-					        // if (mission_rückkehr_set($flotte_abarbeiten[$key], $flotte_abarbeiten[$key]["Spieler_ID"], true) == false) {
-					        // echo "Fehler mission_rückkehr index.php Zeile 164";
-					        // echo "Wenn das hier jemand liest, sagt mal bitte bescheid.";
-					        // exit();
-					        // }
-					        // $flotte_abarbeiten[$key] aktualisieren
-					        // Anschließend auf Rückflug schicken
-					        // Gegnerplanet aktuaisieren
-					        // Nicht vergessen die Ress zu stehlen
-					    }
-					    break;
+						if(mission_erkunden($flotte_abarbeiten[$key], $spieler_id) == true) {
+							if(mission_rückkehr_set($flotte_abarbeiten[$key], $spieler_id) == false) {
+								echo "Fehler mission_rückkehr index.php Zeile 164";
+								echo "Wenn das hier jemand liest, sagt mal bitte bescheid.";
+								exit;
+							}
+						}
+						break;
 					case "Kolonisierung":
 						if(mission_kolonisieren($flotte_abarbeiten[$key], $spieler_id, $username) == true) {
 							if(mission_rückkehr_auflösen($flotte_abarbeiten[$key], $spieler_id) == false) {
@@ -769,24 +741,20 @@ switch ($select) {
 								<form>
 									<table>
 										<tr>
-											<td>&nbsp;Planet</td>
+											<td>Planet</td>
 											<td>
-												<?php $number_of_planets = get_anzahl_planeten($spieler_id, 1); ?>
-												<button class="btnNavigation" type="submit" 
-													onclick = "p.value = <?php echo $planet_id;?>"
-													<?php 	if ($planet_id == 0) {echo ' disabled';}?> ><
-												</button>
+												<?php $anzahlPlaneten = get_anzahl_planeten($spieler_id, 1); ?>
+												<button class="bt" type="submit" name="zurueck" onclick = "p.value = zurueck.value" 
+													value="<?php if ($planet_id == 0) {echo $anzahlPlaneten;} else {echo $planet_id;}?>" ><</button>
 											</td>
 											<td>
-												<button class="btnNavigation" type="submit"  
-													<?php 	if ($planet_id < $number_of_planets -1) {echo 'onclick = "p.value =' . ($planet_id + 2). '"';}
-															if ($planet_id == $number_of_planets -1) {echo ' disabled';} ?> />>
-												</button>
+												<button class="bt" type="submit" name="vor" onclick = "p.value = vor.value" 
+													value="<?php if ($planet_id == $anzahlPlaneten -1) {echo ('1');} else {echo $planet_id + 2;} ?>" >></button>
 											</td>
 										</tr>
 										<tr>
 											<td colspan=3>
-												<select class="slctNavigation" name="p"  style="width: 180px;" onchange="this.form.submit()" autofocus>
+												<select name="p"  style="width: 180px;" onchange="this.form.submit()" autofocus>
 													<?php echo get_list_of_all_planets($spieler_id, $planet_id); ?>
 												</select>
 												<input type="hidden" name="s" value="<?php echo $select; ?>">
@@ -921,11 +889,7 @@ switch ($select)
 <tr>
 <td colspan="2">
 <div class="time_elapsed">
-	<span >
-		<?php include(dirname(__FILE__) . "/inc/version.txt");
-			$time_elapsed_secs = microtime(true) - $start; 
-			echo " . . . . . Total execution time " . round($time_elapsed_secs * 1000) . " milliseconds"; ?>
-	</span>
+<span ><?php $time_elapsed_secs = microtime(true) - $start; echo "Total execution time " . round($time_elapsed_secs * 1000) . " milliseconds. (" . $username . " // $planet_id)" . " PHP Version:" . phpversion(); ?></span>
 </div>
 
 </td>
