@@ -2,7 +2,7 @@
 $activity = get_activity_planet_spieler_schiffe($spieler_id, $planet_id);
 $schiffe = get_Schiffe_stationiert($spieler_id, $planet_id);
 $Bauschleife_naechstes_Schiff = get_activity_schiffe_einzel($spieler_id, $planet_id);
-$Bauschleife_naechste_deff = get_activity_deff_einzel($spieler_id, $planet_id);
+$Bauschleife_naechste_deff = get_single_defense_construction_activity($spieler_id, $planet_id);
 
 if(!isset($schiffe)) {
 	$schiffe[0]["Name"] = "-";
@@ -10,13 +10,12 @@ if(!isset($schiffe)) {
 }
 
 	
-$deff = get_Deff_stationiert($spieler_id, $planet_id);
+$defense = get_stationed_defense($spieler_id, $planet_id);
 
-if(!isset($deff)) {
-	$deff[0]["Name"] = "-";
-	$deff[0]["Anzahl"] = "-";
+if(!isset($defense)) {
+	$defense[0]['name'] = "-";
+	$defense[0]['quantity'] = "-";
 }
-
 
 $bunker = get_Ressbunker_Inhalt($spieler_id, $planet_id);
 $koordinaten = get_koordinaten_planet($spieler_id, $planet_id);
@@ -266,16 +265,16 @@ countdownFlotten();
 			<tr>
 				<td class="tbc">Verteidigung</td><td class="tbchell">
 				<?php
-				if ($Bauschleife_naechste_deff["Bauzeit"] <> "-") {
+				if ($Bauschleife_naechste_deff['construction_time_end'] <> "-") {
 						
-									echo $Bauschleife_naechste_deff["Name"]; ?>
+									echo $Bauschleife_naechste_deff["name"]; ?>
 														[ <span id="einzel_deff"><script type="text/javascript"><!--
-														countdown(<?php echo $Bauschleife_naechste_deff["Bauzeit"]; ?>, "einzel_deff");
+														countdown(<?php echo $Bauschleife_naechste_deff['construction_time_end']; ?>, "einzel_deff");
 														</script></span> ]
 							<?php 
 									} else {
 										
-										echo $Bauschleife_naechste_deff["Bauzeit"];
+										echo $Bauschleife_naechste_deff['construction_time_end'];
 										
 									}  
 				?>
@@ -338,18 +337,18 @@ countdownFlotten();
 				<td  valign="top">
 					<table id="default" cellspacing="0" cellpadding="0" class="übersicht">
 						<tr>
-							<td colspan=2 class="tbtb tbtb_ohne_rechts">Verteidigung Stationiert</td>
+							<td colspan=2 class="tbtb tbtb_ohne_rechts"><?php lng_echo('stationed defense'); ?></td>
 							
 						</tr>
 							<?php 
-							foreach($deff as $key => $value) {
-								$anzahl = $deff[$key]["Anzahl"];
-								$name = $deff[$key]["Name"];
-							?>
-							<tr>
-								<td class="tbc"><?php echo $name; ?></td>
-								<td class="tbchell"><?php echo str_replace(' ', '&nbsp;&nbsp;', str_pad($anzahl, 5 ," ", STR_PAD_LEFT)); ?></td>
-							</tr>
+							foreach($defense as $key => $value) {
+								$quantity = $defense[$key]['quantity'];
+								$name = $defense[$key]['name'];
+								?>
+								<tr>
+									<td class="tbc"><?php echo $name; ?></td>
+									<td class="tbchell"><?php echo str_replace(' ', '&nbsp;&nbsp;', str_pad($quantity, 5 ," ", STR_PAD_LEFT)); ?></td>
+								</tr>
 							<?php } ?>
 					</table>
 					

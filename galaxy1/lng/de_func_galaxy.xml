@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<language_strings> <!-- GERMAN by ES  Sep 2016 -->
+	<!-- strings set_defense_construction_loop_finished -->
+	<string id="success system" text="ERFOLG_SYSTEM" />
+	<string id="contruction loop finished" text="Es wurde {quantity} {defense_name} fertiggestellt." />
+	<string id="contruction loop finished plural" text="Es wurden {quantity} {defense_name} fertiggestellt." />
+	
+</language_strings>

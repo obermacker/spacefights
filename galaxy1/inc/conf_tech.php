@@ -144,7 +144,6 @@ function get_config_tech($id, $var_spieler_stufe) {
 			//Erweiterte Bedingung
 				
 			//Vorraussetzung für Lasertechnik ist Raketentechnik mind. Stufe 5
-			//if($var_spieler_stufe["2"] >= 5) { $Tech["Erw_Bedingung"] = "bestanden"; } else { $Tech["Erw_Bedingung"] = "nicht bestanden"; }
 			if(!is_int($var_spieler_stufe)) {if($var_spieler_stufe["2"] >= 5) { $Tech["Erw_Bedingung"] = "bestanden"; } else { $Tech["Erw_Bedingung"] = "nicht bestanden"; }}
 							
 			break;
