@@ -1,17 +1,190 @@
 <?php
+/* begin: error handling */ 
+
+error_reporting(E_ERROR);
+mysqli_report(MYSQLI_REPORT_STRICT);
+set_exception_handler('catchExeption');
+
+//set_exception_handler(null);
+//$test = 1/0;
+
+function shortenPath($_file){
+	$_file = str_replace('\\','/',$_file);
+	return substr($_file,strpos($_file,'/galaxy'));
+}
+
+function catchExeption($ex) {
+	?><!DOCTYPE html>
+	<body>
+		<style>
+			@keyframes animation_blink {0% { border-color:red; } 50% { border-color:black;}} 
+			body {font-size: 80%;}
+			.GuruMeditation {font-family: Lucida Grande,Lucida Sans Unicode,Lucida Sans,Geneva,Verdana,sans-serif; color:red;
+								padding: 10pt; margin: 10pt 10pt 10pt 10pt; Border: 4pt; border-color: red; border-style: solid; 
+								animation-name: animation_blink; animation-timing-function: step-end; animation-duration: 2s; animation-iteration-count: infinite;}
+			.GuruMeditation p {font-family: Arial, sans-serif; margin: 5pt 0pt 15pt 0pt; font-size: 200%; font-weight: bold;}
+			.GuruMeditation .left {margin-left: 5pt; float: left;}
+			.GuruMeditation .right {margin-right: 5pt; float: right;}
+			.GuruMeditation .sqlError {display: flex; float: left;}
+			.GuruMeditation .headLine {width:100%; display:flow-root;}
+			.GuruMeditation .traceRow {padding:2pt 5pt 2pt 5pt; display:flex;}
+			.GuruMeditation .traceCol1 {float:left; width:30%;}
+			.GuruMeditation .traceCol2 {float:left; width:25%;}
+			.GuruMeditation .traceCol3 {float:left; width:45%;}
+			.GuruMeditation .traceCol23 {float:left; width:70%;}
+			.GuruMeditationContainer {margin:auto; width: 100%; min-width: 890px; max-width: 1218px;}
+			.GuruMeditationContainer td {vertical-align: text-top;padding: 3pt 2pt 2pt 3pt;}
+		</style>
+		<div id=hiddenContainer style=display:none;>
+			<div class=GuruMeditationContainer>
+				<div class=GuruMeditation>
+					<div class=headLine>
+						<p class=left>Guru Meditation</p>
+						<p class=right><?php if (get_class($ex)=='Exception') {echo explode('\\',$ex->getMessage())[0];}else{echo get_class($ex);} ?></p>
+					</div>
+					<div class=tracing>
+						<?php
+						if (get_class($ex)=='Exception') {$_message = explode('\\',$ex->getMessage())[1];} else {$_message = explode('\\',$ex->getMessage())[0];}
+						
+						$_showLastRow=true;	
+						
+						foreach (array_reverse($ex->getTrace()) as $_key => $_value){
+							switch (true) {
+								case $_value['function'] == 'sql_error':
+									?>
+									<div class=traceRow>
+										<div class=traceCol1 style=text-indent:<?= $_key; ?>em;><?= shortenPath($_value['file'].':'.$_value['line']); ?></div>
+										<div class=traceCol23>
+											<div class=sqlError style=width:55pt;><b><?= explode('\\',$ex->getMessage())[0]; ?></b></div>
+											<div class=sqlError style=width:90.5%;><?= explode('\\',$ex->getMessage())[1]; ?></div>
+										</div>
+									</div>
+									<?php
+									$_showLastRow=false;
+									break;
+
+								case $_value['function'] == 'our_sql_query' and get_class($ex)=='Exception':
+									if (explode('\\',$ex->getMessage())[1]==''){
+										?>
+										<div class=traceRow>
+										<div class=traceCol1 style=text-indent:<?= $_key; ?>em;><?= shortenPath($_value['file']).':'.$_value['line']; ?></div>
+										<div class=traceCol23>
+											<div class=sqlError style=width:100%;><b><?= explode('\\',$ex->getMessage())[0]; ?></b></div>
+											<div class=sqlError style=width:55pt;margin-top:5pt;><b>query</b></div>
+											<div class=sqlError style=width:90.5%;margin-top:5pt;><?= $_value['args'][1]; ?></div>
+										</div>
+										<?php
+									} else {
+										?>
+										<div class=traceRow>
+										<div class=traceCol1 style=text-indent:<?= $_key; ?>em;><?= shortenPath($_value['file']).':'.$_value['line']; ?></div>
+										<div class=traceCol23>
+											<div class=sqlError style=width:55pt;><b><?= explode('\\',$ex->getMessage())[0]; ?></b></div>
+											<div class=sqlError style=width:90.5%;><?= explode('\\',$ex->getMessage())[1]; ?></div>
+											<div class=sqlError style=width:55pt;margin-top:5pt;><b>query</b></div>
+											<div class=sqlError style=width:90.5%;margin-top:5pt;><?= $_value['args'][1]; ?></div>
+										</div>
+										<?php	
+									}
+									$_showLastRow=false;
+									break;
+
+								default: 
+									$_showLastRow=true;		
+									?>
+									<div class=traceRow>
+										<div class=traceCol1 style=text-indent:<?= $_key; ?>em;><?= shortenPath($_value['file']).':'.$_value['line'] ?></div>
+										<div class=traceCol2><?= $_value['function'] ?></div>
+										<div class=traceCol3>
+											<?php
+											if (shortenPath($ex->getFile()).$ex->getLine() != shortenPath($_value['file']).$_value['line']){
+												foreach ($_value['args'] as $_i => $_args){
+													if (is_object($_args)) {
+														echo '['.$_i.']&nbsp;&nbsp;&nbsp;[object of class:&nbsp;&nbsp;'.get_class($_args).']<br>';
+													} elseif ($_value['function'] == 'require') {
+														echo '['.$_i.']&nbsp;&nbsp;&nbsp;'.shortenPath($_args).'<br>';
+													} else {
+														echo '['.$_i.']&nbsp;&nbsp;&nbsp;'.$_args.'<br>';
+													}
+												}								
+											} else {
+												echo $_message;
+												$_showLastRow=false;
+											}
+											?>
+										</div>
+									</div>
+									<?php
+							}
+						}
+						if ($_showLastRow) {
+							if (shortenPath($ex->getFile()).$ex->getLine() != shortenPath($ex->getTrace()[0]['file']).$ex->getTrace()[0]['line']) {
+								?>
+								<div class=traceRow>
+									<div class=traceCol1 style=text-indent:<?= $_key+1 ?>em;><?= shortenPath($ex->getFile()).':'.$ex->getLine() ?></div>
+									<div class=traceCol23><?= $_message ?></div>
+								</div>
+								<?php
+							} else {
+								?>
+								<div class=traceRow><div class=traceCol1></div><div class=traceCol23><?= $_message ?></div></div>
+								<?php		
+							}
+						}
+						?>
+					</div>
+				</div>
+			</div>
+		</div>
+		<script> 
+			document.body.innerHTML = document.getElementById('hiddenContainer').innerHTML + document.body.innerHTML;
+			document.body.style.backgroundColor="black";
+			document.body.style.color="white";
+		</script>
+	</body>
+	<?php
+
+	// Fatal error: Uncaught mysqli_sql_exception: Access denied for user 'db12333748-03'@'localhost' to database 'galaxy1' in /is/htdocs/wp12333748_UM2R2512W7/www/sfplus/galaxy1/inc/func_galaxy.php:2349 Stack trace: #0 /is/htdocs/wp12333748_UM2R2512W7/www/sfplus/galaxy1/inc/func_galaxy.php(2349): mysqli_select_db(Object(mysqli), 'galaxy1') #1 /is/htdocs/wp12333748_UM2R2512W7/www/sfplus/galaxy1/inc/nachrichten.php(49): get_message('c3209e2c7309423...', 'c3209e2c7309423...', 'ES') #2 /is/htdocs/wp12333748_UM2R2512W7/www/sfplus/galaxy1/index.php(807): require('/is/htdocs/wp12...') #3 {main} thrown in /is/htdocs/wp12333748_UM2R2512W7/www/sfplus/galaxy1/inc/func_galaxy.php on line 2349
+	// PHP Fatal error:  Uncaught Error: Undefined constant "args" in C:\\Users\\AGCS\\#GIT#\\spacefights.2023\\galaxy1\\inc\\debug.php:38\nStack trace:\n#0 [internal function]: catchExeption(Object(Exception))\n#1 {main}\n  thrown in C:\\Users\\AGCS\\#GIT#\\spacefights.2023\\galaxy1\\inc\\debug.php on line 38, referer: http://agcs-pc.fritz.box/galaxy1/index.php?s=Raumschiffe
+	// PHP Fatal error:  Uncaught mysqli_sql_exception: Unknown database 'spieler' in C:\\Users\\AGCS\\#GIT#\\spacefights\\inc\\connect_spieler.php:3\nStack trace:\n#0 C:\\Users\\AGCS\\#GIT#\\spacefights\\inc\\connect_spieler.php(3): mysqli_connect('localhost', 'root', Object(SensitiveParameterValue), 'spieler')\n#1 C:\\Users\\AGCS\\#GIT#\\spacefights\\login.php(6): require('C:\\\\Users\\\\AGCS\\\\#...')\n#2 {main}\n  thrown in C:\\Users\\AGCS\\#GIT#\\spacefights\\inc\\connect_spieler.php on line 3, referer: http://sf.localhost/
+	error_log('PHP error: '.$ex->getMessage().' in '.$ex->getFile().':'.$ex->getLine().'\nStack trace:\n'.$ex->getTrace());
+
+	//syslog(11,$message);
+	//header($_SERVER['SERVER_PROTOCOL'] . ' 500 Internal Server Error', true, 500);
+	//die($message);
+
+	//throw new Exception("Oh nein, ein Fehler!",33);
+	//echo "Alles ok!";
+	die;
+}
+
+/* end: error handling */ 
+
 	
-define ('no_file' , false); 		define ('echo_off' , false);		
-define ('open_file' , true);	define ('echo_on' , true);
+define ('no_file',false); 				define ('echo_off',false);		
+define ('open_file',true);				define ('echo_on',true);
+define ('must_have_results',false); 	define ('no_result_allowed',true);
+define ('max_one_result',1); 			define ('no_limit_of_results',0);
 
 use phpbb\notification\method\email;
 
 function sql_error ($error){
-	$backtrace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS,2);
-	die ('<BR><BR><b>SQL-errror: </b>&nbsp&nbsp' . $error . '&nbsp -> <b>&nbsp' . $backtrace[0]['file'] . '</b>&nbsp function &nbsp<b>' . $backtrace[1]['function'] . '</b>&nbsp line &nbsp<b>' . $backtrace[0]['line'] . '</b><BR>');
+	throw new exception ('SQL Error\\'.$error);
 }
 
-function get_timestamp_in_was_lesbares($value) {	
-	return date('d.m.Y H:i:s', round($value,0));
+function our_sql_query ($_link,$_query,$_noRows=no_result_allowed,$_maxRows=no_limit_of_results){
+	$_result = mysqli_query($_link,$_query) or throw new exception ('SQL Error\\'.mysqli_error($_link));
+	if (!$_noRows and $_result->num_rows == 0) {throw new Exception('SQL Warning: Found no Rows');}
+	if ($_maxRows != no_limit_of_results and $_result->num_rows > $_maxRows) {throw new Exception('SQL Warning: More Than '.$_maxRows.' Rows\\'.$query);}
+	return $_result;
+}
+
+function get_timestamp_in_was_lesbares($value) {	// old function
+	return format_timestamp($value);
+}
+
+function format_timestamp($_value) {	
+	return date('d.m.Y H:i:s', round($_value,0));
 }
 
 function get_rangliste($spieler_id) {
@@ -120,56 +293,54 @@ function get_defense($defense_id) {
 	return get_config_defense($defense_id);
 }
 
-function get_gebäude_aktuelle_stufe($spieler_id, $planet_id, $gebäude_id) {
+function get_structure_level($_player_id, $_planet_id, $_structure_id) {
 
 	require 'inc/connect_galaxy_1.php';
-	$link->set_charset("utf8");
+		
+	$query = 'SELECT Stufe_Gebaeude_1, Stufe_Gebaeude_2, Stufe_Gebaeude_3, Stufe_Gebaeude_4, Stufe_Gebaeude_5, Stufe_Gebaeude_6, Stufe_Gebaeude_7, Stufe_Gebaeude_8, Stufe_Gebaeude_9, Stufe_Gebaeude_10, Stufe_Gebaeude_11 FROM planet WHERE Spieler_ID = \''.$_player_id.'\' AND Planet_ID = '.$_planet_id;  
+	$row = mysqli_fetch_object(our_sql_query($link,$query,must_have_results,max_one_result));
+	$column = "Stufe_Gebaeude_".$_structure_id;
+	$Player['playerID']='122334555';
 	
-	//planet|aktuelle Stufe
-	$abfrage = "SELECT `Stufe_Gebaeude_1`, `Stufe_Gebaeude_2`, `Stufe_Gebaeude_3`, `Stufe_Gebaeude_4`, `Stufe_Gebaeude_5`, `Stufe_Gebaeude_6`, `Stufe_Gebaeude_7`, `Stufe_Gebaeude_8`, `Stufe_Gebaeude_9`, `Stufe_Gebaeude_10`, `Stufe_Gebaeude_11` FROM `planet` WHERE `Spieler_ID` = '$spieler_id' AND `Planet_ID` = '$planet_id'";
-	
-	$query = $abfrage or die("Error in the consult.." . mysqli_error("Error: get_gebäude_nächste_stufe #1 ".$link));
-	$result = mysqli_query($link, $query) or sql_fehler(mysqli_error($link) , __FILE__ ,  __LINE__ );
-	
-	$row_aktuelle_Stufe = mysqli_fetch_object($result);
-	
-	$tabelle = "Stufe_Gebaeude_".$gebäude_id;	
-	return $row_aktuelle_Stufe->$tabelle;
-	
-
+	return $row->$column;
 }
 
 function random_float ($min,$max) {
 	return ($min+lcg_value()*(abs($max-$min)));
 }
 
-function set_bauschleife_struckture($spieler_id, $planet_id, $gebäude_id, $gebäude_name, $bauzeit, $ressource_eisen, $ressource_silizium, $ressource_wasser, $ressource_energie, $ressource_karma, $kosten_eisen, $kosten_silizium, $kosten_wasser, $kosten_energie, $kosten_karma, $username) {
+function set_construction_loop_structure($_loopData){
+		
 	require 'inc/connect_galaxy_1.php';
 	
+	$_loopData->planetResourcesIron  	-= $_loopData->structureCostIron;
+	$_loopData->planetResourcesSilicon	-= $_loopData->structureCostSilicon;
+	$_loopData->planetResourcesWater	-= $_loopData->structureCostWater;
+	$_loopData->planetResourcesEnergy	-= $_loopData->structureCostEnergy;
+	$_loopData->playerResourcesKarma	-= $_loopData->structureCostKarma;   // later save at player dataset
 	
-	$ressource_eisen = $ressource_eisen - $kosten_eisen;
-	$ressource_silizium  = $ressource_silizium - $kosten_silizium;
-	$ressource_wasser = $ressource_wasser - $kosten_wasser;
-	$ressource_energie = $ressource_energie - $kosten_energie;
-	$ressource_karma = $ressource_karma  - $kosten_karma;
-	$bauzeit = $bauzeit;   
+	$_ds = new datasetPlanet;
 	
-	//$abfrage = "UPDATE `planet` SET `Bauschleife_Gebaeude_ID` = $gebäude_id, SET `Bauschleife_Gebaeude_Bis` = " . $time() + $bauzeit . " FROM  WHERE `Spieler_ID` = '$spieler_id' AND `Planet_ID` = $planet_id";
+	$_query = 'UPDATE '.$_ds::table.' SET '
+				.$_ds::constructionLoopStart.			' = \''.time().'\', '
+				.$_ds::constructionLoopUntil.			' = \''.$_loopData->constructionLoopUntil.'\', '
+				.$_ds::constructionLoopStructureID.		' = \''.$_loopData->constructionLoopStructureID.'\', '
+				.$_ds::constructionLoopStructureName.	' = \''.$_loopData->constructionLoopStructureName.'\', '
+				.$_ds::planetResourcesIron.				' = \''.$_loopData->planetResourcesIron.'\', '
+				.$_ds::planetResourcesSilicon.			' = \''.$_loopData->planetResourcesSilicon.'\', '
+				.$_ds::planetResourcesWater.			' = \''.$_loopData->planetResourcesWater.'\', '
+				.$_ds::planetResourcesEnergy.			' = \''.$_loopData->planetResourcesEnergy.'\' '
+				.'WHERE	'.$_ds::playerID.' = \''.$_loopData->playerID.'\' '
+					.'AND '.$_ds::planetID.' = \''.$_loopData->planetID.'\'';
 	
-	$abfrage = "UPDATE `planet` SET `Bauschleife_Gebaeude_Start` = '" . time() . "', `Ressource_Eisen`= '$ressource_eisen', `Ressource_Silizium`= '$ressource_silizium', `Ressource_Wasser`= '$ressource_wasser', `Ressource_Energie`= '$ressource_energie', `Ressource_Karma`= '$ressource_karma', `Bauschleife_Gebaeude_ID`= '$gebäude_id', `Bauschleife_Gebaeude_Bis`= '" . $bauzeit . "', `Bauschleife_Gebaeude_Name`= '$gebäude_name' WHERE `Spieler_ID` = '$spieler_id' AND `Planet_ID` = $planet_id";
-	
-	$query = $abfrage or die("Error in the consult.." . mysqli_error("Error: set_bauschleife_struckture #1 ".$link));
-	
-	if (mysqli_query($link, $query)) {		
-		$text =  $gebäude_name . " wird gebaut. Fertigstellung geplant für " . get_timestamp_in_was_lesbares($bauzeit);
-		set_message(0, "System", $spieler_id, $username, $text, "" ,1);
-	} else {
-	    die("Fehler in der Bauschleife: " . mysqli_error($link));
-	}
-		
-		
-	
+	our_sql_query($link,$_query);
+
+	// send Message to User //
+	$_message = lng_echo ('contruction loop structure started', no_file, echo_off
+							,array('structure_name' => $_loopData->constructionLoopStructureName , 'loop_until' => format_timestamp($_loopData->constructionLoopUntil))); 
+	set_message(0, "System", $_loopData->playerID, $_loopData->playerName, $_message, "" ,1);
 }
+
 
 function set_bauschleife_tech($spieler_id, $planet_id, $tech_id, $tech_name, $bauStart, $bauzeit, $ressource_eisen, $ressource_silizium, $ressource_wasser, $ressource_karma, $kosten_eisen, $kosten_silizium, $kosten_wasser, $kosten_karma, $username) {
 	require 'inc/connect_galaxy_1.php';
@@ -1311,7 +1482,7 @@ function get_tech_nächste_stufe($spieler_id, $planet_id, $tech_id, $speed_mod) 
 		$tabelle = "Tech_".$tech_id;
 		$stufe = $row_aktuelle_Stufe_Tech["Tech_".$tech_id] + 1;
 		
-		$forschungszentrum = get_gebäude_aktuelle_stufe($spieler_id, $planet_id, 9);
+		$forschungszentrum = get_structure_level($spieler_id, $planet_id, 9);
 
 	//Kosten für die Forschung
 

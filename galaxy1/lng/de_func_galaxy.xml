@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<language_strings> <!-- GERMAN by ES  Sep 2016 -->
+<language_strings> <!-- GERMAN by ES  Sep 2023 -->
 	<!-- strings set_defense_construction_loop_finished -->
 	<string id="success system" text="ERFOLG_SYSTEM" />
 	<string id="contruction loop finished" text="Es wurde {quantity} {defense_name} fertiggestellt." />
 	<string id="contruction loop finished plural" text="Es wurden {quantity} {defense_name} fertiggestellt." />
 	
+	<!-- strings set_construction_loop_structure-->
+	<string id="contruction loop structure started" text="{structure_name} wird gebaut. Fertigstellung geplant für den {loop_until}." />
+
 </language_strings>

@@ -6,6 +6,7 @@ $start = microtime(true);
 //error_reporting(0);
 error_reporting(E_ALL);
 session_start();
+require (dirname(__FILE__) . '/inc/define_vars_classes.php');
 require (dirname(__FILE__) . '/inc/func_galaxy.php');
 require (dirname(__FILE__) . '/inc/conf_structure.php');
 require (dirname(__FILE__) . '/inc/conf_tech.php');
@@ -412,7 +413,20 @@ echo '<span  id="globalJsVariables" select="' . $select . '" />';
 					
 					$bauzeit = time() + $Gebäude["Bauzeit"];
 					
-					set_bauschleife_struckture($spieler_id, $planet_id, $gebäude_id, $Gebäude["Name"], $bauzeit, $ressource["Eisen"], $ressource["Silizium"], $ressource["Wasser"], $ressource["Energie"], $ressource["Karma"], $Gebäude["Kosten_Eisen"], $Gebäude["Kosten_Silizium"], $Gebäude["Kosten_Wasser"], $Gebäude["Kosten_Energie"], $Gebäude["Kosten_Karma"], $username);
+					$ld = new loopData;
+					
+					$ld->playerID = $spieler_id;							$ld->playerName = $username;
+					$ld->planetID = $planet_id;
+					$ld->constructionLoopStructureID = $gebäude_id;			$ld->constructionLoopStructureName = $Gebäude["Name"];
+					$ld->constructionLoopUntil = $bauzeit;
+					$ld->planetResourcesIron = $ressource["Eisen"];			$ld->planetResourcesSilicon = $ressource["Silizium"];
+					$ld->planetResourcesWater = $ressource["Wasser"];		$ld->planetResourcesEnergy = $ressource["Energie"];
+					$ld->playerResourcesKarma = $ressource["Karma"];
+					$ld->structureCostIron = $Gebäude["Kosten_Eisen"];		$ld->structureCostSilicon = $Gebäude["Kosten_Silizium"];
+					$ld->structureCostWater = $Gebäude["Kosten_Wasser"]; 	$ld->structureCostEnergy = $Gebäude["Kosten_Energie"];
+					$ld->structureCostKarma = $Gebäude["Kosten_Karma"];
+					
+					set_construction_loop_structure($ld);
 					
 				} else {
 					
