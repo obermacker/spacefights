@@ -12,7 +12,7 @@ $number_of_planets = get_number_of_planets($spieler_id, 1);
 for ($planet_id = 0 ; $planet_id < $number_of_planets ; $planet_id++ ) {
 	for($gebäude_id = 1; $gebäude_id <= 10; $gebäude_id++) {
 	 		
-		$gebäude = get_gebäude_aktuelle_stufe($spieler_id, $planet_id, $gebäude_id);
+		$gebäude = get_structure_level($spieler_id, $planet_id, $gebäude_id);
 		$row_kosten_nächstes_Gebäude = get_config_structure($gebäude_id);
 		
 		$Gebäude["Kosten_Eisen"] = $row_kosten_nächstes_Gebäude["Kosten_Eisen"];

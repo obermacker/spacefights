@@ -73,7 +73,7 @@ function get_max_number_of_possible_constructions ($construction, $available_res
 		
 		<?php 
 		
-		$level_weapon_factory = get_gebäude_aktuelle_stufe($spieler_id, $planet_id, 8);
+		$level_weapon_factory = get_structure_level($spieler_id, $planet_id, 8);
 		$tech_level = get_tech_level_player($spieler_id);
 		
 		if ($level_weapon_factory > 0) {
