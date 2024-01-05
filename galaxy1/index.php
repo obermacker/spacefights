@@ -160,6 +160,13 @@ switch ($select) {
 		$bar_planet_info = true;
 		$cache = true;
 		break;
+	case "Chat":
+		$nav_page_title = "display: none;";
+		$nav_startseite = "display: none;";
+		$nav_bar_planet = "";
+		$bar_planet_info = true;
+		$cache = true;
+		break;
 	default:
 		$nav_page_title = "display: none;";
 		$nav_startseite = "display: none;";
@@ -668,6 +675,9 @@ switch ($select) {
 	case "Einstellungen":
 		$spalte_rechts = 0;
 		break;
+	case "Chat":
+		$spalte_rechts = 0;
+		break;
 	default:
 		$spalte_rechts = 1;
 		break;
@@ -707,8 +717,9 @@ switch ($select) {
 				 <tr><td><a class="navi" href="index.php?s=Einstellungen">Einstellungen</a></td></tr>
 				 <tr><td><hr></a></td></tr>
 				 <tr><td><a class="navi" href="index.php?s=Nachrichten">Nachrichten</a></td></tr>
-				 <tr><td><a class="navi" href="http://spacefights.darkbug.de/index.php?m=chat" target="starbug_chat">Chat</a></td></tr>
-				 <tr><td><a class="navi" href="http://spacefights.org/forum/" target="_forum">Forum</a></td></tr>
+				 <tr><td><a class="navi" href="index.php?s=Chat">Chat</a></td></tr>
+				 <tr><td><a class="navi" href="http://spacefights.darkbug.de/index.php?m=chat" target="starbug_chat">Notfallchat<sup><?php echo "\u{29C9}"; ?></sup></a></td></tr>
+				 <tr><td><a class="navi" href="https://github.com/obermacker/spacefights/discussions" target="_forum">Forum<sup><?php echo "\u{29C9}"; ?></a></td></tr>
 				 <tr><td><s>Hilfe</td></tr>
 				 <tr><td><hr></a></td></tr>
 				 
@@ -833,7 +844,10 @@ switch ($select) {
 	case "Einstellungen":
 		require 'inc/einstellungen.php';
 	    break;
-    case "punkte-berechnen":
+	case "Chat":
+		require 'inc/chat.php';
+		break;
+	case "punkte-berechnen":
     	require 'inc/punkte-berechnen.php';
     	break;
 	default:

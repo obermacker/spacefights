@@ -2123,7 +2123,7 @@ function check_username_cleaner($value, $spieler_id){
 	//$newVal = filter_var($newVal, FILTER_SANITIZE_SPECIAL_CHARS, FILTER_FLAG_STRIP_LOW | FILTER_FLAG_STRIP_HIGH);
 	
 	
-	mysqli_select_db($link, "spieler");
+	#mysqli_select_db($link, "spieler");
 	mysql_query("SET NAMES 'utf8'");
 	$abfrage = "FROM `spieler` WHERE `spieler_ID` <> '$spieler_id' AND (`spieler_name` = '$newVal' OR `name_galaxy_1` =  '$newVal' OR `name_galaxy_2` =  '$newVal' OR `name_galaxy_3` = '$newVal')";
 	
@@ -2274,7 +2274,7 @@ function check_auth($spieler_id, $session_id) {
 	if(!$spieler_id || !$session_id) { return "nein"; }
 	
 	require 'inc/connect_spieler.php'; 
-	/*mysqli_select_db($link, "spieler");*/
+	/*#mysqli_select_db($link, "spieler");*/
 	
 	$query = "SELECT `ID`, `spieler_ID`, `session_id`, `HTTP_USER_AGENT` FROM `spieler` WHERE `spieler_ID` = '".$spieler_id."' AND `session_id` = '".$session_id."' LIMIT 1" or die("Error: #0009 " . mysqli_error($link));
 	$result = mysqli_query($link, $query) or sql_fehler(mysqli_error($link) , __FILE__ ,  __LINE__ );
@@ -2333,7 +2333,7 @@ function get_spieler_name($spieler_id) {
 function get_spieler_image($spieler_id) {
 	
 	require 'inc/connect_galaxy_1.php';
-	mysqli_select_db($link, "galaxy1");
+	#mysqli_select_db($link, "galaxy1");
 	$sql = "SELECT `avatar` FROM `spieler` WHERE `Spieler_ID` = '$spieler_id'";
 	$query = $sql or die("Error in the consult.." . mysqli_error("Error: #0003 ".$link));
 	$result = mysqli_query($link, $query) or sql_fehler(mysqli_error($link) , __FILE__ ,  __LINE__ );
@@ -2346,7 +2346,7 @@ function get_spieler_image($spieler_id) {
 
 function get_message($absender_id, $empfänger_id, $username) {
 	require 'inc/connect_galaxy_1.php';
-	mysqli_select_db($link, "galaxy1");
+	#mysqli_select_db($link, "galaxy1");
 	$sql = "SELECT `ID`, `Zeit`, `Absender_ID`, `Absender_Name`, `Empfaenger_ID`, `Empfaenger_Name`, `Gelesen`, `Betreff`, `Text`, `Logbuch`, `Chatbot` FROM `nachrichten` WHERE `Empfaenger_ID` Like '" . $empfänger_id . "' OR INSTR(`Text`,'@" . $username . "') > 0 OR `Absender_ID` = '$absender_id' OR INSTR(`Text`,'@Galaxy1') > 0 ORDER BY `ID` DESC";
 	
 	$query = $sql or die("Error in the consult.." . mysqli_error("Error: #0003 ".$link));
