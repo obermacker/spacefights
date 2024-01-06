@@ -37,6 +37,7 @@ a:active, a:hover
 }
 
 input,textarea,select, button { border-color:#000000; border-width:1px; background-color:#062636; color:#FFFFFF; }
+input, textarea {font-family: verdana, sans-serif; font-size: 100%;}
 
 .btn_main {  
   font-family: 'Open Sans';
@@ -286,6 +287,8 @@ a.kontakte {
 	
 }
 
+.wordBreak {word-break:break-all; word-wrap:break-word;}
+
 /* by ES 22.06.2016*/
 .pBar {width: 0%; position: absolute; top: 0px; height: 100%; z-index: 5; background-color: /*#004578*/#00cc00; transition: background-color 3s linear 0s;}
 .pBarG {Background-color: /*#4178a2*/ #008800;}
@@ -307,38 +310,39 @@ a.kontakte {
 
 /* für Bau-GUI  */
 
-.bauGUI  .imBau, .bauGUI2 .imBau {font-weight: bold;}
+.bauGUI  .imBau, .constructionGUI2 .imBau {font-weight: bold;}
 
-.bauGUI .passiv, .bauGUI2 .passiv {color: rgba(255,255,255,0.75);}
-.bauGUI .passiv.zuWenigRess, .bauGUI2 .passiv.zuWenigRess {color: rgba(255,0,0,0.75);}
-.bauGUI .passiv img, .bauGUI2 .passiv img {opacity:0.75;}
+.bauGUI .passive, .constructionGUI2 .passive {color: rgba(255,255,255,0.75);}
+.bauGUI .passive.notEnoughRes, .constructionGUI2 .passive.notEnoughRes {color: rgba(255,0,0,0.75);}
+.bauGUI .passive img, .constructionGUI2 .passive img {opacity:0.75;}
 
-.bauGUI .bildDetails, .bauGUI2 .bildDetails {height:21.5em;  display: block;  margin: 1em auto;}
-.bauGUI .zuWenigRess, .bauGUI2 .zuWenigRess {color:red;}
+.bauGUI .bildDetails, .constructionGUI2 .bildDetails {height:21.5em;  display: block;  margin: 1em auto;}
+.bauGUI .notEnoughRes, .constructionGUI2 .notEnoughRes {color:red;}
 .bauGUI .stufenPfeil {color:#0f0; padding-right: .3em; text-align: right; width: 2em;}
- .bauGUI2 .stufenPfeil {color:#0f0; padding-right: .3em; text-align: right; width: 8em;}
 
-/*.bauGUI, .bauGUI2 .btTdWidth {width: 3.5em;}*/
 
-.bauGUI .pBar, .bauGUI2 .pBar {margin-top: -6px; margin-left: 0.5%; height: 3px;}
-.bauGUI .pBarBkGrd, .bauGUI2 .pBarBkGrd {margin-top: -6px; margin-left: 0.5%; height: 3px; width: 99%; opacity:0.6; z-index: 3; background-color: red;}
+/*.bauGUI, .constructionGUI2 .btTdWidth {width: 3.5em;}*/
 
-.bauGUI .tbBauzeit {text-align: right; width: 12em;}						.bauGUI2 .tbBauzeit {text-align: right; width: 10em; padding-left: 0;}
-.bauGUI .tbMaxFS, .bauGUI2 .tbMaxFS {text-align:center; /*font-weight:bold;*/ color:red}
-.bauGUI .tbMaxFS.passiv, .bauGUI2 .tbMaxFS.passiv {color: rgba(255,0,0,0.75);}
-.bauGUI .tbBezeichnung {width: 18em;}											.bauGUI2 .tbBezeichnung {width: 12em;}
-.bauGUI .tbStufe, .bauGUI2 .tbStufe {text-align: right;  width: 1.3em;}
-.bauGUI .tbVierStellig, .bauGUI2 .tbVierStellig {width: 5.6em;}
-.bauGUI .tbSechsStellig, .bauGUI2 .tbSechsStellig {width: 7em;}
-.bauGUI .tbAchtStellig, .bauGUI2 .tbAchtStellig {width: 9em;}
+.bauGUI .pBar, .constructionGUI2 .pBar {margin-top: -6px; margin-left: 0.5%; height: 3px;}
+.bauGUI .pBarBkGrd, .constructionGUI2 .pBarBkGrd {margin-top: -6px; margin-left: 0.5%; height: 3px; width: 99%; opacity:0.6; z-index: 3; background-color: red;}
+
+.bauGUI .tbConstructionTime {text-align: right; width: 12em;}						.constructionGUI2 .tbConstructionTime {text-align: right; width: 11em; padding-left: 0;}
+.bauGUI .tbMaxFS, .constructionGUI2 .tbMaxFS {text-align:center; /*font-weight:bold;*/ color:red}
+.bauGUI .tbMaxFS.passive, .constructionGUI2 .tbMaxFS.passive {color: rgba(255,0,0,0.75);}
+.bauGUI .tbBezeichnung {width: 18em;}											.constructionGUI2 .tbBezeichnung {width: 14em; padding-top: 1em; padding-bottom: 1em;}
+.bauGUI .tbStufe, .constructionGUI2 .tbStufe {text-align: right;  width: 1.3em;}
+.bauGUI .tbVierStellig, .constructionGUI2 .tbVierStellig {width: 5.6em;}
+.bauGUI .tbSechsStellig, .constructionGUI2 .tbSechsStellig {width: 7em;}
+.bauGUI .tbAchtStellig, .constructionGUI2 .tbAchtStellig {width: 9em;}
 
 .bauGUI .trMitPBar {height: 2.6em; vertical-align: baseline;}
 
-.bauGUI .tbBeschreibungLang, .bauGUI2 .tbBeschreibungLang {padding:0; margin: 0 auto 1em auto;}
-.bauGUI .tbBeschreibungLangText, .bauGUI2 .tbBeschreibungLangText {margin: 0.5em; vertical-align: baseline;}
+.bauGUI .tbBeschreibungLang, .constructionGUI2 .tbBeschreibungLang {padding:0; margin: 0 auto 1em auto;}
+.bauGUI .tbBeschreibungLangText, .constructionGUI2 .tbBeschreibungLangText {margin: 0.5em; vertical-align: baseline; width: 100%;}
 
-.bauGUI2 .img_ress {padding: 0 .225em;}
-.bauGUI2 .tbVierStellig, .bauGUI2 .tbSechsStellig, .bauGUI2 .tbAchtStellig {text-align:right;}
+.constructionGUI2 .tbSlider {color:#0f0; padding-right: .3em; text-align: right; width: 10em;}
+.constructionGUI2 .img_ress {padding: 0 .225em;}
+.constructionGUI2 .tbVierStellig, .constructionGUI2 .tbSechsStellig, .constructionGUI2 .tbAchtStellig {text-align:right;}
 
 /* neue Button braucht das Spiel */
 
@@ -356,40 +360,53 @@ a.kontakte {
 .bauGUI .bt.btMinus:active {color: #fff;	background-color: #f33;}
 
 
-.bauGUI2 .bt {z-index:20;  /*display: block;*/  height: 1.5em;  width: 4.5em; margin: 0 0.5em; font-weight:bold;
+.constructionGUI2 .bt {z-index:20;  /*display: block;*/  height: 1.5em;  width: 4.5em; margin: 0 0.5em; font-weight:bold;
 			cursor: pointer;  color: #fff;  background-color: rgba(255,255,255,.4);	/*#047;*/  box-shadow: 1px 1px 2px #000000; border: 0px;  border-radius: 3px;}
-.bauGUI2 .bt:active {transform: translateY(2px);}
-.bauGUI2 .bt:hover {background-color: #383;}
-.bauGUI2 .bt:active {background-color: #161;}
+.constructionGUI2 .bt:active {transform: translateY(2px);}
+.constructionGUI2 .bt:hover {background-color: #383;}
+.constructionGUI2 .bt:active {background-color: #161;}
 
 
-/* alles für die Schieberegler */
+/* parameter for slider */
 
-.bauGUI2 input[type=range] {-webkit-appearance: none; margin: 0; width: 100%;}
-.bauGUI2 input[type=range]:focus {outline: none;}
+.constructionGUI2 input[type=range] {-webkit-appearance: none; margin: 0; width: 100%;}
+.constructionGUI2 input[type=range]:focus {outline: none;}
 
-.bauGUI2 input[type=range]::-webkit-slider-runnable-track {width: 100%; height: 13px; cursor: pointer; animate: 0.2s; 
+.constructionGUI2 input[type=range]::-webkit-slider-runnable-track {width: 100%; height: 13px; cursor: pointer; animate: 0.2s; 
 		box-shadow: 1px 1px 1px #50555C; background: #50555C; border-radius: 5px; border: 0px solid #000000;}
-.bauGUI2 input[type=range]::-webkit-slider-thumb {box-shadow: 0px 0px 0px #000000; border: 0px solid #000000;
+.constructionGUI2 input[type=range]::-webkit-slider-thumb {box-shadow: 0px 0px 0px #000000; border: 0px solid #000000;
 		height: 12px; width: 22px; border-radius: 5px; background: #4085b8; cursor: pointer; -webkit-appearance: none; margin-top: 0.5px;}
-.bauGUI2 input[type=range]:focus::-webkit-slider-runnable-track {background: #50555C;}
+.constructionGUI2 input[type=range]:focus::-webkit-slider-runnable-track {background: #50555C;}
 
-.bauGUI2 input[type=range]::-moz-range-track {width: 100%; height: 13px; cursor: pointer; animate: 0.2s; 
+.constructionGUI2 input[type=range]::-moz-range-track {width: 100%; height: 13px; cursor: pointer; animate: 0.2s; 
 		box-shadow: 1px 1px 1px #50555C; background: #50555C; border-radius: 5px; border: 0px solid #000000;}
-.bauGUI2 input[type=range]::-moz-range-thumb {box-shadow: 0px 0px 0px #000000; border: 0px solid #000000;
+.constructionGUI2 input[type=range]::-moz-range-thumb {box-shadow: 0px 0px 0px #000000; border: 0px solid #000000;
 		height: 12px; width: 22px; border-radius: 5px; background: #4085b8; cursor: pointer;}
 
-.bauGUI2	input[type=range]::-ms-track {width: 100%; height: 13px; cursor: pointer; animate: 0.2s; background: transparent;
+.constructionGUI2	input[type=range]::-ms-track {width: 100%; height: 13px; cursor: pointer; animate: 0.2s; background: transparent;
 	  border-color: transparent; color: transparent;}
-.bauGUI2	input[type=range]::-ms-fill-lower {background: #50555C; border: 0px solid #000000; border-radius: 10px;
+.constructionGUI2	input[type=range]::-ms-fill-lower {background: #50555C; border: 0px solid #000000; border-radius: 10px;
 		box-shadow: 1px 1px 1px #50555C;}
-.bauGUI2	input[type=range]::-ms-fill-upper {background: #50555C; border: 0px solid #000000; border-radius: 10px;
+.constructionGUI2	input[type=range]::-ms-fill-upper {background: #50555C; border: 0px solid #000000; border-radius: 10px;
 		box-shadow: 1px 1px 1px #50555C;}
-.bauGUI2 input[type=range]::-ms-thumb {box-shadow: 0px 0px 0px #000000; border: 0px solid #000000;height: 12px;
+.constructionGUI2 input[type=range]::-ms-thumb {box-shadow: 0px 0px 0px #000000; border: 0px solid #000000;height: 12px;
 		width: 22px; border-radius: 5px; background: #4085b8; cursor: pointer;}
-.bauGUI2 input[type=range]:focus::-ms-fill-lower {background: #50555C;}
-.bauGUI2 input[type=range]:focus::-ms-fill-upper {background: #50555C;}
+.constructionGUI2 input[type=range]:focus::-ms-fill-lower {background: #50555C;}
+.constructionGUI2 input[type=range]:focus::-ms-fill-upper {background: #50555C;}
 
-.bauGUI2 .schieber {width:6em; vertical-align: middle;}
-.bauGUI2 .eingabeFeld {text-align:center; vertical-align:middle; width:1.5em; background-color:#50555C; border: none;  border-radius: 1px;}
+.constructionGUI2 .slider {width:8em; vertical-align: middle;}
+.constructionGUI2 .inputField {text-align:center; vertical-align:middle; width:1.5em; background-color:#50555C; border: none;  border-radius: 1px;}
 
+.constructionGUI2 .inputField::-moz-selection { background: #70757C;} 
+.constructionGUI2 .inputField::selection { background: #a0a5aC;} 
+.constructionGUI2 .inputField:focus { background: #70757C; border:none; outline:none;} 
+
+/* other button */
+.btnNavigation {vertical-align: top; width: 2.5em; text-align: center; font-size: 90%; border:0; background-color: #036; border-radius: 2px;}
+.btnNavigation input[type=submit]:disabled,button:disabled {color: rgba(255,255,255,0.5);}
+.btnNavigation:active {transform: translateY(2px);}
+.btnNavigation:hover {background-color: #369;}
+.btnNavigation:active {background-color: #69c;}
+
+/*styles message.php */ 
+.messages .btn {font-size: 90%; font-weight: 900; width: 2.1em; vertical-align: middle; text-align: center; padding: 0;}

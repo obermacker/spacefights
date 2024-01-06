@@ -16,7 +16,7 @@ $bilderEinblenden = true;
 			<th class="tbtb " colspan=2><?php echo($bezArt); ?></th>
 			<th class="tbtb " colspan=3>Stufe</th>
 			<th class="tbtb " colspan=3>Kosten</th>
-			<th class="tbtb tbBauzeit"><?php echo($textZeit); ?></th>	
+			<th class="tbtb tbConstructionTime"><?php echo($textZeit); ?></th>	
 		</tr>
 		
 		<?php 
@@ -37,14 +37,14 @@ $bilderEinblenden = true;
 				if ($objekt["Forschung"] == "MAX") {$maxBaustufe = true;} else {$maxBaustufe = false;} 
 				
 				$kann_gebaut_werden = true; 
-				$farbeE = ""; if($ressource["Eisen"] < $objekt["Kosten_Eisen"]) { $farbeE = "zuWenigRess"; $kann_gebaut_werden = false; }
-				$farbeS = ""; if($ressource["Silizium"] < $objekt["Kosten_Silizium"]) { $farbeS = "zuWenigRess"; $kann_gebaut_werden = false; }
-				$farbeW = ""; if($ressource["Wasser"] < $objekt["Kosten_Wasser"]) { $farbeW = "zuWenigRess"; $kann_gebaut_werden = false; }
+				$farbeE = ""; if($ressource["Eisen"] < $objekt["Kosten_Eisen"]) { $farbeE = "notEnoughRes"; $kann_gebaut_werden = false; }
+				$farbeS = ""; if($ressource["Silizium"] < $objekt["Kosten_Silizium"]) { $farbeS = "notEnoughRes"; $kann_gebaut_werden = false; }
+				$farbeW = ""; if($ressource["Wasser"] < $objekt["Kosten_Wasser"]) { $farbeW = "notEnoughRes"; $kann_gebaut_werden = false; }
 				
 				// $classStr für Statuszeile ausgrauen , bzw. hervorhebensetzen
 				$classStr = "";
 				if (is_null($baut_gerade)) {$baut_gerade["ID"] = 0;}
-				if ($baut_gerade["ID"] == 0) {if (!$kann_gebaut_werden || $maxBaustufe) { $classStr='passiv';}} else if ($baut_gerade["ID"] != $i) {$classStr='passiv';} else {$classStr='imBau';}
+				if ($baut_gerade["ID"] == 0) {if (!$kann_gebaut_werden || $maxBaustufe) { $classStr='passive';}} else if ($baut_gerade["ID"] != $i) {$classStr='passive';} else {$classStr='imBau';}
 				?>
 				
 				<tr <?php if ($baut_gerade["ID"] == $i) { ?>  class ="trMitPBar" <?php } ?> >
@@ -78,7 +78,7 @@ $bilderEinblenden = true;
 						<td class="tbchell <?php echo $classStr . ' ' . $farbeE; ?> "><img src="img/eisen.png" class="img_ress"> <?php echo number_format($objekt["Kosten_Eisen"], 0, '.', '.'); ?></td>
 						<td class="tbchell <?php echo $classStr . ' ' . $farbeS; ?> "><img src="img/silizium.png" class="img_ress"> <?php echo number_format($objekt["Kosten_Silizium"], 0, '.', '.'); ?></td>
 						<td class="tbchell <?php echo $classStr . ' ' . $farbeW; ?> "><img src="img/wasser.png" class="img_ress"> <?php echo number_format($objekt["Kosten_Wasser"], 0, '.', '.'); ?></td>
-						<td width=1% class="tbchell tbBauzeit <?php echo $classStr; ?> " >
+						<td width=1% class="tbchell tbConstructionTime <?php echo $classStr; ?> " >
 							<?php
 							if($baut_gerade["ID"] != $i) {
 								echo get_timestamp_in_was_sinnvolles($objekt["Bauzeit"]); 				
@@ -162,7 +162,7 @@ $bilderEinblenden = true;
 				<td class="tbchell"> </td>
 				<td class="tbchell"> </td>
 				<td class="tbchell"> </td>
-				<td width=1% class="tbchell tbBauzeit"> </td>
+				<td width=1% class="tbchell tbConstructionTime"> </td>
 			</tr>
 			<tr><td colspan=9 class="tbchell tbBezeichnung"><b>Bitte zunächst Forschungslabor bauen !</b></td></tr>
 			<tr  style="visibility:collapse"><td colspan=9 > </td></tr>

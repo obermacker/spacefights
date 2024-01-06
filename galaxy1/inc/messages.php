@@ -90,7 +90,7 @@ if($nachrichten["Error"] == false) {
 				
 				?>
 				<td rowspan=2 class="tbchell tbchell_ohne_left_padding" style="width: 50px;" ><img src="<?php echo $image; ?>" style="vertical-align: middle;" width=50 height=50></td>
-				<td class="tbchell"><span style="color: #00aed8"><?php echo $value["Absender_Name"].'    =->    '.$value["Empfaenger_Name"]; ?></span></td><td class="tbchell" style="width: 18em; text-align: right;"><span style="font-size: x-small; padding-right: 5px;"><input type="checkbox"  class="btn"></input>&nbsp;<?php echo get_timestamp_in_was_lesbares($value["Zeit"]); ?> &nbsp;&nbsp;<button class="btn">M</button> <button class="btn">E</button> <button class="btn">X</button></span></td>
+				<td class="tbchell"><span style="color: #00aed8"><?php echo $value["Absender_Name"].'    =->    '.$value["Empfaenger_Name"]; ?></span></td><td class="tbchell" style="width: 25em; text-align: right;"><span style="font-size: x-small; padding-right: 5px;"><input type="checkbox"  class="btn"></input>&nbsp;<?php lng_echo ('{DD.MM.YYYY hh:mm:ss@timestamp}',no_file,echo_on,array ('timestamp' => $value["Zeit"])); ?> &nbsp;&nbsp;<button class="btn">M</button> <button class="btn">E</button> <button class="btn">X</button></span></td>
 			<tr>
 				<td class="tbchell" colspan=2>
 					<b><?php if($value["Betreff"]=="") {echo ' ';} else {echo $value["Betreff"];} ?> </b>
