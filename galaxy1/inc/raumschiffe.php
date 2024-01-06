@@ -8,8 +8,8 @@
 <?php
 
 
-$raumschiffwerft_stufe = get_gebäude_aktuelle_stufe($spieler_id, $planet_id, 7);
-$tech_stufe = get_tech_stufe_spieler($spieler_id);
+$raumschiffwerft_stufe = get_structure_level($spieler_id, $planet_id, 7);
+$tech_stufe = get_tech_level_player($spieler_id);
 
 if($raumschiffwerft_stufe == 0) {
 	

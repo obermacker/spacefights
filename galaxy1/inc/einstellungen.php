@@ -1,6 +1,6 @@
 <?php
 // ToDo:
-// was soll den unter Einstellungen erscheinen ?
+// was soll denn unter Einstellungen erscheinen ?
 //
 //Chatfarbe
 //Planetennamen

@@ -1,4 +1,4 @@
-<?php 
+<?php
 $start = microtime(true);
 //#######################################
 //index.php im Galaxyverzeichnis
@@ -6,11 +6,12 @@ $start = microtime(true);
 //error_reporting(0);
 error_reporting(E_ALL);
 session_start();
+require (dirname(__FILE__) . '/inc/define_vars_classes.php');
 require (dirname(__FILE__) . '/inc/func_galaxy.php');
 require (dirname(__FILE__) . '/inc/conf_structure.php');
 require (dirname(__FILE__) . '/inc/conf_tech.php');
 include (dirname(__FILE__) . '/inc/conf_ship.php');
-include (dirname(__FILE__) . '/inc/conf_def.php');
+include (dirname(__FILE__) . '/inc/conf_defense.php');
 include (dirname(__FILE__) . '/inc/debug.php');
 
 $spieler_id = ""; $session_id = ""; $username = "";
@@ -39,11 +40,18 @@ if (check_auth($spieler_id, $session_id) == "nein"){
 
 if (isset($_SESSION["username"])) { $username = $_SESSION["username"]; } else { $_SESSION["username"] = get_spieler_name($spieler_id); $username = $_SESSION["username"]; }
 
-//var_dump($_POST);
+//var_dump('$_GET ',$_GET, '  -- $_POST ', $_POST);
+
+//  need settings !
+if (!isset($_GET['lng'])) {$lng_defaults = get_language_defaults('de'); } else { $lng_defaults = get_language_defaults($_GET['lng']);}
+if (!isset($lng_defaults['id'])) {$lng_defaults = get_language_defaults('en');}
+$load_pictures = true; 				   // for future versions:  must be set in preferences  to load / not load images
+// seetings END
 
 if(!isset($_POST["s"])){ 
 	if(!isset($_GET["s"])){ $select = "index";} else { $select = $_GET["s"]; }
 } else { $select = $_POST["s"]; }
+
 
 
 if(!isset($_POST["p"])){
@@ -61,7 +69,7 @@ if(isset($planet_wahl)) {
 }
 //prüf mal ob der Spieler überhaupt einen Planeten in der Gala hat
 
-if (get_anzahl_planeten($spieler_id, 1) == 0) { session_unset(); session_destroy(); $_SESSION = array(); header('Location: ../index.html'); exit(); }
+if (get_number_of_planets($spieler_id, 1) == 0) { session_unset(); session_destroy(); $_SESSION = array(); header('Location: ../index.html'); exit(); }
 
 //ENDE: prüf mal ob der Spieler überhaupt einen Planten in der Gala hat ;)
 
@@ -139,7 +147,7 @@ switch ($select) {
 		$bar_planet_info = true;
 		$cache = true;
 		break;
-	case "Verteidigung":
+	case "defense":
 		$nav_page_title = "display: none;";
 		$nav_startseite = "display: none;";
 		$nav_bar_planet = "";
@@ -175,20 +183,14 @@ switch ($select) {
 		$cache = false;
 		break;
 }
-
+ 
 //---- ToDo: C
-?>
-<!DOCTYPE HTML>
+?><!DOCTYPE html>
 <html lang="de">
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<head><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<?php if($cache == false) { ?>
-	<meta http-equiv="Pragma" content="no-cache">
-	<meta http-equiv="Cache-Control" content="no-cache">
-	<meta http-equiv="Expires" content="-1">
-<?php } ?>
+
 <link rel="icon" type="image/png" href="../favicon-32x32.png" sizes="32x32" />
 <link rel="icon" type="image/png" href="../favicon-16x16.png" sizes="16x16" />
 <link rel="stylesheet" href="../css/galaxy.css">    
@@ -197,6 +199,8 @@ switch ($select) {
 </head>
 <body>
 <?php
+// define global variables for seperate JavaScripts
+echo '<span  id="globalJsVariables" select="' . $select . '" />';
 
 //--- Flotte Aktion & Rückkehr
 	$notfall_break = 0;	
@@ -324,11 +328,11 @@ switch ($select) {
 		set_bauschleife_ship_fertig($spieler_id, $planet_id);
 	}
 	
-	//--- Deff
+	//--- defense
 	
-	$bauschleife = check_bauschleife_activ($spieler_id, $planet_id, "Deff");
+	$bauschleife = check_bauschleife_activ($spieler_id, $planet_id, "defense");
 	if ($bauschleife != NULL) {
-		set_bauschleife_deff_fertig($spieler_id, $planet_id);
+		set_defense_construction_loop_finished($spieler_id, $planet_id);
 	}
 	
 	
@@ -376,11 +380,11 @@ switch ($select) {
 		}
 	}
 	
-	//--- Deff
-	if (isset($_POST["action-deff-abbrechen"])) {
-		if (is_numeric($_POST["action-deff-abbrechen"])) {
+	//--- defense
+	if (isset($_POST["action_abort_defense_loop"])) {
+		if (is_numeric($_POST["action_abort_defense_loop"])) {
 				
-			set_bauschleife_deff_abbruch($spieler_id, $planet_id, $_POST["action-deff-abbrechen"]);
+			set_defense_construction_loop_abort($spieler_id, $planet_id, $_POST["action_abort_defense_loop"]);
 				
 		}
 	}
@@ -416,7 +420,20 @@ switch ($select) {
 					
 					$bauzeit = time() + $Gebäude["Bauzeit"];
 					
-					set_bauschleife_struckture($spieler_id, $planet_id, $gebäude_id, $Gebäude["Name"], $bauzeit, $ressource["Eisen"], $ressource["Silizium"], $ressource["Wasser"], $ressource["Energie"], $ressource["Karma"], $Gebäude["Kosten_Eisen"], $Gebäude["Kosten_Silizium"], $Gebäude["Kosten_Wasser"], $Gebäude["Kosten_Energie"], $Gebäude["Kosten_Karma"], $username);
+					$ld = new loopData;
+					
+					$ld->playerID = $spieler_id;							$ld->playerName = $username;
+					$ld->planetID = $planet_id;
+					$ld->constructionLoopStructureID = $gebäude_id;			$ld->constructionLoopStructureName = $Gebäude["Name"];
+					$ld->constructionLoopUntil = $bauzeit;
+					$ld->planetResourcesIron = $ressource["Eisen"];			$ld->planetResourcesSilicon = $ressource["Silizium"];
+					$ld->planetResourcesWater = $ressource["Wasser"];		$ld->planetResourcesEnergy = $ressource["Energie"];
+					$ld->playerResourcesKarma = $ressource["Karma"];
+					$ld->structureCostIron = $Gebäude["Kosten_Eisen"];		$ld->structureCostSilicon = $Gebäude["Kosten_Silizium"];
+					$ld->structureCostWater = $Gebäude["Kosten_Wasser"]; 	$ld->structureCostEnergy = $Gebäude["Kosten_Energie"];
+					$ld->structureCostKarma = $Gebäude["Kosten_Karma"];
+					
+					set_construction_loop_structure($ld);
 					
 				} else {
 					
@@ -493,7 +510,7 @@ switch ($select) {
 				if($anzahl <= 0 OR empty($anzahl) OR !is_numeric($anzahl)) { $kann_gebaut_werden = false; }
 				if($Ship["Stufe_Werft"] > $raumschiffwerft_stufe) { $kann_gebaut_werden = false; }
 				
-				$tech_stufe = get_tech_stufe_spieler($spieler_id);
+				$tech_stufe = get_tech_level_player($spieler_id);
 				
 				for($t = 1; $t <= 12; $t++) {
 					if ($tech_stufe["Tech_" . $t] < $Ship["Tech_" . $t]) {
@@ -541,68 +558,67 @@ switch ($select) {
 
 //--- ENDE: Schiffe einreihen
 
-//--- Verteidigung einreihen
 
+//--- defense queuing
 
-	if(isset($_POST["action-deff-bauen"])) {
-	
-		
+	if(isset($_POST["action_built_defense"])) {
 
-	
 		$ressource = get_ressource($spieler_id, $planet_id);
-		$waffenfabrik_stufe = get_gebäude_aktuelle_stufe($spieler_id, $planet_id, 8);
-
-		for ($i = 1; $i <= $deffCount; $i++) {
 		
-			if (isset($_POST["vanzahl" . $i])) {
+		// -------------- only for the time , if all variables are translated !!! ------------------ //
+				$resources = german_res_to_english_res ($ressource);
+		// -------------- only for the time , if all variables are translated !!! ------------------ //
+		
+		$level_weapon_factory = get_gebäude_aktuelle_stufe($spieler_id, $planet_id, 8);
+		$defense_count = get_defense(0)['defense count'];
+		
+		for ($i = 1; $i <= $defense_count; $i++) {
+		
+			if (isset($_POST['quantity' . $i])) {
 			
-				$kann_gebaut_werden = true;
-				$Deff = get_deff($i); 
-				$ship_id = $i;
-				$anzahl = usereingabe_cleaner ($_POST["vanzahl" . $i]);
+				$can_be_built = true;
+				$defense = get_defense($i); 
+				$defense_id = $i;
+				$quantity = usereingabe_cleaner ($_POST['quantity' . $i]);
 			
-				if($anzahl <= 0 OR empty($anzahl) OR !is_numeric($anzahl)) { $kann_gebaut_werden = false; }
+				if($quantity <= 0 OR empty($quantity) OR !is_numeric($quantity)) { $can_be_built = false; }
 	
-				$deff_in_Besitz = get_deff_in_Besitz($spieler_id, $planet_id, $Deff["Schiff_ID"]);
+				$existing_defense = get_existing_defense($spieler_id, $planet_id, $defense_id);
 	
-				$tech_stufe = get_tech_stufe_spieler($spieler_id);
+				$tech_level = get_tech_level_player($spieler_id);
 				
 				for($t = 1; $t <= $techCount; $t++) {
-					if ($tech_stufe["Tech_" . $t] < $Deff["Tech_" . $t]) {
-						$kann_gebaut_werden = false;
+					if ($tech_level["Tech_" . $t] < $defense['required tech level typ ' . $t]) {
+						$can_be_built = false;
 					}
 				}
-								
-				$max = false;
-					
-				if($Deff["Max_Hold_Planet"] != -1) {				
-					if($deff_in_Besitz["Planet"] + $anzahl > $Deff["Max_Hold_Planet"]) { $max = true; }				
+				
+				if($defense['max hold planet'] != -1) { 
+					if($existing_defense['planet'] >= $defense['max hold planet']) { $can_be_built = false; }
 				}
-					
-				if($Deff["Max_Hold"] != -1) {					
-					if($deff_in_Besitz["Galaxy"] + $anzahl > $Deff["Max_Hold"]) { $max = true; }							
+				if($defense['max hold'] != -1) { 
+					if($existing_defense['galaxy'] >= $defense['max hold']) { $can_be_built = false; }			
 				}
 			
-				if($max == true) { $kann_gebaut_werden = false; }
-				if($Deff["Stufe_Werft"] > $waffenfabrik_stufe) { $kann_gebaut_werden = false; }
-				if($ressource["Eisen"] < ($Deff["Kosten_Eisen"] * $anzahl)) { $kann_gebaut_werden = false; }
-				if($ressource["Silizium"] < ($Deff["Kosten_Silizium"] * $anzahl)) { $kann_gebaut_werden = false; }
-				if($ressource["Wasser"] < ($Deff["Kosten_Wasser"] * $anzahl)) { $kann_gebaut_werden = false; }
-				if($ressource["Karma"] < ($Deff["Kosten_Karma"] * $anzahl)) { $kann_gebaut_werden = false; }
-				if($ressource["Bot"] < ($Deff["Bots"] * $anzahl)) { $kann_gebaut_werden = false; }
-				
-				if ($kann_gebaut_werden == true) {
-					$bauzeit = $Deff["Bauzeit"];
-					set_bauschleife_deff($spieler_id, $planet_id, $ship_id, $Deff["Name"], $anzahl, $bauzeit, $ressource["Eisen"], $ressource["Silizium"], $ressource["Wasser"], $ressource["Bot"], $ressource["Karma"], $Deff["Kosten_Eisen"], $Deff["Kosten_Silizium"], $Deff["Kosten_Wasser"], $Deff["Bots"], $Deff["Kosten_Karma"]);					
-				} else {
-					echo("$kann_gebaut_werden"); //ToDo: Fehlermeldung einbauen
+				if($defense['required level weapon factory' ] > $level_weapon_factory) { $can_be_built = false; }
+
+				if($resources['iron'] < ($defense['required iron'] * $quantity)) { $can_be_built = false; }
+				if($resources['silicon'] < ($defense['required silicon'] * $quantity)) { $can_be_built = false; }
+				if($resources['water'] < ($defense['required water'] * $quantity)) { $can_be_built = false; }
+				if($resources['karma'] < ($defense['required karma'] * $quantity)) { $can_be_built = false; }
+				if($resources['bots'] < ($defense['required bots'] * $quantity)) { $can_be_built = false; }
+
+				if ($can_be_built) {
+					set_defense_construction_loop($spieler_id, $planet_id, $quantity, $defense);					
+				} else if ($quantity <> 0) {
+					echo("kann nicht gebaut werden !"); 	//ToDo: Fehlermeldung einbauen
 				}
 			}
 		}
 	}
 	
 
-//--- ENDE: Verteidigung einreihen
+//--- END: defense queuing
 
 
 // Robots produzieren
@@ -657,7 +673,7 @@ switch ($select) {
 	case "Flotte-Info":
 		$spalte_rechts = 1;
 		break;
-	case "Verteidigung":
+	case "defense":
 		$spalte_rechts = 1;
 		break;
 	case "Sonnensystem":
@@ -697,32 +713,31 @@ switch ($select) {
 <!-- Menü -->
 <table id="hauptmenue" width="100%"  cellspacing="0" cellpadding="1" style="margin-top: 2px;">
 				 <tr><td><a class="navi" href="index.php">Übersicht</a></td></tr>
-				 <tr><td><s>Imperium</td></tr>
+				 <tr><td><s>Imperium</s></td></tr>
 				 <tr><td><a class="navi" href="index.php?s=Rohstoffe">Rohstoffe</a></td></tr>
 				 <tr><td><hr></td></tr>
 				 <tr><td><a class="navi" href="index.php?s=Gebaeude">Gebäude</a></td></tr>
 				 <tr><td><a class="navi" href="index.php?s=Raumschiffe">Raumschiffe</a></td></tr>
-				 <tr><td><a class="navi" href="index.php?s=Verteidigung">Verteidigung</a></td></tr>
+				 <tr><td><a class="navi" href="index.php?s=defense">Verteidigung</a></td></tr>
 				 <tr><td><a class="navi" href="index.php?s=Forschung">Forschung</a></td></tr>
-				 <tr><td><hr></a></td></tr>
+				 <tr><td><hr></td></tr>
 				 <tr><td><a class="navi" href="index.php?s=Sonnensystem">Sonnensystem</a></td></tr>
-				 <tr><td><s>Koordinatenbuch</td></tr>
+				 <tr><td><s>Koordinatenbuch</s></td></tr>
 				 <tr><td><a class="navi" href="index.php?s=Flotte">Flotte</a></td></tr>
-				 <tr><td><s>Handel</td></tr>
-				 <tr><td><hr></a></td></tr>
-				 <tr><td><s>Allianzen</td></tr>
+				 <tr><td><s>Handel</s></td></tr>
+				 <tr><td><hr></td></tr>
+				 <tr><td><s>Allianzen</s></td></tr>
 				 <tr><td><a class="navi" href="index.php?s=Rangliste">Rangliste</a></td></tr>
 				 <tr><td><s>Kampfstatistik</s></td></tr>
-				 <tr><td><s>Technologie</td></tr>
+				 <tr><td><s>Technologie</s></td></tr>
 				 <tr><td><a class="navi" href="index.php?s=Einstellungen">Einstellungen</a></td></tr>
-				 <tr><td><hr></a></td></tr>
+				 <tr><td><hr></td></tr>
 				 <tr><td><a class="navi" href="index.php?s=Nachrichten">Nachrichten</a></td></tr>
 				 <tr><td><a class="navi" href="index.php?s=Chat">Chat</a></td></tr>
 				 <tr><td><a class="navi" href="http://spacefights.darkbug.de/index.php?m=chat" target="starbug_chat">Notfallchat<sup><?php echo "\u{29C9}"; ?></sup></a></td></tr>
 				 <tr><td><a class="navi" href="https://github.com/obermacker/spacefights/discussions" target="_forum">Forum<sup><?php echo "\u{29C9}"; ?></a></td></tr>
 				 <tr><td><s>Hilfe</td></tr>
-				 <tr><td><hr></a></td></tr>
-				 
+				 <tr><td><hr></a></td></tr>				 
 				  <tr><td><a class="navi" href="../logout.php">Ausloggen</a></td></tr>
 			</table>
 <!-- ENDE: Menü -->
@@ -752,19 +767,25 @@ switch ($select) {
 								<form>
 									<table>
 										<tr>
-											<td>Planet</td>
-											<td>
-												<?php $anzahlPlaneten = get_anzahl_planeten($spieler_id, 1); ?>
-												<button class="bt" type="submit" name="zurueck" onclick = "p.value = zurueck.value" 
-													value="<?php if ($planet_id == 0) {echo $anzahlPlaneten;} else {echo $planet_id;}?>" ><</button>
-											</td>
-											<td>
-												<button class="bt" type="submit" name="vor" onclick = "p.value = vor.value" 
-													value="<?php if ($planet_id == $anzahlPlaneten -1) {echo ('1');} else {echo $planet_id + 2;} ?>" >></button>
+											<td style="padding-left:0.5em;">Planet</td>
+											<td align=right>
+												<?php $numberOfPlanets = get_number_of_planets($spieler_id, 1); ?>
+												<!-- <button class="btnNavigation" type="submit" name="first" onclick = "p.value =first.value" 
+														<?php 	echo 'value="1"';
+																if ($planet_id == 0) {echo ' disabled';}?> >|◄</button>
+												 -->
+												<button class="btnNavigation" type="submit" onclick = "p.value = <?php echo $planet_id;?>" <?php if ($planet_id == 0) {echo ' disabled';}?> ><</button>
+												<button class="btnNavigation" type="submit" <?php 	if ($planet_id < $numberOfPlanets -1) {echo 'onclick = "p.value =' . ($planet_id + 2). '"';} if ($planet_id == $numberOfPlanets -1) {echo ' disabled';} ?> >></button>
+												<!-- <button class="btnNavigation" type="submit" name="last" onclick = "p.value = last.value" 
+														<?php 	echo 'value="'.$numberOfPlanets.'"'; 
+																if ($planet_id == $numberOfPlanets -1) {echo ' disabled';} ?>>►| </button> 
+												-->
+												&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+												<button class="btnNavigation" type="submit" name="lng" <?php if ($lng_defaults['id'] == 'de') {echo 'value="en"';} else {echo 'value="de"';} ?>><?php if ($lng_defaults['id'] == 'de') {echo 'DE';} else {echo 'EN';}?></button> 
 											</td>
 										</tr>
 										<tr>
-											<td colspan=3>
+											<td colspan=2>
 												<select name="p"  style="width: 180px;" onchange="this.form.submit()" autofocus>
 													<?php echo get_list_of_all_planets($spieler_id, $planet_id); ?>
 												</select>
@@ -815,7 +836,7 @@ switch ($select) {
 		require 'inc/gebaeude.php';
 		break;
 	case "Nachrichten":
-		require 'inc/nachrichten.php';
+		require 'inc/messages.php';
 		break;
 	case "Forschung":
 		require 'inc/forschung.php';
@@ -826,8 +847,8 @@ switch ($select) {
 	case "Flotte-Info":
 		require 'inc/flotte-info.php';
 		break;
-	case "Verteidigung":
-		require 'inc/verteidigung.php';
+	case "defense":
+		require 'inc/defense.php';
 		break;
 	case "Sonnensystem":
 		require 'inc/sonnensystem.php';
@@ -860,7 +881,7 @@ switch ($select) {
 <!-- ENDE: Content -->
 <?php 
 
-//var_dump(get_tech_stufe_spieler($spieler_id)); 
+//var_dump(get_tech_level_player($spieler_id)); 
 ?>
 </td>
 <?php if ($spalte_rechts == 1) { ?>
@@ -872,12 +893,12 @@ switch ($select) {
 switch ($select) 
 {
 	case "Nachrichten":
-		require 'inc/kontakte.php'; 
+		require 'inc/recipients.php'; 
 		break;
 	case "Raumschiffe":
 		require 'inc/bauschleife.php'; 
 		break;
-	case "Verteidigung":
+	case "defense":
 		require 'inc/bauschleife.php'; 
 		break;		
 	default:
@@ -903,7 +924,7 @@ switch ($select)
 <tr>
 <td colspan="2">
 <div class="time_elapsed">
-<span ><?php $time_elapsed_secs = microtime(true) - $start; echo "Total execution time " . round($time_elapsed_secs * 1000) . " milliseconds. (" . $username . " // $planet_id)" . " PHP Version:" . phpversion(); ?></span>
+<span ><?php $time_elapsed_secs = microtime(true) - $start; echo "Total execution time " . round($time_elapsed_secs * 1000) . " milliseconds. (" . $username . " // $planet_id)"; ?></span>
 </div>
 
 </td>

@@ -1,12 +1,190 @@
 <?php
-use phpbb\notification\method\email;
+/* begin: error handling */ 
 
-function sql_fehler ($fehler, $datei = '---', $zeile = '---'){
-	die ('<b>SQL-Fehler: </b>&nbsp&nbsp' . $fehler . '&nbsp -> <b>&nbsp' . $datei . '</b>&nbsp Zeile &nbsp<b>' . $zeile . '</b>');
+error_reporting(E_ERROR);
+mysqli_report(MYSQLI_REPORT_STRICT);
+set_exception_handler('catchExeption');
+
+//set_exception_handler(null);
+//$test = 1/0;
+
+function shortenPath($_file){
+	$_file = str_replace('\\','/',$_file);
+	return substr($_file,strpos($_file,'/galaxy'));
 }
 
-function get_timestamp_in_was_lesbares($value) {	
-	return date('d.m.Y H:i:s', round($value,0));
+function catchExeption($ex) {
+	?><!DOCTYPE html>
+	<body>
+		<style>
+			@keyframes animation_blink {0% { border-color:red; } 50% { border-color:black;}} 
+			body {font-size: 80%;}
+			.GuruMeditation {font-family: Lucida Grande,Lucida Sans Unicode,Lucida Sans,Geneva,Verdana,sans-serif; color:red;
+								padding: 10pt; margin: 10pt 10pt 10pt 10pt; Border: 4pt; border-color: red; border-style: solid; 
+								animation-name: animation_blink; animation-timing-function: step-end; animation-duration: 2s; animation-iteration-count: infinite;}
+			.GuruMeditation p {font-family: Arial, sans-serif; margin: 5pt 0pt 15pt 0pt; font-size: 200%; font-weight: bold;}
+			.GuruMeditation .left {margin-left: 5pt; float: left;}
+			.GuruMeditation .right {margin-right: 5pt; float: right;}
+			.GuruMeditation .sqlError {display: flex; float: left;}
+			.GuruMeditation .headLine {width:100%; display:flow-root;}
+			.GuruMeditation .traceRow {padding:2pt 5pt 2pt 5pt; display:flex;}
+			.GuruMeditation .traceCol1 {float:left; width:30%;}
+			.GuruMeditation .traceCol2 {float:left; width:25%;}
+			.GuruMeditation .traceCol3 {float:left; width:45%;}
+			.GuruMeditation .traceCol23 {float:left; width:70%;}
+			.GuruMeditationContainer {margin:auto; width: 100%; min-width: 890px; max-width: 1218px;}
+			.GuruMeditationContainer td {vertical-align: text-top;padding: 3pt 2pt 2pt 3pt;}
+		</style>
+		<div id=hiddenContainer style=display:none;>
+			<div class=GuruMeditationContainer>
+				<div class=GuruMeditation>
+					<div class=headLine>
+						<p class=left>Guru Meditation</p>
+						<p class=right><?php if (get_class($ex)=='Exception') {echo explode('\\',$ex->getMessage())[0];}else{echo get_class($ex);} ?></p>
+					</div>
+					<div class=tracing>
+						<?php
+						if (get_class($ex)=='Exception') {$_message = explode('\\',$ex->getMessage())[1];} else {$_message = explode('\\',$ex->getMessage())[0];}
+						
+						$_showLastRow=true;	
+						
+						foreach (array_reverse($ex->getTrace()) as $_key => $_value){
+							switch (true) {
+								case $_value['function'] == 'sql_error':
+									?>
+									<div class=traceRow>
+										<div class=traceCol1 style=text-indent:<?= $_key; ?>em;><?= shortenPath($_value['file'].':'.$_value['line']); ?></div>
+										<div class=traceCol23>
+											<div class=sqlError style=width:55pt;><b><?= explode('\\',$ex->getMessage())[0]; ?></b></div>
+											<div class=sqlError style=width:90.5%;><?= explode('\\',$ex->getMessage())[1]; ?></div>
+										</div>
+									</div>
+									<?php
+									$_showLastRow=false;
+									break;
+
+								case $_value['function'] == 'our_sql_query' and get_class($ex)=='Exception':
+									if (explode('\\',$ex->getMessage())[1]==''){
+										?>
+										<div class=traceRow>
+										<div class=traceCol1 style=text-indent:<?= $_key; ?>em;><?= shortenPath($_value['file']).':'.$_value['line']; ?></div>
+										<div class=traceCol23>
+											<div class=sqlError style=width:100%;><b><?= explode('\\',$ex->getMessage())[0]; ?></b></div>
+											<div class=sqlError style=width:55pt;margin-top:5pt;><b>query</b></div>
+											<div class=sqlError style=width:90.5%;margin-top:5pt;><?= $_value['args'][1]; ?></div>
+										</div>
+										<?php
+									} else {
+										?>
+										<div class=traceRow>
+										<div class=traceCol1 style=text-indent:<?= $_key; ?>em;><?= shortenPath($_value['file']).':'.$_value['line']; ?></div>
+										<div class=traceCol23>
+											<div class=sqlError style=width:55pt;><b><?= explode('\\',$ex->getMessage())[0]; ?></b></div>
+											<div class=sqlError style=width:90.5%;><?= explode('\\',$ex->getMessage())[1]; ?></div>
+											<div class=sqlError style=width:55pt;margin-top:5pt;><b>query</b></div>
+											<div class=sqlError style=width:90.5%;margin-top:5pt;><?= $_value['args'][1]; ?></div>
+										</div>
+										<?php	
+									}
+									$_showLastRow=false;
+									break;
+
+								default: 
+									$_showLastRow=true;		
+									?>
+									<div class=traceRow>
+										<div class=traceCol1 style=text-indent:<?= $_key; ?>em;><?= shortenPath($_value['file']).':'.$_value['line'] ?></div>
+										<div class=traceCol2><?= $_value['function'] ?></div>
+										<div class=traceCol3>
+											<?php
+											if (shortenPath($ex->getFile()).$ex->getLine() != shortenPath($_value['file']).$_value['line']){
+												foreach ($_value['args'] as $_i => $_args){
+													if (is_object($_args)) {
+														echo '['.$_i.']&nbsp;&nbsp;&nbsp;[object of class:&nbsp;&nbsp;'.get_class($_args).']<br>';
+													} elseif ($_value['function'] == 'require') {
+														echo '['.$_i.']&nbsp;&nbsp;&nbsp;'.shortenPath($_args).'<br>';
+													} else {
+														echo '['.$_i.']&nbsp;&nbsp;&nbsp;'.$_args.'<br>';
+													}
+												}								
+											} else {
+												echo $_message;
+												$_showLastRow=false;
+											}
+											?>
+										</div>
+									</div>
+									<?php
+							}
+						}
+						if ($_showLastRow) {
+							if (shortenPath($ex->getFile()).$ex->getLine() != shortenPath($ex->getTrace()[0]['file']).$ex->getTrace()[0]['line']) {
+								?>
+								<div class=traceRow>
+									<div class=traceCol1 style=text-indent:<?= $_key+1 ?>em;><?= shortenPath($ex->getFile()).':'.$ex->getLine() ?></div>
+									<div class=traceCol23><?= $_message ?></div>
+								</div>
+								<?php
+							} else {
+								?>
+								<div class=traceRow><div class=traceCol1></div><div class=traceCol23><?= $_message ?></div></div>
+								<?php		
+							}
+						}
+						?>
+					</div>
+				</div>
+			</div>
+		</div>
+		<script> 
+			document.body.innerHTML = document.getElementById('hiddenContainer').innerHTML + document.body.innerHTML;
+			document.body.style.backgroundColor="black";
+			document.body.style.color="white";
+		</script>
+	</body>
+	<?php
+
+	// Fatal error: Uncaught mysqli_sql_exception: Access denied for user 'db12333748-03'@'localhost' to database 'galaxy1' in /is/htdocs/wp12333748_UM2R2512W7/www/sfplus/galaxy1/inc/func_galaxy.php:2349 Stack trace: #0 /is/htdocs/wp12333748_UM2R2512W7/www/sfplus/galaxy1/inc/func_galaxy.php(2349): mysqli_select_db(Object(mysqli), 'galaxy1') #1 /is/htdocs/wp12333748_UM2R2512W7/www/sfplus/galaxy1/inc/nachrichten.php(49): get_message('c3209e2c7309423...', 'c3209e2c7309423...', 'ES') #2 /is/htdocs/wp12333748_UM2R2512W7/www/sfplus/galaxy1/index.php(807): require('/is/htdocs/wp12...') #3 {main} thrown in /is/htdocs/wp12333748_UM2R2512W7/www/sfplus/galaxy1/inc/func_galaxy.php on line 2349
+	// PHP Fatal error:  Uncaught Error: Undefined constant "args" in C:\\Users\\AGCS\\#GIT#\\spacefights.2023\\galaxy1\\inc\\debug.php:38\nStack trace:\n#0 [internal function]: catchExeption(Object(Exception))\n#1 {main}\n  thrown in C:\\Users\\AGCS\\#GIT#\\spacefights.2023\\galaxy1\\inc\\debug.php on line 38, referer: http://agcs-pc.fritz.box/galaxy1/index.php?s=Raumschiffe
+	// PHP Fatal error:  Uncaught mysqli_sql_exception: Unknown database 'spieler' in C:\\Users\\AGCS\\#GIT#\\spacefights\\inc\\connect_spieler.php:3\nStack trace:\n#0 C:\\Users\\AGCS\\#GIT#\\spacefights\\inc\\connect_spieler.php(3): mysqli_connect('localhost', 'root', Object(SensitiveParameterValue), 'spieler')\n#1 C:\\Users\\AGCS\\#GIT#\\spacefights\\login.php(6): require('C:\\\\Users\\\\AGCS\\\\#...')\n#2 {main}\n  thrown in C:\\Users\\AGCS\\#GIT#\\spacefights\\inc\\connect_spieler.php on line 3, referer: http://sf.localhost/
+	error_log('PHP error: '.$ex->getMessage().' in '.$ex->getFile().':'.$ex->getLine().'\nStack trace:\n'.$ex->getTrace());
+
+	//syslog(11,$message);
+	//header($_SERVER['SERVER_PROTOCOL'] . ' 500 Internal Server Error', true, 500);
+	//die($message);
+
+	//throw new Exception("Oh nein, ein Fehler!",33);
+	//echo "Alles ok!";
+	die;
+}
+
+/* end: error handling */ 
+
+	
+define ('no_file',false); 				define ('echo_off',false);		
+define ('open_file',true);				define ('echo_on',true);
+define ('must_have_results',false); 	define ('no_result_allowed',true);
+define ('max_one_result',1); 			define ('no_limit_of_results',0);
+
+use phpbb\notification\method\email;
+
+function sql_error ($error){
+	throw new exception ('SQL Error\\'.$error);
+}
+
+function our_sql_query ($_link,$_query,$_noRows=no_result_allowed,$_maxRows=no_limit_of_results){
+	$_result = mysqli_query($_link,$_query) or throw new exception ('SQL Error\\'.mysqli_error($_link));
+	if (!$_noRows and $_result->num_rows == 0) {throw new Exception('SQL Warning: Found no Rows');}
+	if ($_maxRows != no_limit_of_results and $_result->num_rows > $_maxRows) {throw new Exception('SQL Warning: More Than '.$_maxRows.' Rows\\'.$query);}
+	return $_result;
+}
+
+function get_timestamp_in_was_lesbares($value) {	// old function
+	return format_timestamp($value);
+}
+
+function format_timestamp($_value) {	
+	return date('d.m.Y H:i:s', round($_value,0));
 }
 
 function get_rangliste($spieler_id) {
@@ -107,67 +285,62 @@ function get_ship($ship_id) {
 	return $row_ship;
 	
 }
-
-function get_deff($deff_id) {
-
-	$row_deff = get_config_deff($deff_id, 0);
-
-	$row_deff["Bauzeit"] = $row_deff["Bauzeit"];		//get_timestamp_in_was_sinnvolles($row_def["Bauzeit"]);
-
-	return $row_deff;
-
+function get_defense_count (){
+	return get_config_defense(0)['defense count'];
 }
 
-function get_gebäude_aktuelle_stufe($spieler_id, $planet_id, $gebäude_id) {
+function get_defense($defense_id) {
+	return get_config_defense($defense_id);
+}
+
+function get_structure_level($_player_id, $_planet_id, $_structure_id) {
 
 	require 'inc/connect_galaxy_1.php';
-	$link->set_charset("utf8");
+		
+	$query = 'SELECT Stufe_Gebaeude_1, Stufe_Gebaeude_2, Stufe_Gebaeude_3, Stufe_Gebaeude_4, Stufe_Gebaeude_5, Stufe_Gebaeude_6, Stufe_Gebaeude_7, Stufe_Gebaeude_8, Stufe_Gebaeude_9, Stufe_Gebaeude_10, Stufe_Gebaeude_11 FROM planet WHERE Spieler_ID = \''.$_player_id.'\' AND Planet_ID = '.$_planet_id;  
+	$row = mysqli_fetch_object(our_sql_query($link,$query,must_have_results,max_one_result));
+	$column = "Stufe_Gebaeude_".$_structure_id;
+	$Player['playerID']='122334555';
 	
-	//planet|aktuelle Stufe
-	$abfrage = "SELECT `Stufe_Gebaeude_1`, `Stufe_Gebaeude_2`, `Stufe_Gebaeude_3`, `Stufe_Gebaeude_4`, `Stufe_Gebaeude_5`, `Stufe_Gebaeude_6`, `Stufe_Gebaeude_7`, `Stufe_Gebaeude_8`, `Stufe_Gebaeude_9`, `Stufe_Gebaeude_10`, `Stufe_Gebaeude_11` FROM `planet` WHERE `Spieler_ID` = '$spieler_id' AND `Planet_ID` = '$planet_id'";
-	
-	$query = $abfrage or die("Error in the consult.." . mysqli_error("Error: get_gebäude_nächste_stufe #1 ".$link));
-	$result = mysqli_query($link, $query) or sql_fehler(mysqli_error($link) , __FILE__ ,  __LINE__ );
-	
-	$row_aktuelle_Stufe = mysqli_fetch_object($result);
-	
-	$tabelle = "Stufe_Gebaeude_".$gebäude_id;	
-	return $row_aktuelle_Stufe->$tabelle;
-	
-
+	return $row->$column;
 }
 
 function random_float ($min,$max) {
 	return ($min+lcg_value()*(abs($max-$min)));
 }
 
-function set_bauschleife_struckture($spieler_id, $planet_id, $gebäude_id, $gebäude_name, $bauzeit, $ressource_eisen, $ressource_silizium, $ressource_wasser, $ressource_energie, $ressource_karma, $kosten_eisen, $kosten_silizium, $kosten_wasser, $kosten_energie, $kosten_karma, $username) {
+function set_construction_loop_structure($_loopData){
+		
 	require 'inc/connect_galaxy_1.php';
 	
+	$_loopData->planetResourcesIron  	-= $_loopData->structureCostIron;
+	$_loopData->planetResourcesSilicon	-= $_loopData->structureCostSilicon;
+	$_loopData->planetResourcesWater	-= $_loopData->structureCostWater;
+	$_loopData->planetResourcesEnergy	-= $_loopData->structureCostEnergy;
+	$_loopData->playerResourcesKarma	-= $_loopData->structureCostKarma;   // later save at player dataset
 	
-	$ressource_eisen = $ressource_eisen - $kosten_eisen;
-	$ressource_silizium  = $ressource_silizium - $kosten_silizium;
-	$ressource_wasser = $ressource_wasser - $kosten_wasser;
-	$ressource_energie = $ressource_energie - $kosten_energie;
-	$ressource_karma = $ressource_karma  - $kosten_karma;
-	$bauzeit = $bauzeit;   
+	$_ds = new datasetPlanet;
 	
-	//$abfrage = "UPDATE `planet` SET `Bauschleife_Gebaeude_ID` = $gebäude_id, SET `Bauschleife_Gebaeude_Bis` = " . $time() + $bauzeit . " FROM  WHERE `Spieler_ID` = '$spieler_id' AND `Planet_ID` = $planet_id";
+	$_query = 'UPDATE '.$_ds::table.' SET '
+				.$_ds::constructionLoopStart.			' = \''.time().'\', '
+				.$_ds::constructionLoopUntil.			' = \''.$_loopData->constructionLoopUntil.'\', '
+				.$_ds::constructionLoopStructureID.		' = \''.$_loopData->constructionLoopStructureID.'\', '
+				.$_ds::constructionLoopStructureName.	' = \''.$_loopData->constructionLoopStructureName.'\', '
+				.$_ds::planetResourcesIron.				' = \''.$_loopData->planetResourcesIron.'\', '
+				.$_ds::planetResourcesSilicon.			' = \''.$_loopData->planetResourcesSilicon.'\', '
+				.$_ds::planetResourcesWater.			' = \''.$_loopData->planetResourcesWater.'\', '
+				.$_ds::planetResourcesEnergy.			' = \''.$_loopData->planetResourcesEnergy.'\' '
+				.'WHERE	'.$_ds::playerID.' = \''.$_loopData->playerID.'\' '
+					.'AND '.$_ds::planetID.' = \''.$_loopData->planetID.'\'';
 	
-	$abfrage = "UPDATE `planet` SET `Bauschleife_Gebaeude_Start` = '" . time() . "', `Ressource_Eisen`= '$ressource_eisen', `Ressource_Silizium`= '$ressource_silizium', `Ressource_Wasser`= '$ressource_wasser', `Ressource_Energie`= '$ressource_energie', `Ressource_Karma`= '$ressource_karma', `Bauschleife_Gebaeude_ID`= '$gebäude_id', `Bauschleife_Gebaeude_Bis`= '" . $bauzeit . "', `Bauschleife_Gebaeude_Name`= '$gebäude_name' WHERE `Spieler_ID` = '$spieler_id' AND `Planet_ID` = $planet_id";
-	
-	$query = $abfrage or die("Error in the consult.." . mysqli_error("Error: set_bauschleife_struckture #1 ".$link));
-	
-	if (mysqli_query($link, $query)) {		
-		$text =  $gebäude_name . " wird gebaut. Fertigstellung geplant für " . get_timestamp_in_was_lesbares($bauzeit);
-		set_message(0, "System", $spieler_id, $username, $text, 1, 0);
-	} else {
-	    die("Fehler in der Bauschleife: " . mysqli_error($link));
-	}
-		
-		
-	
+	our_sql_query($link,$_query);
+
+	// send Message to User //
+	$_message = lng_echo ('contruction loop structure started', no_file, echo_off
+							,array('structure_name' => $_loopData->constructionLoopStructureName , 'loop_until' => format_timestamp($_loopData->constructionLoopUntil))); 
+	set_message(0, "System", $_loopData->playerID, $_loopData->playerName, $_message, "" ,1);
 }
+
 
 function set_bauschleife_tech($spieler_id, $planet_id, $tech_id, $tech_name, $bauStart, $bauzeit, $ressource_eisen, $ressource_silizium, $ressource_wasser, $ressource_karma, $kosten_eisen, $kosten_silizium, $kosten_wasser, $kosten_karma, $username) {
 	require 'inc/connect_galaxy_1.php';
@@ -194,7 +367,7 @@ function set_bauschleife_tech($spieler_id, $planet_id, $tech_id, $tech_name, $ba
 		if (mysqli_query($link, $query)) {
 		
 			$text =  $tech_name . " wird geforscht. Forschung geplant bis " . get_timestamp_in_was_lesbares($bauzeit);
-			set_message(0, "System", $spieler_id, $username, $text, 1, 0);
+			set_message(0, "System", $spieler_id, $username, $text, "",  1);
 		
 			} else {
 				die("Fehler in der Bauschleife: " . mysqli_error($link));
@@ -232,28 +405,26 @@ function get_letzte_bauschleife_ship($spieler_id, $planet_id) {
 	
 }
 
-function get_letzte_bauschleife_deff($spieler_id, $planet_id) {
+function get_end_of_last_defense_construction_loop ($player_id, $planet_id) { 		// ex-function: get_letzte_bauschleife_deff
 	require 'inc/connect_galaxy_1.php';
 
-	$abfrage = "SELECT `Bauzeit_Bis` FROM `bauschleifedeff` WHERE `Spieler_ID` = '$spieler_id' AND `Planet_ID` = '$planet_id' ORDER BY Bauzeit_Bis DESC";
+	$abfrage = "SELECT `construction_time_end` FROM `construction_loops_defense` WHERE `player_id` = '$player_id' AND `planet_id` = '$planet_id' ORDER BY construction_time_end DESC";
 	$query = $abfrage or die("Error in the consult.." . mysqli_error("Error: get_letzte_bauschleife_ship #1 ".$link));
 	$result = mysqli_query($link, $query) or sql_fehler(mysqli_error($link) , __FILE__ ,  __LINE__ );
 
 	$row = mysqli_fetch_object($result);
 
-
-
-	if(isset($row->Bauzeit_Bis)) {
-		if ($row->Bauzeit_Bis < time()) { //Fallback für den Fall das eine Bauschleife nicht beeendet werden kann
+	if(isset($row->construction_time_end)) {
+		if ($row->construction_time_end < time()) { 		// Fallback for the case that a construction loop can not be stopped
 			return time();
 		} else {
-			return $row->Bauzeit_Bis;
+			return $row->construction_time_end;
 		}
-			
-	} else { return time(); }
-
-
+	} else { 
+		return time();
+	}
 }
+
 
 function set_bauschleife_ship($spieler_id, $planet_id, $ship_id, $ship_name, $anzahl, $bauzeit, $ressource_eisen, $ressource_silizium, $ressource_wasser, $ressource_bot, $ressource_karma, $kosten_eisen, $kosten_silizium, $kosten_wasser, $kosten_bot, $kosten_karma) {
 	
@@ -322,148 +493,80 @@ function set_bauschleife_ship($spieler_id, $planet_id, $ship_id, $ship_name, $an
 	
 }
 
-function set_bauschleife_deff($spieler_id, $planet_id, $ship_id, $ship_name, $anzahl, $bauzeit, $ressource_eisen, $ressource_silizium, $ressource_wasser, $ressource_bot, $ressource_karma, $kosten_eisen, $kosten_silizium, $kosten_wasser, $kosten_bot, $kosten_karma) {
+function set_defense_construction_loop ($player_id, $planet_id, $quantity, $defense) { 	// ex-function: set_bauschleife_deff
+	
+	$resources = get_ressource($player_id, $planet_id);
+		
+	// -------------- only for the time , if all variables are translated !!! ------------------ //
+			$resources = german_res_to_english_res ($resources);
+	// -------------- only for the time , if all variables are translated !!! ------------------ //
 
 	require 'inc/connect_galaxy_1.php';
 
-	$von = get_letzte_bauschleife_deff($spieler_id, $planet_id);
-	$bis = $von + ($anzahl * $bauzeit);
+	$start_time = get_end_of_last_defense_construction_loop ($player_id, $planet_id);
+	$end_time = $start_time + ($quantity * $defense['construction time']);
 
-	$abfrage = "INSERT INTO `bauschleifedeff` (
-	`ID`,
-	`Spieler_ID`,
-	`Planet_ID`,
-	`Typ`,
-	`Eisen`,
-	`Silizium`,
-	`Wasser`,
-	`Karma`,
-	`Name`,
-	`Anzahl`,
-	`Bauzeit_Von`,
-	`Bauzeit_Einzel`,
-	`Bauzeit_Bis`)
-	VALUES (NULL,
-	'$spieler_id',
-	'$planet_id',
-	'$ship_id',
-	'$kosten_eisen',
-	'$kosten_silizium',
-	'$kosten_wasser',
-	'$kosten_karma',
-	'$ship_name',
-	'$anzahl',
-	'$von',
-	'$bauzeit',
-	'$bis')";
+	$abfrage = "INSERT INTO `construction_loops_defense` (`id`, `player_id`, `planet_id`, `defense_id`, `required_iron`, `required_silicon`, `required_water`, `required_karma`, `required_bots`,`name`, `quantity`, `construction_time_start`, `construction_time`, `construction_time_end`) VALUES (NULL, '" . $player_id . "'," . $planet_id . "," . $defense['defense id'] . "," . $defense['required iron'] . "," . $defense['required silicon'] . "," . $defense['required water'] . "," . $defense['required karma'] . "," . $defense['required bots'] . ",'" . $defense['name'] . "'," . $quantity . "," . $start_time . "," . $defense['construction time'] . "," . $end_time . ")";
+	$query  = $abfrage or die("Error in the consult.." . mysqli_error("Error: set_bauschleife_ship #1 ".$link));
+	mysqli_query($link, $query) or sql_error(mysqli_error($link));
 
-	$query = $abfrage or die("Error in the consult.." . mysqli_error("Error: set_bauschleife_ship #1 ".$link));
+	//  set resources on planet to new values
+	$resources['iron'] 	-= ($defense['required iron'] * $quantity);
+	$resources['silicon'] 	-= ($defense['required silicon'] * $quantity);
+	$resources['water']	-= ($defense['required water'] * $quantity);
+	$resources['karma']	-= ($defense['required karma'] * $quantity);
+	$resources['bots']	-= ($defense['required bots'] * $quantity);
 
-	if (mysqli_query($link, $query)) {
-		// Ress aufn Planni aktualisiseren
-
-
-		$ressource_eisen = $ressource_eisen - ($kosten_eisen * $anzahl);
-		$ressource_silizium  = $ressource_silizium - ($kosten_silizium * $anzahl);
-		$ressource_wasser = $ressource_wasser - ($kosten_wasser * $anzahl);
-		$ressource_karma = $ressource_karma  - ($kosten_karma * $anzahl);
-		$ressource_bot = $ressource_bot - ($kosten_bot * $anzahl);
-		$bauzeit = $bauzeit;
-
-		//$abfrage = "UPDATE `planet` SET `Bauschleife_Gebaeude_ID` = $gebäude_id, SET `Bauschleife_Gebaeude_Bis` = " . $time() + $bauzeit . " FROM  WHERE `Spieler_ID` = '$spieler_id' AND `Planet_ID` = $planet_id";
-
-		$abfrage = "UPDATE `planet` SET `Ressource_Eisen`= '$ressource_eisen', `Ressource_Silizium`= '$ressource_silizium', `Ressource_Wasser`= '$ressource_wasser', `Ressource_Karma`= '$ressource_karma', `Ressource_Bot` = $ressource_bot WHERE `Spieler_ID` = '$spieler_id' AND `Planet_ID` = $planet_id";
-
-		$query = $abfrage or die("Error in the consult.." . mysqli_error("Error: set_bauschleife_struckture #1 ".$link));
-
-		if (mysqli_query($link, $query)) {
-			//echo "Gebäude eingereiht <br>$abfrage<br>";
-		} else {
-			die("Fehler in der Bauschleife: " . mysqli_error($link));
-		}
-
-
-	} else {
-		die("Fehler in der set_bauschleife_ship: " . mysqli_error($link));
-	}
-
+	$abfrage = "UPDATE `planet` SET `Ressource_Eisen`= " . $resources['iron'] . ", `Ressource_Silizium`= " . $resources['silicon'] . ", `Ressource_Wasser`= " . $resources['water'] . ", `Ressource_Karma`= " . $resources['karma'] . ", `Ressource_Bot` = " . $resources['bots'] . " WHERE `Spieler_ID` = '" . $player_id . "' AND `Planet_ID` = " . $planet_id;
+	$query = $abfrage or die("Error in the consult.." . mysqli_error("Error: set_bauschleife_struckture #1 ".$link));
+	mysqli_query($link, $query) or sql_error(mysqli_error($link));
 }
 
-function get_deff_in_Besitz($spieler_id, $planet_id, $ship_id) {
-	$tabelle = "Deff_Typ_" . $ship_id;
-	
-//aktuelle Planet
-	$sql_planet = "SELECT `Spieler_ID`, `Planet_ID`, `$tabelle` FROM `planet` WHERE `Spieler_ID` = '$spieler_id' AND `Planet_ID` = $planet_id";
-	$sql_summe_planet = "SELECT SUM(`$tabelle`) AS summe_planet FROM ($sql_planet) x";
-	//aktuelle Planet Bauschleife
-	
-	
-	$sql_planet_bauschleife = "SELECT `Spieler_ID`, `Planet_ID`, `Typ` , `Anzahl` FROM `bauschleifedeff` WHERE `Typ` = '$ship_id' AND `Spieler_ID` = '$spieler_id' AND `Planet_ID` = $planet_id";
-	$sql_summe_planet_bauschleife = "SELECT SUM(`Anzahl`) AS summe_planet_bauschleife FROM ($sql_planet_bauschleife) x";
-	
-//aktuelle Galaxy		
-	$sql_galaxy = "SELECT `Spieler_ID`, `Planet_ID`, `$tabelle` FROM `planet` WHERE `Spieler_ID` = '$spieler_id'";
-	$sql_summe_galaxy = "SELECT SUM(`$tabelle`) AS summe_galaxy FROM ($sql_galaxy) x";
-	
-	$sql_galaxy_bauschleife = "SELECT `Spieler_ID`, `Planet_ID`, `Typ`, `Anzahl` FROM `bauschleifedeff` WHERE `Typ` = '$ship_id' AND `Spieler_ID` = '$spieler_id' AND `Planet_ID` = $planet_id";
-	$sql_summe_galaxy_bauschleife = "SELECT SUM(`Anzahl`) AS summe_galaxy_bauschleife FROM ($sql_galaxy_bauschleife) x";
 
-	$deff_in_Besitz["Planet"] = 0;
-	$deff_in_Besitz["Galaxy"] = 0;
-	
+function get_existing_defense($player_id, $planet_id, $defense_id) {		// ex-function: get_deff_in_Besitz
+
 	require 'inc/connect_galaxy_1.php';
 	
-	if($row_summe_planet = mysqli_query($link, $sql_summe_planet)) {
-		
-		$result = mysqli_fetch_object($row_summe_planet);
-		$deff_in_Besitz["Planet"] = $deff_in_Besitz["Planet"] + $result->summe_planet;
-		
-	} else {
-		
-		die("Fehler in der Bauschleife: " . mysqli_error($link));
-	}
+	$existing_defense['planet'] = 0;
+	$existing_defense['galaxy'] = 0;
 	
-	if($row_summe_planet_bauschleife = mysqli_query($link, $sql_summe_planet_bauschleife)) {
-				
-		$result = mysqli_fetch_object($row_summe_planet_bauschleife);
-		$deff_in_Besitz["Planet"] = $deff_in_Besitz["Planet"] + $result->summe_planet_bauschleife;
-		
-	} else {
-		
-		die("Fehler in der Bauschleife: " . mysqli_error($link));
-	}
+	$tabelle = "Deff_Typ_" . $defense_id;
 	
+	//this planet
+	$query = "SELECT SUM(`$tabelle`) AS total FROM (SELECT `Spieler_ID`, `Planet_ID`, `$tabelle` FROM `planet` WHERE `Spieler_ID` = '$player_id' AND `Planet_ID` = $planet_id) x";
+	$result = mysqli_query($link, $query) or sql_error(mysqli_error($link));
 	
-	if($row_summe_galaxy = mysqli_query($link, $sql_summe_galaxy)) {
+	$row = mysqli_fetch_object($result);
+	$existing_defense["planet"] += $row->total;
 		
-		$result = mysqli_fetch_object($row_summe_galaxy);
-		$deff_in_Besitz["Galaxy"] = $deff_in_Besitz["Galaxy"] + $result->summe_galaxy;
-		
-		
-	} else {
-		
-		die("Fehler in der Bauschleife: " . mysqli_error($link));
-	}
 	
+	//this planet construction loops
+	$query = "SELECT SUM(`quantity`) AS total FROM (SELECT `player_id`, `planet_id`, `defense_id` , `quantity` FROM `construction_loops_defense` WHERE `defense_id` = '$defense_id' AND `player_id` = '$player_id' AND `planet_id` = $planet_id) x";
+	$result = mysqli_query($link, $query) or sql_error(mysqli_error($link));
 	
-	if($row_summe_galaxy_bauschleife = mysqli_query($link, $sql_summe_galaxy_bauschleife)) {
-		
-		$result = mysqli_fetch_object($row_summe_galaxy_bauschleife);
-		$deff_in_Besitz["Galaxy"] = $deff_in_Besitz["Galaxy"] + $result->summe_galaxy_bauschleife;
-		
-	} else {
-		
-		die("Fehler in der Bauschleife: " . mysqli_error($link));
-	}
-	
-
-	return $deff_in_Besitz;
-	
+	$row = mysqli_fetch_object($result);
+	$existing_defense["planet"] += $row->total;
 
 	
-	// 
+	//this galaxy		
+	$query = "SELECT SUM(`$tabelle`) AS total FROM (SELECT `Spieler_ID`, `Planet_ID`, `$tabelle` FROM `planet` WHERE `Spieler_ID` = '$player_id') x";
+	$result = mysqli_query($link, $query) or sql_error(mysqli_error($link));
 	
+	$row = mysqli_fetch_object($result);
+	$existing_defense["galaxy"] += $row->total;
+
+	
+	//this galaxy construction loops
+
+	$query = "SELECT SUM(`quantity`) AS total FROM (SELECT `player_id`, `planet_id`, `defense_id`, `quantity` FROM `construction_loops_defense` WHERE `defense_id` = '$defense_id' AND `player_id` = '$player_id') x";
+	$result = mysqli_query($link, $query) or sql_error(mysqli_error($link));
+	
+	$row = mysqli_fetch_object($result);
+	$existing_defense["galaxy"] += $row->total;
+
+	return $existing_defense;
 }
+
 
 function get_schiffe_in_Besitz($spieler_id, $planet_id, $ship_id) {
 	$tabelle = "Schiff_Typ_" . $ship_id;
@@ -595,7 +698,7 @@ function set_bauschleife_ship_fertig($spieler_id, $planet_id) {
 					
 		//Bauschliefe löschen
 		
-			$abfrage_bauschleife_delete = "DELETE FROM `bauschleifeflotte` WHERE `ID` = " . $row->ID; 
+			$abfrage_bauschleife_delete = "DELETE FROM `bauschleifedeff` WHERE `ID` = '" . $row->ID . "'";
 			$query = $abfrage_bauschleife_delete or die("Error in the consult.." . mysqli_error("Error: set_bauschleife_struckture #1 ".$link));
 				
 			if (mysqli_query($link, $query)) {
@@ -689,150 +792,99 @@ function set_bauschleife_ship_fertig($spieler_id, $planet_id) {
 		}
 		
 	}
-	
-	
 }
 
-function set_bauschleife_deff_fertig($spieler_id, $planet_id) {
+function set_defense_construction_loop_finished ($player_id, $planet_id) {		// ex-function: set_bauschleife_deff_fertig
 	require 'inc/connect_galaxy_1.php';
 
-	// erstmal alle auschecken die komplett sind
+	// get finished construction loops and delete them 
+	$query = "SELECT `id`, `player_id`, `planet_id`, `defense_id`, `name`, `quantity`, `construction_time`, `construction_time_start`, `construction_time_end` FROM `construction_loops_defense`  WHERE `construction_time_end` <= " . time() . " AND `player_id` = '$player_id' AND `planet_id` = $planet_id";
+	$result = mysqli_query($link, $query) or sql_error(mysqli_error($link));
 
-	$abfrage = "SELECT `ID`, `Typ`, `Spieler_ID`, `Planet_ID`, `Name`, `Anzahl`, `Bauzeit_Von`, `Bauzeit_Einzel`, `Bauzeit_Bis` FROM `bauschleifedeff`  WHERE `Bauzeit_Bis` <= " . time() . " AND `Spieler_ID` = '$spieler_id' AND `Planet_ID` = $planet_id";
+	while($row_construction_loop = mysqli_fetch_object($result)) {
 
-	$query = $abfrage or die("Error in the consult.." . mysqli_error("Error in set_bauschleife_Deff_fertig ".$link));
-	$result = mysqli_query($link, $query) or sql_fehler(mysqli_error($link) , __FILE__ ,  __LINE__ );
-
-	while($row = mysqli_fetch_object($result)) {
-
-		//schauen wie viele vom Typ sind stationiert
-
-		$tabelle = "Deff_Typ_" . $row->Typ;
-		$abfrage_planet = "SELECT `$tabelle` FROM `planet` WHERE `Spieler_ID` = '$spieler_id' AND `Planet_ID` = $planet_id";
-		$query = $abfrage_planet  or die("Error in the consult.." . mysqli_error("Error in set_bauschleife_Deff_fertig ".$link));
-		$result = mysqli_query($link, $query) or sql_fehler(mysqli_error($link) , __FILE__ ,  __LINE__ );
+		// get stationed defense
+		$column = 'Deff_Typ_' . $row_construction_loop->defense_id;
+		$query = "SELECT `$column` FROM `planet` WHERE `Spieler_ID` = '$player_id' AND `Planet_ID` = $planet_id";
+		$result = mysqli_query($link, $query) or sql_error(mysqli_error($link));
+		
 		$row_planet = mysqli_fetch_object($result);
-		$deff_ist = $row_planet->$tabelle;
+		$defense_now = $row_planet->$column;
 
-		//anzahl aktualisieren
+		// calculate new value for stationed defense
+		$defense = get_defense($row_construction_loop->defense_id);   
+		$quantity = $row_construction_loop->quantity;
+		$defense_now += $quantity;
 
-		$anzahl = $row->Anzahl;
-		$deff_soll = $deff_ist + $anzahl;
-		
-		$Deff = get_deff($row->Typ);
-		
-		$punkte = get_punkte($spieler_id, $planet_id);
+		// !!! punkte update macht so keinen sinn !!!
+		//$punkte = get_punkte($player_id, $planet_id);
 		//$punkte = $punkte + ((($Deff["Kosten_Eisen"] + $Deff["Kosten_Silizium"] + $Deff["Kosten_Wasser"]) * $anzahl) / 1000);
-		
-		
-		$abfrage_planet_update = "UPDATE `planet` SET  `$tabelle` = $deff_soll
-		, `punkte` = " . "0" . " WHERE `Spieler_ID` = '$spieler_id' AND `Planet_ID` = $planet_id";
-		$query = $abfrage_planet_update or die("Error in the consult.." . mysqli_error("Error: set_bauschleife_struckture #1 ".$link));
+		//
+		//$abfrage_planet_update = "UPDATE `planet` SET  `$tabelle` = $deff_soll
+		//, `punkte` = " . "0" . " WHERE `Spieler_ID` = '$player_id' AND `Planet_ID` = $planet_id";
+		//$query = $abfrage_planet_update or die("Error in the consult.." . mysqli_error("Error: set_bauschleife_struckture #1 ".$link));
 			
-		if (mysqli_query($link, $query)) {			
+		$query = "UPDATE `planet` SET  `$column` = $defense_now WHERE `Spieler_ID` = '$player_id' AND `Planet_ID` = $planet_id";
+		mysqli_query($link, $query) or sql_error(mysqli_error($link));
 
-			if ($anzahl > 1) { $insert_name = $Deff["Name_Plural"]; } else { $insert_name = $Deff["Name"]; }
-
-			$news_typ = "ERFOLG_SYSTEM";
-			$news_text = "Es wurden $anzahl $insert_name fertiggestellt";
-			set_news($spieler_id, $planet_id, $news_typ, $news_text);
-		} else {
-			die("Fehler in der fertigstellung: " . mysqli_error($link));
-		}
-
-		//Bauschliefe löschen
-
-		$abfrage_bauschleife_delete = "DELETE FROM `bauschleifedeff` WHERE `ID` = '" . $row->ID . "'";
-		$query = $abfrage_bauschleife_delete or die("Error in the consult.." . mysqli_error("Error: set_bauschleife_struckture #1 ".$link));
-
-		if (mysqli_query($link, $query)) {
-
-		} else {
-			die("Fehler in der fertigstellung: " . mysqli_error($link));
-		}
-
-
-	}
-
-
-
-	// jetzt nur die teilweise gebauten, z.B. die 10 von 100
+		// set news 
+		$news_typ = lng_echo ('success system', no_file, echo_off);
+		if ($quantity > 1) { $news_text = lng_echo ('contruction loop finished plural', no_file, echo_off, array('defense_name' => $defense['name plural'] , 'quantity' => $quantity));} 
+			else { $news_text = lng_echo ('contruction loop finished', no_file, echo_off, array('defense_name' => $defense['name'] , 'quantity' => $quantity));}
+		
+		set_news($player_id, $planet_id, $news_typ, $news_text);
 	
-	$abfrage = "SELECT `ID`, `Typ`, `Spieler_ID`, `Planet_ID`, `Name`, `Anzahl`, `Bauzeit_Von`, `Bauzeit_Einzel`, `Bauzeit_Bis` FROM `bauschleifedeff`  WHERE `Bauzeit_Von` < " . time() . " AND `Bauzeit_Bis` >= " . time() . " AND `Spieler_ID` = '$spieler_id' AND `Planet_ID` = $planet_id";
-
-	$query = $abfrage or die("Error in the consult.." . mysqli_error("Error in set_bauschleife_Deff_fertig ".$link));
-	$result = mysqli_query($link, $query) or sql_fehler(mysqli_error($link) , __FILE__ ,  __LINE__ );
-
-	while($row = mysqli_fetch_object($result)) {
-
-		//schauen wie viele vom Typ sind stationiert
-
-		$tabelle = "Deff_Typ_" . $row->Typ;
-		$Deff = get_deff($row->Typ);
-		$abfrage_planet = "SELECT `$tabelle` FROM `planet` WHERE `Spieler_ID` = '$spieler_id' AND `Planet_ID` = $planet_id";
-		$query = $abfrage_planet  or die("Error in the consult.." . mysqli_error("Error in set_bauschleife_Deff_fertig ".$link));
-		$result = mysqli_query($link, $query) or sql_fehler(mysqli_error($link) , __FILE__ ,  __LINE__ );
-		$row_planet = mysqli_fetch_object($result);
-		$deff_ist = $row_planet->$tabelle;
-
-		//anzahl aktualisieren
-
-		$fertiggestellte = (int)((time() - $row->Bauzeit_Von) / $row->Bauzeit_Einzel);
-
-		$restliche = $row->Anzahl - $fertiggestellte;
-		if($fertiggestellte > 0) {
-				
-			$weiter_ab_zeitpunkt = $row->Bauzeit_Von + ($fertiggestellte *  $row->Bauzeit_Einzel);
-
-			$deff_soll = $deff_ist + $fertiggestellte;
-			
-			$punkte = get_punkte($spieler_id, $planet_id);
-			//$punkte = $punkte + ((($Deff["Kosten_Eisen"] + $Deff["Kosten_Silizium"] + $Deff["Kosten_Wasser"]) * $fertiggestellte) / 1000);
-			
-
-			$abfrage_planet_update = "UPDATE `planet` SET  `$tabelle` = $deff_soll
-			, `punkte` = " . "0" . " WHERE `Spieler_ID` = '$spieler_id' AND `Planet_ID` = $planet_id";
-			$query = $abfrage_planet_update or die("Error in the consult.." . mysqli_error("Error: set_bauschleife_struckture #1 ".$link));
-
-			if (mysqli_query($link, $query)) {
-				//echo "teile fertig";
-			} else {
-				die("Fehler in der fertigstellung: " . mysqli_error($link));
-			}
-
-			//Bauschliefe anpassen
-
-			$abfrage_bauschleife_delete = "UPDATE `bauschleifedeff` SET `Anzahl` = $restliche, `Bauzeit_Von` = $weiter_ab_zeitpunkt  WHERE `ID` = " . $row->ID;
-			$query = $abfrage_bauschleife_delete or die("Error in the consult.." . mysqli_error("Error: set_bauschleife_struckture #1 ".$link));
-
-			if (mysqli_query($link, $query)) {
-				//echo "Schleife angepasst";
-			} else {
-				die("Fehler in der fertigstellung: " . mysqli_error($link));
-			}
-
-		}
-
-		//--- wenn alle durch sind kann die Bauschleife dann auch gelöscht werden
-
-		if($restliche == 0) {
-				
-			$abfrage_bauschleife_delete = "DELETE FROM `bauschleifedeff` WHERE `ID` = " . $row->ID;
-			$query = $abfrage_bauschleife_delete or die("Error in the consult.." . mysqli_error("Error: set_bauschleife_struckture #1 ".$link));
-
-			if (mysqli_query($link, $query)) {
-				//echo "Schleife gelöscht";
-			} else {
-				die("Fehler in der fertigstellung: " . mysqli_error($link));
-			}
-
-
-		}
-
+		// delete construction loop
+		$query = "DELETE FROM `construction_loops_defense` WHERE `id` = " . $row_construction_loop->id;
+		mysqli_query($link, $query) or sql_error(mysqli_error($link));
 	}
 
 
+	// get partial finished construction loops and update them (e.g. 10 of 100, remaining 90)
+	$query = "SELECT `id`, `player_id`, `planet_id`, `defense_id`, `name`, `quantity`, `construction_time`, `construction_time_start`, `construction_time_end` FROM `construction_loops_defense`  WHERE `construction_time_end` > " . time() . " AND `player_id` = '$player_id' AND `planet_id` = $planet_id";
+	$result = mysqli_query($link, $query) or sql_error(mysqli_error($link));
+
+	while($row_construction_loop = mysqli_fetch_object($result)) {
+
+		// get stationed defense
+		$column = 'Deff_Typ_' . $row_construction_loop->defense_id;
+		$query = "SELECT `$column` FROM `planet` WHERE `Spieler_ID` = '$player_id' AND `Planet_ID` = $planet_id";
+		$result = mysqli_query($link, $query) or sql_error(mysqli_error($link));
+		
+		$row_planet = mysqli_fetch_object($result);
+		$defense_now = $row_planet->$column;
+
+		// calculate new value for stationed defense
+		$defense = get_defense($row_construction_loop->defense_id);   
+		$quantity_finished = round_down ((time() - $row_construction_loop->construction_time_start) / $row_construction_loop->construction_time);
+		$quantity_remaining = $row_construction_loop->quantity - $quantity_finished;
+
+		if($quantity_finished > 0) {
+			$new_start_time = $row_construction_loop->construction_time_end - ($quantity_remaining * $row_construction_loop->construction_time);
+			$defense_now += $quantity_finished;
+			
+			// !!! punkte update macht so keinen sinn !!!
+			// $punkte = get_punkte($player_id, $planet_id);
+			//$punkte = $punkte + ((($Deff["Kosten_Eisen"] + $Deff["Kosten_Silizium"] + $Deff["Kosten_Wasser"]) * $fertiggestellte) / 1000);
+			//
+			// $abfrage_planet_update = "UPDATE `planet` SET  `$tabelle` = $deff_soll
+			// , `punkte` = " . "0" . " WHERE `Spieler_ID` = '$player_id' AND `Planet_ID` = $planet_id";
+			// $query = $abfrage_planet_update or die("Error in the consult.." . mysqli_error("Error: set_bauschleife_struckture #1 ".$link));
+			
+			$query = "UPDATE `planet` SET  `$column` = $defense_now WHERE `Spieler_ID` = '$player_id' AND `Planet_ID` = $planet_id";
+			mysqli_query($link, $query) or sql_error(mysqli_error($link));
+
+			// update construction loop 
+			if ($quantity_remaining == 0) {			//  if nothing remanining, delete construction loop
+				$query =  "DELETE FROM `construction_loops_defense` WHERE `id` = " . $row_construction_loop->id;
+			} else {
+				$query = "UPDATE `construction_loops_defense` SET `quantity` = $quantity_remaining, `construction_time_start` = $new_start_time  WHERE `id` = " . $row_construction_loop->id;
+			}
+			mysqli_query($link, $query) or sql_error(mysqli_error($link));
+		}
+	}
 }
+
 
 function get_punkte($spieler_id) {
 	
@@ -896,7 +948,7 @@ function set_bauschleife_struckture_fertig($spieler_id, $planet_id, $gebäude_id
 	if (mysqli_query($link, $query)) {
 		
 		$text =  $Gebäude["Name"] . " ist jetzt fertiggestellt";
-		set_message(0, "System", $spieler_id, $username, $text, 1, 0);
+		set_message(0, "System", $spieler_id, $username, $text, "", 1);
 		
 		
 	} else {
@@ -934,7 +986,7 @@ function set_bauschleife_tech_fertig($spieler_id, $planet_id, $tech_id, $usernam
 	
 	if (mysqli_query($link, $query)) {
 		$text =  $Tech["Name"] . " wurde erforscht.";
-		set_message(0, "System", $spieler_id, $username, $text, 1, 0);
+		set_message(0, "System", $spieler_id, $username, $text, "", 1);
 	} else {
 		die("$abfrage Fehler in der fertigstellung: " . mysqli_error($link));
 	}
@@ -975,7 +1027,7 @@ function set_bauschleife_structure_abbruch($spieler_id, $planet_id, $gebäude_id
 	
 	if (mysqli_query($link, $query)) {
 		$text =  $Gebäude["Name"] . " wurde abgebrochen. Ressourcen wurden gutgeschrieben (Eisen: " . $Gebäude["Kosten_Eisen"] . " Silizium: " . $Gebäude["Kosten_Silizium"] . " Wasser: " . $Gebäude["Kosten_Wasser"] . " Energie: " . $Gebäude["Kosten_Energie"] . ")";
-		set_message(0, "System", $spieler_id, $username, $text, 1, 0);
+		set_message(0, "System", $spieler_id, $username, $text, "", 1);
 	} else {
 		die("Fehler in der fertigstellung: " . mysqli_error($link));
 	}
@@ -1017,7 +1069,7 @@ function set_bauschleife_tech_abbruch($spieler_id, $planet_id, $tech_id, $userna
 			if (mysqli_query($link, $query)) { 
 
 				$text =  $Tech["Name"] . " wurde abgebrochen. Ressourcen wurden gutgeschrieben (Eisen: " . $Tech["Kosten_Eisen"] . " Silizium: " . $Tech["Kosten_Silizium"] . " Wasser: " . $Tech["Kosten_Wasser"] . ")";
-				set_message(0, "System", $spieler_id, $username, $text, 1, 0);
+				set_message(0, "System", $spieler_id, $username, $text, "", 1);
 				
 			} else { 
 				die("Fehler im Abbruch: " . mysqli_error($link)); 
@@ -1150,141 +1202,78 @@ function set_bauschleife_ship_abbruch($spieler_id, $planet_id, $schleife_id) {
 		
 		
 	}
-
-
-		
-	
-	
-	
 }
 
-function set_bauschleife_deff_abbruch($spieler_id, $planet_id, $schleife_id) {
+
+function set_defense_construction_loop_abort ($player_id, $planet_id, $loop_id) { 		// ex-function: set_bauschleife_deff_abbruch
 
 	require 'inc/connect_galaxy_1.php';
 
-	$abfrage  = "SELECT `ID`, `Typ`, `Anzahl`, `Bauzeit_Von` FROM `bauschleifedeff` WHERE `Spieler_ID` = '$spieler_id' AND `Planet_ID` = $planet_id AND ID = $schleife_id";
-	$query = $abfrage or die("Error in the consult.." . mysqli_error("Error: set_bauschleife_ship_abbruch #1 ".$link));
+	$query  = "SELECT `id`, `defense_id`, `quantity`, `construction_time_start` FROM `construction_loops_defense` WHERE `player_id` = '$player_id' AND `planet_id` = $planet_id AND id = $loop_id";
 
-	$result = mysqli_query($link, $query) or sql_fehler(mysqli_error($link) , __FILE__ ,  __LINE__ );
+	$result = mysqli_query($link, $query) or sql_error(mysqli_error($link));
 	$row = mysqli_fetch_object($result);
 
 	if (!empty($row)) {
 
-		$Deff = get_deff($row->Typ);
-		$anzahl = $row->Anzahl;
+		$defense = get_defense($row->defense_id);
+		$quantity = $row->quantity;
 
-		$eisen_ruck = ($Deff["Kosten_Eisen"] * $anzahl) / 3 * 2;
-		$silizium_ruck = ($Deff["Kosten_Silizium"] * $anzahl) / 3 * 2;
-		$wasser_ruck = ($Deff["Kosten_Wasser"] * $anzahl) / 3 * 2;
-		$karma_ruck = ($Deff["Kosten_Karma"] * $anzahl) / 3 * 2;
-		$bots_ruck = $Deff["Bots"] * $anzahl;
+		// update resources & bots on planet
+		$resources = get_ressource($player_id, $planet_id);
+			
+	// -------------- only for the time , if all variables are translated !!! ------------------ //
+			$resources = german_res_to_english_res ($resources);
+	// -------------- only for the time , if all variables are translated !!! ------------------ //
 
-		// update ress & bots auf dem Planeten
+		//put resources back (only 2/3 of  payed resources !) & delete constuction loop
 
-		$ressource = get_ressource($spieler_id, $planet_id);
-
-		//Eisen, Sili, Wasser zurück & Bauschleife löschen
-
-		$ressource["Eisen"] = $ressource["Eisen"] + $eisen_ruck;
-		$ressource["Silizium"] = $ressource["Silizium"] + $silizium_ruck;
-		$ressource["Wasser"] = $ressource["Wasser"] + $wasser_ruck;
-		$ressource["Bot"] = $ressource["Bot"] + $bots_ruck;
-		$ressource["Karma"] = $ressource["Karma"] + $karma_ruck;
+		$resources['iron'] 	+= ($defense['required iron'] *  $quantity * 2 / 3);
+		$resources['silicon'] 	+= ($defense['required silicon'] *  $quantity * 2 / 3);
+		$resources['water'] 	+= ($defense['required water'] *  $quantity * 2 / 3);
+		$resources['karma']	+= ($defense['required karma'] *  $quantity * 2 / 3);
+		$resources['bots'] 	+= ($defense['required bots'] *  $quantity);
 
 
-		$abfrage  = "UPDATE `planet` SET
-		`Ressource_Eisen` = " . $ressource["Eisen"] . ",
-		`Ressource_Silizium` = ". $ressource["Silizium"] .",
-		`Ressource_Wasser` = " . $ressource["Wasser"] . ",
-		`Ressource_Bot` = " . $ressource["Bot"] . ",
-		`Ressource_Karma` = " . $ressource["Karma"] . "
-		WHERE `Spieler_ID` = '$spieler_id' AND `Planet_ID` = $planet_id";
-
-		$query = $abfrage or die("Error in the consult.." . mysqli_error("Error: set_bauschleife_struckture #1 ".$link));
-		if (mysqli_query($link, $query)) {
+		$query  = "UPDATE `planet` SET
+		`Ressource_Eisen`	= " . $resources['iron'] . 	", `Ressource_Silizium` 	= ". $resources['silicon'] .",
+		`Ressource_Wasser`= " . $resources['water']  . 	", `Ressource_Bot` = " . $resources['bots'] . ",
+		`Ressource_Karma` = " . $resources['karma'] . 	" WHERE `Spieler_ID` = '$player_id' AND `Planet_ID` = $planet_id";
+		mysqli_query($link, $query) or sql_error(mysqli_error($link));
 				
-			// lösche Bauschleife
-				
-			$abfrage = "DELETE FROM `bauschleifedeff` WHERE ID = " . $row->ID;
-				
-			$query = $abfrage or die("Error in the consult.." . mysqli_error("Error: set_bauschleife_struckture #1 ".$link));
-			if (mysqli_query($link, $query)) {
+		// delete construction loop
+		$query = "DELETE FROM `construction_loops_defense` WHERE id = " . $row->id;
+		mysqli_query($link, $query) or sql_error(mysqli_error($link));
 
-				// berechne übrige Zeiten neu für nach now starten
+		// recalculate construction times for remanining loops 
+		$query  = "SELECT `id`, `construction_time_start`, `construction_time_end` FROM `construction_loops_defense` WHERE `player_id` = '$player_id' AND `planet_id` = $planet_id "; 
+		$result = mysqli_query($link, $query) or sql_error(mysqli_error($link));
+		$row = mysqli_fetch_object ($result);
 
-				$abfrage  = "SELECT `ID`, `Bauzeit_Von`, `Bauzeit_Bis` FROM `bauschleifedeff` WHERE `Spieler_ID` = '$spieler_id' AND `Planet_ID` = $planet_id AND Bauzeit_Von > " . time();
-				$query = $abfrage or die("Error in the consult.." . mysqli_error("Error: set_bauschleife_struckture #1 ".$link));
+		if (!empty($row)) {		
+			// check if first entry begin after current time and correct beginning 
+			if ($row->construction_time_start > time()) {$new_start_time = time();} 	
+				else {$new_start_time = $row->construction_time_start;}
+			
+			$new_end_time = $new_start_time + $row->construction_time_end - $row->construction_time_start;
+			
+			$query = "UPDATE `construction_loops_defense` SET `construction_time_start` = $new_start_time, `construction_time_end` = $new_end_time WHERE ID = '$row->id'";
+			mysqli_query($link, $query) or sql_error(mysqli_error($link));
+			
+			$new_start_time = $new_end_time;
+			
+			while($row = mysqli_fetch_object($result)) {
+				$new_end_time = $new_start_time + $row->construction_time_end - $row->construction_time_start;
 
-				$result = mysqli_query($link, $query) or sql_fehler(mysqli_error($link) , __FILE__ ,  __LINE__ );
-
-				if (!empty($result)) {
-						
-						
-					$neue_zeit_start = $row->Bauzeit_Von;
-					if ($neue_zeit_start < time()) { $neue_zeit_start = time(); }
-						
-					$starte_ab = $neue_zeit_start;
-						
-					while($row_bauschleife = mysqli_fetch_object($result)) {
-
-
-						$dauer = $row_bauschleife->Bauzeit_Bis - $row_bauschleife->Bauzeit_Von;
-
-						$update_von_auf = $starte_ab;
-						$update_bis_auf = $update_von_auf + $dauer;
-
-
-						$ID = $row_bauschleife->ID;
-
-						$sql = "UPDATE `bauschleifedeff` SET `Bauzeit_Von` = $update_von_auf, `Bauzeit_Bis` = $update_bis_auf WHERE ID = '$ID'";
-
-						$starte_ab = $update_bis_auf;
-
-						$query2 = $sql or die("Error in the consult.." . mysqli_error("Error: set_bauschleife_struckture #1 ".$link));
-						if (mysqli_query($link, $query2)) {
-								
-							
-						} else {
-							die("die zeiten wurde nicht überschrieben");
-						}
-
-
-					}
-						
-						
-				} else {
-						
-					die("Bauschleife kann nicht neu berechnet werden");
-				}
-
-
-
-			} else {
-				die("kann die schleife nciht löschen");
+				$query = "UPDATE `construction_loops_defense` SET `construction_time_start` = $new_start_time, `construction_time_end` = $new_end_time WHERE ID = '$row->id'";
+				mysqli_query($link, $query) or sql_error(mysqli_error($link));
+			
+				$new_start_time = $new_end_time;
 			}
-				
-				
-				
-				
-				
-		} else {
-			die("Fehler im Abbruch: " . mysqli_error($link));
 		}
-
-
-
-
-
-
-
 	}
-
-
-
-
-
-
 }
+
 
 function check_bauschleife_activ($spieler_id, $planet_id, $zweig) {
 	
@@ -1344,19 +1333,19 @@ function check_bauschleife_activ($spieler_id, $planet_id, $zweig) {
 			}
 		break;
 				
-		case "Deff":
-			$abfrage = "SELECT `ID`, `Bauzeit_Von`, `Bauzeit_Bis` FROM `bauschleifedeff` WHERE `Bauzeit_Von` < " . time() . " AND `Spieler_ID` = '$spieler_id' AND `Planet_ID` = $planet_id";
+		case "defense":
+			$abfrage = "SELECT `id`, `construction_time_start`, `construction_time_end` FROM `construction_loops_defense` WHERE `construction_time_start` < " . time() . " AND `player_id` = '$spieler_id' AND `planet_id` = $planet_id";
 			
 			$query = $abfrage;
-			$result = mysqli_query($link, $query) or sql_fehler(mysqli_error($link) , __FILE__ ,  __LINE__ );
+			$result = mysqli_query($link, $query) or sql_error(mysqli_error($link));
 			
 			$row = mysqli_fetch_object($result);
 			
 			if(!empty($row)) {
-				$bauschleife["ID"] = $row->ID;
-				$bauschleife["Start"] = $row->Bauzeit_Von;
-				$bauschleife["Bis"] = $row->Bauzeit_Bis; //get_timestamp_in_was_sinnvolles($row->Bauschleife_Gebaeude_Bis - time());
-				$bauschleife["Countdown"] = $row->Bauzeit_Bis - time(); //get_timestamp_in_was_sinnvolles($row->Bauschleife_Gebaeude_Bis - time());
+				$bauschleife["ID"] = $row->id;
+				$bauschleife["Start"] = $row->construction_time_start;
+				$bauschleife["Bis"] = $row->construction_time_end; //get_timestamp_in_was_sinnvolles($row->Bauschleife_Gebaeude_Bis - time());
+				$bauschleife["Countdown"] = $row->construction_time_end - time(); //get_timestamp_in_was_sinnvolles($row->Bauschleife_Gebaeude_Bis - time());
 			
 				return $bauschleife;
 			}	
@@ -1443,32 +1432,29 @@ function get_gebäude_nächste_stufe($spieler_id, $planet_id, $gebäude_id, $spe
 		$Gebäude["Wirkung"] = $Gebäude["Wirkung"]  . 
 		"<br>Name: " . $Gebäude["Name"] . "<br>" .
 		"Bauzentrum Stufe: " . $bauzentrum ."<br>" .
-		"ohne Bauzentrum: " . $Gebäude["Bauzeit"] ." sek. sind " . get_timestamp_in_was_sinnvolles($Gebäude["Bauzeit"]) . "<br>";
+		"ohne Bauzentrum: " . round($Gebäude["Bauzeit"],0) ." sek. sind " . get_timestamp_in_was_sinnvolles($Gebäude["Bauzeit"]) . "<br>";
 		
 		if ($bauzentrum > 0) { $Gebäude["Bauzeit"] = $Gebäude["Bauzeit"] / (1 + $bauzentrum); }
 		$Gebäude["Wirkung"] = $Gebäude["Wirkung"]  . 
-		"mit Bauzentrum: " . $Gebäude["Bauzeit"] ." sek. sind " . get_timestamp_in_was_sinnvolles($Gebäude["Bauzeit"]) . "<br>" .
+		"mit Bauzentrum: " . round($Gebäude["Bauzeit"],0) ." sek. sind " . get_timestamp_in_was_sinnvolles($Gebäude["Bauzeit"]) . "<br>" .
 		"Formel: Bauzeit = Bauzeit / (1 + Stufe BZ) ". "<br>";
 	return $Gebäude;
 	
 }
 
-function get_tech_stufe_spieler($spieler_id) {
+function get_tech_level_player ($player_id) {			// ex-function: get_tech_stufe_spieler
 
 	require 'inc/connect_galaxy_1.php';
 	$link->set_charset("utf8");
 	
-	//spieler|aktuelle Stufe
-	$abfrage = "SELECT `Tech_1`, `Tech_2`, `Tech_3`, `Tech_4`, `Tech_5`, `Tech_6`, `Tech_7`, `Tech_8`, `Tech_9`, `Tech_10`, `Tech_11`, `Tech_12`, `Tech_Schleife_ID` FROM `spieler` WHERE `Spieler_ID` = '$spieler_id'";
+	$query = "SELECT `Tech_1`, `Tech_2`, `Tech_3`, `Tech_4`, `Tech_5`, `Tech_6`, `Tech_7`, `Tech_8`, `Tech_9`, `Tech_10`, `Tech_11`, `Tech_12`, `Tech_Schleife_ID` FROM `spieler` WHERE `Spieler_ID` = '$player_id'";
+	$result = mysqli_query($link, $query) or sql_error(mysqli_error($link));
+
+	$tech_level_player = json_decode(json_encode(mysqli_fetch_object($result)), true);
 	
-	$query = $abfrage or die("Error in the consult.." . mysqli_error("Error: get_tech_nächste_stufe #1 ".$link));
-	$result = mysqli_query($link, $query) or sql_fehler(mysqli_error($link) , __FILE__ ,  __LINE__ );
-	
-	$row_aktuelle_Stufe_Tech = mysqli_fetch_array($result);
-	
-	return $row_aktuelle_Stufe_Tech;
-	
+	return $tech_level_player;
 }
+
 
 function get_tech_sortierung() {
 	
@@ -1496,11 +1482,11 @@ function get_tech_nächste_stufe($spieler_id, $planet_id, $tech_id, $speed_mod) 
 		$tabelle = "Tech_".$tech_id;
 		$stufe = $row_aktuelle_Stufe_Tech["Tech_".$tech_id] + 1;
 		
-		$forschungszentrum = get_gebäude_aktuelle_stufe($spieler_id, $planet_id, 9);
+		$forschungszentrum = get_structure_level($spieler_id, $planet_id, 9);
 
 	//Kosten für die Forschung
 
-		$row_kosten_nächste_Forschung = get_config_tech($tech_id, $stufe);
+		$row_kosten_nächste_Forschung = get_config_tech($tech_id, $row_aktuelle_Stufe_Tech);
 		
 		$Tech["Name"] = $row_kosten_nächste_Forschung["Name"];
 		$Tech["Bild"] = $row_kosten_nächste_Forschung["Bild"];
@@ -1768,50 +1754,34 @@ function get_Schiffe_stationiert($spieler_id, $planet_id) {
 	
 }
 
-function get_Deff_stationiert($spieler_id, $planet_id) {
+function get_stationed_defense ($player_id, $planet_id) {		// ex-function: get_Deff_stationiert
 
 	require 'inc/connect_galaxy_1.php';
 	$link->set_charset("utf8");
-	$abfrage = "SELECT `Deff_Typ_1`, `Deff_Typ_2`, `Deff_Typ_3`, `Deff_Typ_4`, `Deff_Typ_5`, `Deff_Typ_6` FROM `planet` WHERE `Spieler_ID` = '$spieler_id' AND `Planet_ID` = $planet_id";
-
-	$query = $abfrage or die("Error in the consult.." . mysqli_error("Error: get_Schiffe_stationiert #1 ".$link));
-	$result = mysqli_query($link, $query) or sql_fehler(mysqli_error($link) , __FILE__ ,  __LINE__ );
-
+	$query = "SELECT `Deff_Typ_1`, `Deff_Typ_2`, `Deff_Typ_3`, `Deff_Typ_4`, `Deff_Typ_5`, `Deff_Typ_6` FROM `planet` WHERE `Spieler_ID` = '$player_id' AND `Planet_ID` = $planet_id";
+	$result = mysqli_query($link, $query) or sql_error(mysqli_error($link));
 
 	$row = mysqli_fetch_object($result);
+	
+	$defense_count = get_defense(0)['defense count'];
+	for($i = 1; $i <= $defense_count; $i++) {
 
-	for($i = 1; $i <= 6; $i++) {
+		$column = "Deff_Typ_" . $i;
+		$quantity = $row->$column;
 
-		$row_deff = get_deff($i);
-
-		$tabelle = "Deff_Typ_".$i;
-
-		$anzahl = $row->$tabelle;
-
-		$anzahl = number_format($anzahl, 0, '.', '.');
-
-		if ($row->$tabelle > 0) {
-				
-			if ($row->$tabelle = 1) {
-				$deff[$i]["Name"] = $row_deff["Name"];
-				$deff[$i]["Anzahl"] = $anzahl;
+		if ($quantity > 0) {
+			if ($quantity == 1) {
+				$defense[$i]['name'] = get_defense($i)['name'];
 			} else {
-				$deff[$i]["Name"] = $row_deff["Name_Plural"];
-				$deff[$i]["Anzahl"] = $anzahl;
+				$defense[$i]['name'] = get_defense($i)['name plural'];
 			}
-
+			$defense[$i]['quantity'] = number_format($quantity, 0, '.', '.');
 		}
 
 	}
-
-
-	if (isset($deff)) { return $deff; }
-
-
-
-
-
+	if (isset($defense)) { return $defense; }
 }
+
 
 function get_activity_planet_spieler_schiffe($spieler_id, $planet_id) {
 	require 'inc/connect_galaxy_1.php';
@@ -1844,37 +1814,29 @@ function get_activity_planet_spieler_schiffe($spieler_id, $planet_id) {
 	
 }
 
-function get_activity_schiffe_Liste($spieler_id, $planet_id) {
+function get_list_of_ship_construction_activity($player_id, $planet_id) { 		// ex-function: get_activity_schiffe_Liste
 	require 'inc/connect_galaxy_1.php';
 
 	$link->set_charset("utf8");
-	
-	//schiffe
 
-	$abfrage = "SELECT `ID`, `Name`, `Anzahl`, `Bauzeit_Bis` FROM `bauschleifeflotte` WHERE `Spieler_ID` = '$spieler_id' AND `Planet_ID` = $planet_id";
+	$query = "SELECT `ID`, `Name`, `Anzahl`, `Bauzeit_Bis` FROM `bauschleifeflotte` WHERE `Spieler_ID` = '$player_id' AND `Planet_ID` = $planet_id";
 
-	$query = $abfrage or die("Error in the consult.." . mysqli_error("Error: #0010c ".$link));
-	$result = mysqli_query($link, $query) or sql_fehler(mysqli_error($link) , __FILE__ ,  __LINE__ );
-
-	
+	$result = mysqli_query($link, $query) or sql_error(mysqli_error($link));
 	
 	$i = 0;
 	while($row = mysqli_fetch_object($result)) {
 		
-		$flotte[$i]["ID"] = $row->ID;
-		$flotte[$i]["Anzahl"] = number_format($row->Anzahl, 0, '.', '.');
-		$flotte[$i]["Name"] = $row->Name;
-		$flotte[$i]["Zeit-Bis"] = $row->Bauzeit_Bis - time();
+		$ship_list[$i]["ID"] = $row->ID;
+		$ship_list[$i]["Anzahl"] = number_format($row->Anzahl, 0, '.', '.');
+		$ship_list[$i]["Name"] = $row->Name;
+		$ship_list[$i]["Zeit-Bis"] = $row->Bauzeit_Bis - time();
 
 		$i++;
-
 	}
 
-
-
-	if (isset($flotte)) { return $flotte; }
-
+	if (isset($ship_list)) { return $ship_list; }
 }
+
 
 function get_activity_schiffe_einzel($spieler_id, $planet_id) {
 	require 'inc/connect_galaxy_1.php';
@@ -1902,63 +1864,50 @@ function get_activity_schiffe_einzel($spieler_id, $planet_id) {
 
 }
 
-function get_activity_deff_einzel($spieler_id, $planet_id) {
+function get_single_defense_construction_activity ($player_id, $planet_id) { 			// ex-function: get_activity_deff_einzel
 	require 'inc/connect_galaxy_1.php';
-
 	$link->set_charset("utf8");
 
-	//deff
+	$query = "SELECT `construction_time_start`, `construction_time`, `defense_id` FROM `construction_loops_defense` WHERE `player_id` = '$player_id' AND `planet_id` = $planet_id LIMIT 1";
+	$result = mysqli_query($link, $query) or sql_error(mysqli_error($link));
 
-	$abfrage = "SELECT `Bauzeit_Von`, `Bauzeit_Einzel`, `Name` FROM `bauschleifedeff` WHERE `Spieler_ID` = '$spieler_id' AND `Planet_ID` = $planet_id LIMIT 1";
-
-	$query = $abfrage or die("Error in the consult.." . mysqli_error("Error: #0010c ".$link));
-	$result = mysqli_query($link, $query) or sql_fehler(mysqli_error($link) , __FILE__ ,  __LINE__ );
-
-	if($row = mysqli_fetch_object($result)) {
-
-		$Bauschleife_naechste_deff["Name"] = $row->Name;
-		$Bauschleife_naechste_deff["Bauzeit"] = $row->Bauzeit_Von + $row->Bauzeit_Einzel - time();
-		return $Bauschleife_naechste_deff;
+	if($row = mysqli_fetch_object($result)) {  		
+		if ($row->construction_time_start <= time()) {			// only loops that are not finished
+			$next_defense_construction_loop['name'] = get_defense ($row->defense_id)['name'];
+			$next_defense_construction_loop['construction_time_end'] = $row->construction_time_start + $row->construction_time - time();
+		} 
+	}
+	if (!isset($next_defense_construction_loop['construction_time_end'])) {
+		$next_defense_construction_loop['construction_time_end'] = '-';
 	}
 
-
-	$Bauschleife_naechste_deff["Bauzeit"] = "-";
-
-	return $Bauschleife_naechste_deff;
-
+	return $next_defense_construction_loop;
 }
 
-function get_activity_deff_Liste($spieler_id, $planet_id) {
-	require 'inc/connect_galaxy_1.php';
 
+function get_list_of_defense_construction_activity ($player_id, $planet_id) { 		// ex-function: get_activity_deff_Liste
+	require 'inc/connect_galaxy_1.php';
+	
 	$link->set_charset("utf8");
 
-	//schiffe
+	$query = "SELECT `id`, `name`, `defense_id`, `quantity`, `construction_time_end` FROM `construction_loops_defense` WHERE `player_id` = '$player_id' AND `planet_id` = $planet_id";
 
-	$abfrage = "SELECT `ID`, `Name`, `Anzahl`, `Bauzeit_Bis` FROM `bauschleifedeff` WHERE `Spieler_ID` = '$spieler_id' AND `Planet_ID` = $planet_id";
-
-	$query = $abfrage or die("Error in the consult.." . mysqli_error("Error: #0010c ".$link));
-	$result = mysqli_query($link, $query) or sql_fehler(mysqli_error($link) , __FILE__ ,  __LINE__ );
-
-
+	$result = mysqli_query($link, $query) or sql_error(mysqli_error($link));
 
 	$i = 0;
 	while($row = mysqli_fetch_object($result)) {
-
-		$deff[$i]["ID"] = $row->ID;
-		$deff[$i]["Anzahl"] = number_format($row->Anzahl, 0, '.', '.');
-		$deff[$i]["Name"] = $row->Name;
-		$deff[$i]["Zeit-Bis"] = $row->Bauzeit_Bis - time();
-
-		$i++;
-
+		If ($row->construction_time_end > time()) {				// only loops that are not finished
+			$defense_list[$i]['id'] = $row->id;
+			$defense_list[$i]['qauntity'] = number_format($row->quantity, 0, '.', '.');
+			$defense_list[$i]['name'] = get_defense($row->defense_id)['name'];
+			$defense_list[$i]['remanining construction time'] = $row->construction_time_end - time();
+			$i++;
+		}
 	}
 
-
-
-	if (isset($deff)) { return $deff; }
-
+	if (isset($defense_list)) { return $defense_list; }
 }
+
 
 function get_ressource($spieler_id, $planet_id) {
 	require 'inc/connect_galaxy_1.php';
@@ -2200,11 +2149,12 @@ function usereingabe_cleaner ($value)
 }
 
 function user_message_cleaner ($value)
-{
+{dVar ($value,  'vor: user_message_cleaner' );
 	$newVal = trim($value);
-	$regex ='/[^.:a-zA-ZäüöÄÜÖß@ 0-9-\/]/';
-	$newVal = preg_replace($regex,"", $newVal);
-
+//	$regex ='/[^.:a-zA-ZäüöÄÜÖß@ 0-9-\/]/';
+//	$regex ='/[^\n<>{}.:a-zA-ZäüöÄÜÖß@ 0-9-\/]/';
+//	$newVal = preg_replace($regex,"", $newVal);
+dvar ($newVal,  'nach: user_message_cleaner');
 	$newVal = htmlspecialchars($newVal);
 	#$newVal = htmlentities($newVal);
 	$newVal = stripslashes($newVal);
@@ -2218,7 +2168,7 @@ function user_message_cleaner ($value)
 
 }
 
-function get_anzahl_planeten($spieler_id, $galaxy_number){
+function get_number_of_planets($spieler_id, $galaxy_number){
 	if ($galaxy_number == 1) { require 'inc/connect_galaxy_1.php';}
 	//if ($galaxy_number == 2) { require 'inc/connect_galaxy_2.php'; mysql_select_db("galaxy2");}
 	
@@ -2393,36 +2343,17 @@ function get_message($absender_id, $empfänger_id, $username) {
 }
 
 
-function set_message($absender_id, $absender_name, $empfänger_id, $empfänger_name, $text, $chatbot, $zeit) {	
+function set_message($fromId, $fromName, $toId, $toName, $subject, $text="", $chatbot=0, $logbook=0, $time=0) {	
 	require 'inc/connect_galaxy_1.php';
-	
-	if($zeit == 0) { $zeit = time(); }
-	
-	
-	
-	$absender_name = mysqli_real_escape_string($link, $absender_name);
-	$empfänger_name = mysqli_real_escape_string($link, $empfänger_name);
+	if($time == 0) { $time = time(); }
+
+	$fromName = mysqli_real_escape_string($link, $fromName);
+	$toName = mysqli_real_escape_string($link, $toName);
 	$text = mysqli_real_escape_string($link, $text);
 	
-	$sql = "INSERT INTO `nachrichten`(
-			`Zeit`, 
-			`Absender_ID`, 
-			`Absender_Name`, 
-			`Empfaenger_ID`, 
-			`Empfaenger_Name`,  
-			`Text`, 			 
-			`Chatbot`,
-			`Gelesen`, `Betreff`) 
-			VALUES ($zeit, '$absender_id', '$absender_name', '$empfänger_id', '$empfänger_name', '$text', $chatbot, 0, '')";
-	
-	$query = $sql or die("Error in the consult.." . mysqli_error("Fehler im Nachrichtensystem #1 ".$link));
-	//var_dump($sql);
-	if (mysqli_query($link, $query)) {
-		
-	} else {
-		die("Fehler im Nachrichtensystem " . mysqli_error($link));
-	}
-	
+	$query = "INSERT INTO `nachrichten`(`Zeit`, `Absender_ID`, `Absender_Name`, `Empfaenger_ID`, `Empfaenger_Name`,  `Betreff`, `Text`,`Logbuch`,`Chatbot`) VALUES ($time, '$fromId', '$fromName', '$toId', '$toName', '$subject', '$text', '$logbook', $chatbot)";
+	dVar ($query);
+	mysqli_query($link, $query) or sql_error(mysqli_error($link));
 	
 }
 
@@ -2710,7 +2641,7 @@ function flotte_senden($spieler_id, $planet_id, $flotte, $ziel_x, $ziel_y, $ziel
 			if($ressource["Bot"] < $ress_mitnehmen["3"]) { $ress_mitnehmen["3"] = $ressource["Bots"]; }
 			$ress_mitnehmen["3"] = 0;
 			
-			$tech_spieler = get_tech_stufe_spieler($spieler_id); //Antrieb & Kappa
+			$tech_spieler = get_tech_level_player($spieler_id); //Antrieb & Kappa
 			
 			//Kappa prüfen
 			$kapazität = 0;
@@ -2909,14 +2840,14 @@ function get_addiere_schiffe_luft($spieler_id, $ship_id) {
 }
 
 
-function get_addiere_deff_stationiert($spieler_id, $deff_id) {
+function get_total_stationed_defense_in_galaxy ($player_id, $defense_id) { 			// ex-function:  get_addiere_deff_stationiert
 	require 'inc/connect_galaxy_1.php';
-	$sql = "SELECT SUM(`Deff_Typ_" . $deff_id . "`) as summe FROM `planet` WHERE `Spieler_ID` = '" . $spieler_id . "'";
-	$query = $sql or die("Error in the consult.." . mysqli_error("Error: #0002302 ".$link));
+	$query = "SELECT SUM(`Deff_Typ_" . $defense_id . "`) as total FROM `planet` WHERE `Spieler_ID` = '" . $player_id . "'";
 
-	$result = mysqli_query($link, $query) or sql_fehler(mysqli_error($link) , __FILE__ ,  __LINE__ );
+	$result = mysqli_query($link, $query) or sql_error(mysqli_error($link));
 	$row = mysqli_fetch_object($result);
-	return $row->summe;
+	
+	return $row->total;
 }
 
 function korrigiere_punkte($spieler_id, $punkte_structur,  $punkte_flotte, $punkte_forschung) {
@@ -3173,8 +3104,8 @@ function mission_kolonisieren($flotte_abarbeiten, $spieler_id, $username) {
 	$z2 = $flotte_abarbeiten["z2"];
 	$Ankunft = $flotte_abarbeiten["Ankunft"];
 	
-	$tech_spieler = get_tech_stufe_spieler($spieler_id); //Kolotech: Tech_10
-	$anzahl_planeten = get_anzahl_planeten($spieler_id, 1);
+	$tech_spieler = get_tech_level_player($spieler_id); //Kolotech: Tech_10
+	$anzahl_planeten = get_number_of_planets($spieler_id, 1);
 	if($tech_spieler["Tech_10"] <= $anzahl_planeten - 1) { return false; }	
 	if (check_koordinaten_besetzt($x2, $y2, $z2) == false) { //Schauen ob der Planet besetzt ist
 		
@@ -3414,7 +3345,7 @@ function create_next_planet($spieler_id, $x, $y, $z, $username) {
 
 	//Planet
 	$planetname = $username."s Kolonie";
-	$nächste_id = get_anzahl_planeten($spieler_id, 1);
+	$nächste_id = get_number_of_planets($spieler_id, 1);
 	$abfrage = "INSERT INTO `planet`(`Spieler_ID`, `Spieler_Name`, `Planet_Name`, `x`, `y`, `z`, `Grund_Prod_Eisen`, `Grund_Prod_Silizium`, `Grund_Prod_Wasser`, `Planet_ID`, `Produktion_Zeit`, `Ressource_Eisen`, `Ressource_Silizium`, `Ressource_Wasser`, `Ressource_Bot`, `Stationiert_Bot`, `Stufe_Gebaeude_1`, `Stufe_Gebaeude_2`, `Stufe_Gebaeude_3`, `Stufe_Gebaeude_4`, `Stufe_Gebaeude_5`, `Stufe_Gebaeude_6`, `Stufe_Gebaeude_7`, `Stufe_Gebaeude_8`, `Stufe_Gebaeude_9`, `Stufe_Gebaeude_10`, `Stufe_Gebaeude_11`, `Prod_Eisen`, `Prod_Silizium`, `Prod_Wasser`, `Ressource_Energie`, `Ressource_Karma`, `Bauschleife_Gebaeude_ID`, `Bauschleife_Gebaeude_Start`, `Bauschleife_Gebaeude_Bis`, `Bauschleife_Gebaeude_Name`, `Bunker_Kapa`, `Bunker_Eisen`, `Bunker_Silizium`, `Bunker_Wasser`, `Bauschleife_Flotte_ID`, `Schiff_Typ_1`, `Schiff_Typ_2`, `Schiff_Typ_3`, `Schiff_Typ_4`, `Schiff_Typ_5`, `Schiff_Typ_6`, `Schiff_Typ_7`, `Schiff_Typ_8`, `Schiff_Typ_9`, `Schiff_Typ_10`, `Schiff_Typ_11`, `Schiff_Typ_12`, `Deff_Typ_1`, `Deff_Typ_2`, `Deff_Typ_3`, `Deff_Typ_4`, `Deff_Typ_5`, `Deff_Typ_6`, `Handel_Kapa`, `Handel_Eisen`, `Handel_Silizium`, `Handel_Wasser`, `punkte`, `Gesamt_Bot`) VALUES ('$spieler_id', '$username','$planetname', $x, $y, $z, 20,10,5, " . $nächste_id . ", '" . time() . "', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)";
 
 	$query = $abfrage or die("Error in the consult.." . mysqli_error("Error: #0003b ".$link));
@@ -3457,4 +3388,500 @@ function get_timestamp_in_was_sinnvolles($value) {
 }
 
 
+
+function get_possible_languages () {}
+
+
+
+function get_language_defaults ($lng_id = null) {
+	// written by ES  Sep 2016
+	
+	static $last_call_lng_id;
+	static $lng_defaults;
+	$file = 'lng/lng.xml';
+
+	// if first call of function and $lng_id is not set  use  english for default
+	if (!isset($last_call_lng_id) && !isset($lng_id)) { $last_call_lng_id = 'en'; }  
+
+	if (!isset($lng_id)) {$lng_id = $last_call_lng_id;};
+	
+	$last_call_lng_id = $lng_id;
+	
+	if (isset($lng_defaults['id'])) {if ($lng_defaults['id'] <> $lng_id) {$lng_defaults['id'] = null;}}
+
+	if (!isset($lng_defaults['id'])) {
+		if (file_exists($file)) {
+			$xml = simplexml_load_file($file);
+
+			foreach ($xml->language as $language) {
+				if ($language['id']->__toString() == $lng_id) {
+					foreach ($language->attributes() as $key => $value) {
+						$lng_defaults[$key] = $value->__toString();
+					}
+				}
+			}
+		} else {
+			error_log ('>>><b>ERROR:</b> language file: <b>' . $file . '</b> don´t exits !<<<');
+		}
+	}
+	return $lng_defaults;
+}
+
+
+function get_language_file ($lng_id, $filename, $lng) {
+	// written by ES  Sep 2016
+
+	$lngFile = 'lng/' . $lng_id . '_' . $filename . '.xml';
+	
+	if (file_exists($lngFile)) {
+		$xml = simplexml_load_file($lngFile);
+		foreach ($xml->string as $string) {
+			$lng['~~' . $filename . '~~ ' . $string['id']->__toString()]=$string['text']->__toString();
+		}
+		$lng['language file for ' . $filename. '.php loaded'] = true;
+	} else {
+		$lng['language file for ' . $filename. '.php loaded'] = false;
+		error_log ('>>><b>ERROR:</b> language file: <b>' . $lngFile . '</b> don´t exits !<<<');
+	}
+	return $lng;	
+}
+
+
+function lng_echo ($id, $open_txt_file = false, $echo_on = true, $var_array = null){
+	// written by ES  Sep 2016
+	// return language string or file-content
+	// string lng_echo (string $id [, bool  $open_txt_file = false [, $no_echo = false]] )
+	// 						$id = string-id or filename
+	// if  only $id  is set, lng_echo search for string-id in 'lng/' . $selected_lng_id . '_' . $function_called_from_file . '.xml'  (for example: file: lng/de_messages.xml)
+	// if $open_txt_file is set, lng_echo search for file 'lng/' . $selected_lng_id . '_' . $id . '.txt'  (for example: file: lng/de_number_test.txt)
+	// in both case, {variable_name} will be replaced with global defined variables with variable_name, the value can be formated
+	// number format :  {#.#0,00@variable_name}  #.# set thousands_sep  / 0,00 set dezimal point and number of dezimals  
+
+	static $lng; 
+
+	$lng_defaults = get_language_defaults();
+
+	$error_reading_file = false;
+	
+	$function_called_from_file = pathinfo(debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS,1)[0]['file'])['filename'];
+
+	if (!$open_txt_file && !isset ($lng['language file for ' . $function_called_from_file. '.php loaded'])) {$lng = get_language_file ($lng_defaults['id'], $function_called_from_file, $lng);}
+
+	if (!$open_txt_file && !isset ($lng['~~' . $function_called_from_file . '~~ ' . $id])) {
+		//$string = '>>><b>Notice: </b>Undefined string-id:<b> ' . $id . '</b> in language file: <b>' . $selected_lng_id . '_' . $function_called_from_file . '.xml</b><<<';
+		$string = $id; 
+	} else {
+		if ($open_txt_file) {
+			$txtFile = ('lng/' . $lng_defaults['id'] . '_' . $id . '.txt');
+			if (file_exists($txtFile)) {
+				$string = file_get_contents($txtFile);
+				dVar ($string,'$string');
+			} else {
+				$error_reading_file = true;
+				$string = '>>><b>ERROR:</b> language file: <b>' . $lng_defaults['id'] . '_' . $id . '.txt</b> don´t exits !<<<';
+			}
+		} else {
+			$string = $lng['~~' . $function_called_from_file . '~~ ' . $id];
+		}
+	}
+
+	if (!$error_reading_file) {
+		while (strpos($string, '{') !== false) {
+			$pos1 = strpos($string, '{');
+			$pos2 = strpos($string, '}');
+			if ($pos2 === false) {								// check only {  without } and delete lonley { 
+				$string = substr($string, 0, $pos1).substr($string, $pos1+1, strlen($string));
+			} else {
+				$var_name = substr ($string , $pos1 +1, $pos2 - $pos1 -1);
+				
+				$formatted_output  = stripos ($var_name, '@');  // check for formatted  output
+				if ($formatted_output !== false) {
+					$format = substr ($var_name, 0, $formatted_output);
+					$var_name = substr ($var_name, $formatted_output+1, strlen($var_name));
+				} else {
+					$format = 'n';
+				}
+				$value = get_value_of_variable ($var_name, $var_array);
+				if (is_numeric($value)) {$value = lng_number_format ($value, $format);}
+				
+				if ($formatted_output !== false && (strpos ($value,'Notice:') === false)) {
+					//if (is_numeric($value)) {$value = lng_format_number ($value, $format);}
+				} else if (strpos ($value,'<b>Notice:</b>') !== false) {
+					if ($open_txt_file) {
+						$value .= ' in language file: <b>' . $lng_defaults['id'] . '_' . $id . '.txt</b><<<';
+					} else {
+						$value .= ' in language file: <b>' . $lng_defaults['id'] . '_' . $function_called_from_file . '.xml </b> string-id: <b>' . $id . '</b><<<';
+					}
+				}
+				$string = substr($string, 0, $pos1).$value.substr($string, $pos2+1, strlen($string)-$pos2-1);
+			}
+		}
+	}
+	if ($echo_on) {echo $string;}
+	return $string;
+}
+
+function get_value_of_variable ($variable, $var_array) {		// check for black / white listed variables
+	// written by ES  Sep 2016
+
+	if (!isset($var_array)) {$var_array = $GLOBALS;}; 
+
+	$value = false;
+	$variable_blocked = true; 
+	$block_variable_names_begin_with_underline = true;
+	$blacklist = array ('spieler_id', 'session_id');
+
+	if (!($block_variable_names_begin_with_underline && (substr($variable,0,1)=='_'))) {
+
+		$variable_blocked = false;
+		$index_undefined = false;
+		
+		$pos = strpos ($variable,'[');  // check for array
+		if ($pos !== false) {
+			$index = substr ($variable, $pos +2, strlen ($variable) - $pos -4);
+			if (isset($var_array[substr ($variable, 0, $pos)])) {
+				$variable = substr ($variable, 0, $pos);
+				$array = $var_array[$variable];
+				if (isset($array[$index])) {
+					$value = $array[$index];
+				} else {
+					$index_undefined = true;
+				}
+			} 
+		} else {
+			if (isset($var_array[$variable])) {
+				$value = $var_array[$variable];
+			}
+		}
+	}
+
+	if (in_array($variable, $blacklist) || $variable_blocked) { 		// check Blacklist
+		$value = '>>><b>Notice:</b> Blocked variable: <b>' . $variable . '</b>';} 
+	
+	if ($value === false ) { 										// check variable name is defined in global scope
+		if ($index_undefined) {
+			$value = '>>><b>Notice:</b> Undefined index: <b>' . $variable . '["' . $index . '"]</b>';
+		} else {
+			$value = '>>><b>Notice:</b> Undefined variable: <b>' . $variable . '</b>';
+		} 
+	}
+	return $value;
+}
+
+function german_res_to_english_res ($resources) {
+	// written by ES  Sep 2016
+	
+	$replace = 	array 	(	// for german variable $ressource 
+							'Eisen' 			=> 'iron' 				,	'Silizium'		=> 'silicon' 				,
+							'Wasser'		=> 'water' 				, 	'Energie'		=> 'energy' 			,
+							'Bot'			=> 'bots' 				,	'Bot Gesamt'	=>	'total bots'			,
+							'Bot Stationiert'	=>	'stationed bots'		,	'Karma'			=>	'karma'				
+							
+							//for german variable $constuction
+							//'Kosten_Eisen'	=>	'required iron'		,	'Kosten_Karma'	=>	'required karma'	,
+							//'Kosten_Silizium'=>	'required silicon'		,	'Kosten_Wasser' =>	'required water'		,
+							//'Bots'			=>	'required bots'		,	'Max_Hold_Planet'=>'max hold planet'	,
+							//'Max_Hold'		=>	'max hold'	
+							
+						);
+	
+	foreach ($replace as $index => $replacement) {
+		if (isset ($resources[$index])) {$resources [$replacement] = $resources [$index]; unset($resources [$index]);}
+	}
+	
+	return ($resources);
+}
+
+function round_down($number) {
+	// written by ES  Sep 2016
+	
+	$rounded_number = round($number);
+	if ($rounded_number > $number) {$rounded_number--;}
+	return $rounded_number;
+}
+
+
+
+function lng_number_format ($number, $format = 'n') {
+	// written by ES  Sep 2016
+
+	$lng_defaults = get_language_defaults();
+	$number = floatval ($number);
+	$formated_number = '';
+	$last_number = 0;
+	
+	if (isset($format)) { 			// if only one letter set default , respectively set format for single placeholder
+		if (strlen($format) == 1) {
+			switch ($format) {
+				case 'd' : 	$format = $lng_defaults['date_format']; 			break;
+				case 't'	:	$format = $lng_defaults['time_format']; 			break;
+				case 'c'	:	$format = $lng_defaults['countdown_format']; 	break;
+				case 'n'	:	$format = $lng_defaults['number_format']; 		break;
+			}
+		}
+	}		
+	
+	// test for countdown 
+	$temp = explode("'", $format);
+	$typ_check = '';
+	foreach($temp as $key => $string) {	// for typ check delete all strings in format string
+		if (round_down($key/2) == $key/2) {
+			$typ_check .= $string;}} 	
+
+	switch (true) {
+		case (strpos($typ_check,'C') !== false) :		// typ is countdown
+			$timestamp = round_down($number);
+			$days = round_down($timestamp/(24*60*60)); 		$timestamp -= ($days*(24*60*60));		
+			$hours = round_down($timestamp/(60*60));		$timestamp -= ($hours*(60*60));
+			$min = round_down($timestamp/(60));				$timestamp -= ($min*(60));
+			$sec = $timestamp;
+	
+			$no_zero_value = false;
+			$next_case_string = '';
+			
+			while (strlen($format) > 0) { 
+				$pos = 0;
+				$case_string = substr($format,0,1);
+				while ($case_string == substr($format,$pos,1)) {$pos++; } 
+				switch ($case_string) {
+					case 'h'	:
+					case 'm' :
+					case 's'	:
+					case 'C'	:
+						if ($next_case_string <> $case_string) {$no_zero_value = false;}
+						switch ($case_string) {
+							case 'h'	:	$last_number = $hours;				break;
+							case 'm' :	$last_number = $min;				break;
+							case 's'	:	$last_number = $sec;				break;
+							case 'C'	:	$last_number = $days;				break;
+						}
+						if (!(($last_number == 0) && $no_zero_value)) {
+							if ($pos == 1) { 
+								$formated_number .= $last_number; 
+							} else { 
+								if ($last_number < 10) {$formated_number .= '0' . $last_number;} 
+										else {$formated_number .= $last_number;}		
+							}
+						} 
+						break;
+					
+					case '~'	:	
+						$next_case_string = substr($format,1,1);
+						$no_zero_value = true; 
+						break;	
+					
+					case "'"	:	
+						$pos = strpos($format, "'", 1);
+						if (!(($last_number == 0) && $no_zero_value)) {
+							$temp = explode ('|',substr($format,1,$pos-1));
+							if (count($temp) == 2) {
+								if ($last_number == 1) {$formated_number .= $temp[0];}
+									else {$formated_number .= $temp[1];}
+							} else {
+								$formated_number .= $temp[0];
+							}
+						}
+						$no_zero_value = false;
+						$pos++;
+						break;
+					
+					default :
+						for ($pos1 = 1; $pos1 <= strlen($format);) {
+							switch (substr($format,$pos1,1)) {
+								case 'h'	:	case 'm' :	case 's'	:
+								case 'C'	:	case '~'	:	case "'"	:	
+									$pos = $pos1;
+									$pos1 = strlen($format);
+									break;
+									
+								default:
+									$pos1++;
+									break;
+							}
+						} 
+						if (!(($last_number == 0) && $no_zero_value)) {$formated_number .=substr($format,0,$pos);}						
+						break;
+				}
+				$format = substr($format,$pos,strlen($format));	
+			}	
+			break;
+		
+		case (strpos($typ_check,'#') !== false) :	// typ is formated number
+		case (strpos($typ_check,'0') !== false) :		
+			$thousands_sep = '';	$decimal_point = '';		
+			$leading_zeros = 0;		$decimals = 0;			$last_case_number = false;
+			while (strlen($format) > 0) { 
+				$pos = 0;
+				$case_string = substr($format,0,1);
+				while ($case_string == substr($format,$pos,1)) {$pos++; } 
+				switch ($case_string) {
+					case '#'	:
+						if ((substr($format,$pos,1) <> '#') && (substr($format,$pos+1,1) == '#')) {
+							$thousands_sep = substr($format,$pos,1);
+							$pos++;
+						}
+						$last_case_number = true;
+						break; 
+					
+					case '0' :
+						if ((substr($format,$pos,1) <> '0') && (substr($format,$pos+1,1) === '0')) {
+							$decimal_point = substr($format,$pos,1);
+							$leading_zeros = $pos;
+							$pos++;
+						} 
+						if ($decimal_point <> '') {$decimals = $pos;} else {$leading_zeros = $pos;}
+						$last_case_number = true;
+						break;
+					
+					case "'":
+					//default :
+						if ($case_string == "'") {		// insert String
+							$pos = strpos($format, "'", 1);		
+							$temp = explode ('|',substr($format,1,$pos-1));
+							if (count($temp) == 2) {
+								if ($number == 1) {$formated_number .= $temp[0];}
+									else {$formated_number .= $temp[1];}
+							} else {
+								$formated_number .= $temp[0];
+							}
+							$pos++;
+						} else {
+						}
+						break;
+				}
+
+				switch (true) {
+					case ($last_case_number && $pos >= strlen($format)) :
+					case ($last_case_number && $case_string <> '0' && $case_string <> '#') :
+						// format number 
+						$thousand_fill = '000'; for ($i = 0; $i <=10; $i++) {$thousand_fill .=  $thousands_sep . '000'  ;} 
+						$number_of_thousands = round_down(strlen(number_format($number,0,'',''))/3);
+						$number_remaing_length = strlen(number_format($number,0,'','')) - ($number_of_thousands * 3);
+
+						$number_string = substr($thousand_fill, 0, strlen($thousand_fill) -  $number_remaing_length) ; 
+						if(!$number_remaing_length){$number_string .= $thousands_sep;} 
+						$number_string .= number_format ($number,$decimals,$decimal_point,$thousands_sep);
+					
+						if ($number > pow (10,$leading_zeros)) {
+							for ($leading_zeros = $leading_zeros; $number >= pow (10,$leading_zeros); $leading_zeros++) {}
+						}
+						$pos_cut = strlen($number_string) - $leading_zeros - (round_down($leading_zeros/3) * strlen($thousands_sep)) - strlen($decimal_point) - $decimals;
+						if (round_down($leading_zeros/3) == $leading_zeros/3)  {$pos_cut++;}
+
+						$formated_number .= substr($number_string, $pos_cut) ;
+						if ($case_string <> '0' && $case_string <> '#') {$formated_number .= substr($format,0,$pos);}
+						
+						$thousands_sep = '';	$decimal_point = '';						// clear parameter
+						$leading_zeros = 0;		$decimals = 0;		$last_case_number = false;
+						break;
+					
+					case (($case_string <> '0') && ($case_string <> '#')) :
+							$formated_number .= substr($format,0,$pos);
+						break;
+				}
+							
+				$format = substr($format, $pos, strlen($format));	
+
+			}			
+			break;
+		
+		default:										// typ is date / time
+			$am_pm = false;
+			
+			// new placeholder for am/pm 
+			while (($pos = strpos($format, 'am/pm')) !== false) {
+				$format = substr($format,0,$pos) . '~!~!~!~' . substr($format,$pos+5,strlen($format));
+				$am_pm = true;
+			}
+			
+			while (($pos = strpos($format, 'AM/PM')) !== false) {
+				$format = substr($format,0,$pos) . '~^~^~^~' . substr($format,$pos+5,strlen($format));
+				$am_pm = true;
+			}
+
+			while (strlen($format) > 0) { 
+				$pos = 0;
+				while (substr($format,0,1) == substr($format,$pos,1)) {$pos++; } 
+				switch (substr($format,0,1)) {
+					case 'T'	:
+					case 'D'	:
+						switch ($pos) {
+							case 1 :		$formated_number .= date ('j', $number);		break;
+							case 2 :		$formated_number .= date ('d', $number);		break;
+							case 3 :		$formated_number .= explode('|', $lng_defaults[strtolower(date ('l', $number))])[0];		break;
+							case 4 :		$formated_number .= explode('|', $lng_defaults[strtolower(date ('l', $number))])[1];		break;
+						}
+						break;
+
+					case 'M'	:
+						switch ($pos) {
+							case 1 :		$formated_number .= date ('n', $number);		break;
+							case 2 :		$formated_number .= date ('m', $number);		break;
+							case 3 :		$formated_number .= explode('|', $lng_defaults[strtolower(date ('F', $number))])[0];		break;
+							case 4 :		$formated_number .= explode('|', $lng_defaults[strtolower(date ('F', $number))])[1];		break;
+						}
+						break;
+					
+					case 'Y'	:
+					case 'J'	:
+						switch ($pos) {
+							case 1 :		case 2 :		$formated_number .= date ('y', $number);		break;
+							case 3 :		case 4 :		$formated_number .= date ('Y', $number);		break;
+						}
+						break;
+
+					case 'h'	:
+						switch ($pos) {
+							case 1 :		if ($am_pm) {$formated_number .= date ('g', $number);}
+											else {$formated_number .= date ('G', $number);}			break;
+							case 2 :		if ($am_pm) {$formated_number .= date ('h', $number);}
+											else {$formated_number .= date ('H', $number);}			break;
+						}
+						break;
+
+					case 'm'	:
+						switch ($pos) {
+							case 1 :		$temp = date ('i', $number);
+										if (substr($temp,0,1) == '0') {$formated_number .= substr($temp,1,1);}
+											else {$formated_number .= $temp;}						break;
+							case 2 :		$formated_number .= date ('i', $number);		break;
+						}
+						break;
+
+					case 's'	:
+						switch ($pos) {
+							case 1 :		$temp = date ('s', $number);
+										if (substr($temp,0,1) == '0') {$formated_number .= substr($temp,1,1);}
+											else {$formated_number .= $temp;}						break;
+							case 2 :		$formated_number .= date ('s', $number);		break;
+						}
+						break;
+
+					case "'"	:	
+						$pos = strpos($format, "'", 1) ;
+						$formated_number .= substr($format,1,$pos-1); 
+						$pos++;
+						break;
+			
+					default	:	$formated_number .=	substr($format,0,$pos);			break;
+				}
+				$format = substr($format,$pos,strlen($format));
+			}
+			
+			// exchange placeholder for am/pm 
+			while (($pos = strpos($formated_number, '~!~!~!~')) !== false) {
+				$formated_number = substr($formated_number,0,$pos) . date ('a', $number) . substr($formated_number,$pos+7,strlen($formated_number));
+				$am_pm = true;
+			}
+			
+			while (($pos = strpos($formated_number, '~^~^~^~')) !== false) {
+				$formated_number = substr($formated_number,0,$pos) . date ('A', $number) . substr($formated_number,$pos+7,strlen($formated_number));
+				$am_pm = true;
+			}
+			
+			break;  // end date time
+	}
+
+	return $formated_number;
+}
 ?>
