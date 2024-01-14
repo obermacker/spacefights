@@ -307,12 +307,14 @@ function registrieren($username, $password) {
 	$username = check_username_cleaner_register($username);
 	$_password = mysqli_real_escape_string($link, $password);
 	
-	if ($username == "fehler") { return "fehler"; } 
+	if ($username == "fehler") { return "fehler"; } 	
 
-	echo preg_match("/^(?=.*\d)(?=.*[@#\-_$%^&+=§!\?])(?=.*[a-z])(?=.*[A-Z])[0-9A-Za-z@#\-_$%^&+=§!\?]{8,20}$/", $_password);
-
-	if(preg_match("/^(?=.*\d)(?=.*[@#\-_$%^&+=§!\?])(?=.*[a-z])(?=.*[A-Z])[0-9A-Za-z@#\-_$%^&+=§!\?]{8,20}$/", $_password)) {
-
+	if(preg_match("/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[#?!@$%^&*-]).{8,}$/", $_password)) {
+			#Has minimum 8 characters in length. Adjust it by modifying {8,}
+			#At least one uppercase English letter. You can remove this condition by removing (?=.*?[A-Z])
+			#At least one lowercase English letter.  You can remove this condition by removing (?=.*?[a-z])
+			#!Deleted: At least one digit. You can remove this condition by removing (?=.*?[0-9])
+			#At least one special character,  You can remove this condition by removing (?=.*?[#?!@$%^&*-])
 
 		$password_hash = password_hash($password, PASSWORD_BCRYPT);		
 		$unique = md5(uniqid(mt_rand(), TRUE));
@@ -361,6 +363,8 @@ function registrieren($username, $password) {
 		}
 		
 
+	} else {
+		return "Password does not meet the requirements";
 	}
 	
 
