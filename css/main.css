@@ -80,7 +80,7 @@ content .impressum {  font-size: 100%; }
 .nav > li,
 .nav > li > a {
   display: inline-block;
-  *display: inline;
+  /*display: inline;*/
   zoom: 1;
 }
 
@@ -118,7 +118,7 @@ content .impressum {  font-size: 100%; }
 .attribute > li,
 .attribute > li > a {
   display: inline-block;
-  *display: inline;
+  /*display: inline;*/
   zoom: 1;
 }
 
@@ -385,7 +385,7 @@ th, td, tr .ubersicht { padding:4px; border: 0; text-align: left;}
    }
 
 
-.flexcontainer { // <- das hier wird der neue flex 20.03.2016
+.flexcontainer { /* <- das hier wird der neue flex 20.03.2016 */
    display: -webkit-flex;
    display: flex;
    -webkit-align-items: flex-start;
@@ -412,7 +412,7 @@ th, td, tr .ubersicht { padding:4px; border: 0; text-align: left;}
 	
 }
 
-.flexcontainer-center { // <- das hier wird der neue flex 20.03.2016
+.flexcontainer-center { /* <- das hier wird der neue flex 20.03.2016 */
 display: -webkit-flex;
    display: flex;
    -webkit-align-items: center;

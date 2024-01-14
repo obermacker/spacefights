@@ -10,6 +10,5 @@
 	<string id="delete marked messages" text="markierte Nachrichten löschen" />
 	<string id="archive marked messages" text="markierte Nachrichten archivieren" />
 	<string id="report marked messages" text="markierte Nachrichten melden" />
-	
-	<string id="{DD.MM.YYYY hh:mm:ss@timestamp}" text="{DDD DD.MM.YYYY hh:mm:ss@timestamp}" />
+	<string id="{DDD YYYY/MM/DD hh:mm:ss am/pm@timestamp}" text="{DDD DD.MM.YYYY hh:mm:ss@timestamp}" />
 </language_strings>

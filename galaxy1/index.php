@@ -14,33 +14,26 @@ include (dirname(__FILE__) . '/inc/conf_ship.php');
 include (dirname(__FILE__) . '/inc/conf_defense.php');
 include (dirname(__FILE__) . '/inc/debug.php');
 
-$spieler_id = ""; $session_id = ""; $username = "";
+$playerID = ''; $sessionID = ''; $playerName = '';
 
 //rememberme cookie check
 
-	if($_COOKIE["rememberme"] == "yes"){
-		$spieler_id = $_COOKIE["user_id"];
-		$session_id = $_COOKIE["auth_token"];
-		
-	} else {
-		
-		if (isset($_SESSION["spieler_ID"])) { $spieler_id = $_SESSION["spieler_ID"]; }
-		if (isset($_SESSION["session_id"])) { $session_id = $_SESSION["session_id"]; }
-		
-		
-	}
+if($_COOKIE['rememberme'] == 'yes'){
+	$playerID = $_COOKIE['user_id'];
+	$sessionID = $_COOKIE['auth_token'];
+} else {
+	if (isset($_SESSION['spieler_ID'])) { $playerID = $_SESSION['spieler_ID']; }
+	if (isset($_SESSION['session_id'])) { $sessionID = $_SESSION['session_id']; }
+}
 
 //end: rememberme cookie check
 
+if (check_auth($playerID, $sessionID) == "nein"){session_unset(); session_destroy(); $_SESSION = array(); header('Location: ../index.html'); exit();}
 
-if (check_auth($spieler_id, $session_id) == "nein"){
-	    session_unset(); session_destroy(); $_SESSION = array(); header('Location: ../index.html'); exit();
-	    exit();	
-}
+if (isset($_SESSION['username'])) {$playerName = $_SESSION['username'];} else {$_SESSION['username'] = get_spieler_name($playerID); $playerName = $_SESSION['username'];}
 
-if (isset($_SESSION["username"])) { $username = $_SESSION["username"]; } else { $_SESSION["username"] = get_spieler_name($spieler_id); $username = $_SESSION["username"]; }
-
-//var_dump('$_GET ',$_GET, '  -- $_POST ', $_POST);
+// for transitional period / compatiblity old vars
+$spieler_id = $playerID; $session_id = $sessionID; $username = $playerName;
 
 //  need settings !
 if (!isset($_GET['lng'])) {$lng_defaults = get_language_defaults('de'); } else { $lng_defaults = get_language_defaults($_GET['lng']);}
@@ -505,7 +498,7 @@ echo '<span  id="globalJsVariables" select="' . $select . '" />';
 				$ressource = get_ressource($spieler_id, $planet_id);
 				$Ship = get_ship($_POST["action-schiffe-bauen"]);
 				$anzahl = usereingabe_cleaner ($_POST["vanzahl" . $_POST["action-schiffe-bauen"]]);
-				$raumschiffwerft_stufe = get_gebäude_aktuelle_stufe($spieler_id, $planet_id, 7);
+				$raumschiffwerft_stufe =get_structure_level($spieler_id, $planet_id, 7);
 
 				if($anzahl <= 0 OR empty($anzahl) OR !is_numeric($anzahl)) { $kann_gebaut_werden = false; }
 				if($Ship["Stufe_Werft"] > $raumschiffwerft_stufe) { $kann_gebaut_werden = false; }
@@ -569,7 +562,7 @@ echo '<span  id="globalJsVariables" select="' . $select . '" />';
 				$resources = german_res_to_english_res ($ressource);
 		// -------------- only for the time , if all variables are translated !!! ------------------ //
 		
-		$level_weapon_factory = get_gebäude_aktuelle_stufe($spieler_id, $planet_id, 8);
+		$level_weapon_factory =get_structure_level($spieler_id, $planet_id, 8);
 		$defense_count = get_defense(0)['defense count'];
 		
 		for ($i = 1; $i <= $defense_count; $i++) {
