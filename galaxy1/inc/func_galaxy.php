@@ -1281,7 +1281,7 @@ function check_bauschleife_activ($spieler_id, $planet_id, $zweig) {
 
 	switch ($zweig) {
 		case "Structure":
-			$abfrage = "SELECT `Bauschleife_Gebaeude_ID`, `Bauschleife_Gebaeude_Bis`, `Bauschleife_Gebaeude_Start` FROM `planet` WHERE `Spieler_ID` = '$spieler_id' AND `Planet_ID` = $planet_id";
+			$abfrage = "SELECT `Bauschleife_Gebaeude_ID`, `Bauschleife_Gebaeude_Bis`, `Bauschleife_Gebaeude_Start` FROM `planet` WHERE `Spieler_ID` = '$spieler_id' AND `Planet_ID` = '$planet_id'";
 			
 			$query = $abfrage;
 			$result = mysqli_query($link, $query) or sql_fehler(mysqli_error($link) , __FILE__ ,  __LINE__ );
@@ -2280,66 +2280,59 @@ function get_spieler_name($spieler_id) {
 	return $row->Spieler_Name;	
 }
 
-function get_spieler_image($spieler_id) {
-	
+function get_player_image($_playerID) {
 	require 'inc/connect_galaxy_1.php';
-	mysqli_select_db($link, "galaxy1");
-	$sql = "SELECT `avatar` FROM `spieler` WHERE `Spieler_ID` = '$spieler_id'";
-	$query = $sql or die("Error in the consult.." . mysqli_error("Error: #0003 ".$link));
-	$result = mysqli_query($link, $query) or sql_fehler(mysqli_error($link) , __FILE__ ,  __LINE__ );
-	$row = mysqli_fetch_object($result);
-	
-	return $row->avatar;
-	
-	
+	$_ds = new datasetPlayer;
+	$_query = 'SELECT '.$_ds::playerImage.' AS playerImage FROM '.$_ds::table.' WHERE '.$_ds::playerID.' = \''.$_playerID.'\'';
+	return mysqli_fetch_object(our_sql_query($link,$_query))->playerImage;
 }
 
-function get_message($absender_id, $empfänger_id, $username) {
+function get_player_id($_playerName) {
 	require 'inc/connect_galaxy_1.php';
-	mysqli_select_db($link, "galaxy1");
-	$sql = "SELECT `ID`, `Zeit`, `Absender_ID`, `Absender_Name`, `Empfaenger_ID`, `Empfaenger_Name`, `Gelesen`, `Betreff`, `Text`, `Logbuch`, `Chatbot` FROM `nachrichten` WHERE `Empfaenger_ID` Like '" . $empfänger_id . "' OR INSTR(`Text`,'@" . $username . "') > 0 OR `Absender_ID` = '$absender_id' OR INSTR(`Text`,'@Galaxy1') > 0 ORDER BY `ID` DESC";
-	
-	$query = $sql or die("Error in the consult.." . mysqli_error("Error: #0003 ".$link));
-	if($result = mysqli_query($link, $query)) {
-		$row_cnt = $result->num_rows;
-	} else {
-		$row_cnt = 0;		
-	}
-	echo $link->error;
-	$row_cnt = $result->num_rows;
-	
-	$nachrichten = array();
-	
-	$nachrichten["Error"] = false;
-	$nachrichten["Message"] = "";
-	
-	if($row_cnt > 0) {
+	$_ds = new datasetPlayer;
+	$_query = 'SELECT '.$_ds::playerID.' AS playerID FROM '.$_ds::table.' WHERE '.$_ds::playerName.' like \''.$_playerName.'\'';
+	return mysqli_fetch_object(our_sql_query($link,$_query))->playerID;
+}	
 
-		$i = 0;
-		while($row = mysqli_fetch_object($result)) {
-		
-			$nachrichten["result"][$i]["ID"] = $row->ID ;
-			$nachrichten["result"][$i]["Zeit"] = $row->Zeit ;
-			$nachrichten["result"][$i]["Absender_ID"] = $row->Absender_ID ;
-			$nachrichten["result"][$i]["Absender_Name"] = $row->Absender_Name ;
-			$nachrichten["result"][$i]["Empfaenger_ID"] = $row->Empfaenger_ID ;
-			$nachrichten["result"][$i]["Empfaenger_Name"] = $row->Empfaenger_Name ;
-			$nachrichten["result"][$i]["Gelesen"] = $row->Gelesen ;
-			$nachrichten["result"][$i]["Betreff"] = $row->Betreff ;
-			$nachrichten["result"][$i]["Text"] = $row->Text ;
-			$nachrichten["result"][$i]["Logbuch"] = $row->Logbuch ;
-			$nachrichten["result"][$i]["Chatbot"] = $row->Chatbot ;
-		
-			$i++;
+function get_messages($_senderID, $_recipientID, $_playerName) {
+	require 'inc/connect_galaxy_1.php';
+	
+	$_ds = new datasetMessages;
+
+	$_query = 'SELECT * FROM '.$_ds::table.' 
+				WHERE '.$_ds::recipientID.' LIKE \''.$_recipientID.'\' 
+				OR '.$_ds::senderID.' LIKE \''.$_senderID.'\'
+				OR '.$_ds::messageText.' LIKE \'%@'.$_playerName.'%\' 
+				OR '.$_ds::messageText.' LIKE \'%@Galaxy%\' 
+				ORDER BY '.$_ds::messageID.' DESC' ;
+	
+	$_result = our_sql_query($link,$_query,);
+
+	$_messages['noMessages'] = true;
+	
+	if($_result->num_rows > 0) {
+		$_messages['noMessages'] = false;
+		$_i = 0;
+
+		while($_row = mysqli_fetch_assoc($_result)) {
+			$_messages['item'][$_i] = new message;
+			$_messages['item'][$_i]->messageID = $_row[$_ds::messageID];
+			$_messages['item'][$_i]->messageSent = $_row[$_ds::messageSent];
+			$_messages['item'][$_i]->senderID = $_row[$_ds::senderID];
+			$_messages['item'][$_i]->senderName = $_row[$_ds::senderName];
+			$_messages['item'][$_i]->recipientID = $_row[$_ds::recipientID];
+			$_messages['item'][$_i]->recipientName = $_row[$_ds::recipientName];
+			$_messages['item'][$_i]->messageHasBeenRead = $_row[$_ds::messageHasBeenRead];
+			$_messages['item'][$_i]->messageSubject = $_row[$_ds::messageSubject];
+			$_messages['item'][$_i]->messageText = $_row[$_ds::messageText];
+			$_messages['item'][$_i]->logbookMessage = $_row[$_ds::logbookMessage];
+			$_messages['item'][$_i]->chatbotMessage = $_row[$_ds::chatbotMessage];
+	
+			$_i++;
 		}
+	} 
 		
-	} else {
-		$nachrichten["Error"] = true;
-		$nachrichten["Message"] = "Keine Nachrichten";		
-	}
-	
-	
-	return $nachrichten;
+	return $_messages;
 }
 
 
@@ -2363,6 +2356,26 @@ define("PRODUKTION_JE_STUNDE_MAXIMAL", 5); //weil pro 24h waren es 120 Robots
 define("PRODUKTION_JE_STUNDE_MINIMUM", .5); //0.0416666666666667
 define("ZEIT_EINHEIT", 60 * 60);
 
+
+function delete_message($messageID) {
+	require 'inc/connect_galaxy_1.php';
+
+	if (is_array($messageID)){
+		$_isIn = '(';
+		$_isFirst = true;
+		foreach ($messageID as $_value) {
+			if ($_isFirst) {$_isFirst = false;} else {$_isIn .= ',';}
+			$_isIn .= $_value;
+		}
+		$_isIn .= ')';
+	}else{
+		$_isIn = '('.$messageID.')';
+	}
+
+	$_ds = new datasetMessages;
+	$_query = 'DELETE FROM '.$_ds::table.' WHERE '.$_ds::messageID.' IN '.$_isIn;
+	our_sql_query($link,$_query);
+}
 
 
 function berechne_robot_zuwachs($spieler_id, $zeit) {

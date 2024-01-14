@@ -287,6 +287,20 @@ a.kontakte {
 	
 }
 
+
+/* for messages ES 10.01.2024 */
+
+.messagesGrid 		      {display:grid; grid-template-columns: 50px 15% auto 20% 20% 70px;}
+.sendMessagesRecipient 	{grid-column: 1 / span 2;}
+.sendMessagesSubject 	  {grid-column: 3 / span 3;}
+.sendMessagesSendBtn 	  {grid-column: 6;}
+.sendMessagesContent 	  {grid-column: 1 / span 6;}
+.messagesContent    	  {grid-column: 1 / span 6; grid-row: 3;}
+.messagesImage       	  {grid-column: 1; grid-row: 1 / span 2;}
+.messagesSubject       	{grid-column: 2 / span 5; grid-row: 2;}
+.messagesSenderRecipient{grid-column: 2 / span 2; grid-row: 1;}
+.messagesDateButtons    {grid-column: 4 / span 3; grid-row: 1;}
+
 .wordBreak {word-break:break-all; word-wrap:break-word;}
 
 /* by ES 22.06.2016*/
