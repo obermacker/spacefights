@@ -659,11 +659,12 @@ function set_bauschleife_ship_fertig($spieler_id, $planet_id) {
 		//schauen wie viele vom Typ sind stationiert
 
 		$tabelle = "Schiff_Typ_" . $row->Typ;
-		$abfrage_planet = "SELECT `$tabelle`, `Stationiert_Bot` FROM `planet` WHERE `Spieler_ID` = '$spieler_id' AND `Planet_ID` = $planet_id";
+		$abfrage_planet = "SELECT `$tabelle`, `Stationiert_Bot`, `Planet_Name` FROM `planet` WHERE `Spieler_ID` = '$spieler_id' AND `Planet_ID` = $planet_id";
 			$query = $abfrage_planet  or die("Error in the consult.." . mysqli_error("Error in set_bauschleife_ship_fertig ".$link));
 			$result = mysqli_query($link, $query) or sql_fehler(mysqli_error($link) , __FILE__ ,  __LINE__ );
 			$row_planet = mysqli_fetch_object($result);
 			$schiffe_ist = $row_planet->$tabelle;
+			$_planetName = $row_planet->Planet_Name;
 
 		//anzahl aktualisieren
 
@@ -689,16 +690,17 @@ function set_bauschleife_ship_fertig($spieler_id, $planet_id) {
 
 				if ($anzahl > 1) { $insert_name = $Ship["Name_Plural"]; } else { $insert_name = $Ship["Name"]; }
 
-				$news_typ = "ERFOLG_SYSTEM";
+				//$news_typ = "ERFOLG_SYSTEM";
 				$news_text = "Es wurden $anzahl $insert_name fertiggestellt";
-				set_news($spieler_id, $planet_id, $news_typ, $news_text);
+				set_message(0, "System", $spieler_id, $username, $_planetName.': '.$news_text, "",  1);
+				// set_news($spieler_id, $planet_id, $news_typ, $news_text);
 			} else {
 				die("Fehler in der fertigstellung: " . mysqli_error($link));
 			}
 
 		//Bauschliefe löschen
 
-			$abfrage_bauschleife_delete = "DELETE FROM `bauschleifedeff` WHERE `ID` = '" . $row->ID . "'";
+			$abfrage_bauschleife_delete = "DELETE FROM `bauschleifeflotte` WHERE `ID` = '" . $row->ID . "'";
 			$query = $abfrage_bauschleife_delete or die("Error in the consult.." . mysqli_error("Error: set_bauschleife_struckture #1 ".$link));
 
 			if (mysqli_query($link, $query)) {
@@ -722,11 +724,12 @@ function set_bauschleife_ship_fertig($spieler_id, $planet_id) {
 
 		$tabelle = "Schiff_Typ_" . $row->Typ;
 		$Ship = get_ship($row->Typ);
-		$abfrage_planet = "SELECT `$tabelle`, `Stationiert_Bot` FROM `planet` WHERE `Spieler_ID` = '$spieler_id' AND `Planet_ID` = $planet_id";
+		$abfrage_planet = "SELECT `$tabelle`, `Stationiert_Bot`, `Planet_Name` FROM `planet` WHERE `Spieler_ID` = '$spieler_id' AND `Planet_ID` = $planet_id";
 		$query = $abfrage_planet  or die("Error in the consult.." . mysqli_error("Error in set_bauschleife_ship_fertig ".$link));
 		$result = mysqli_query($link, $query) or sql_fehler(mysqli_error($link) , __FILE__ ,  __LINE__ );
 		$row_planet = mysqli_fetch_object($result);
 		$schiffe_ist = $row_planet->$tabelle;
+		$_planetName = $row_planet->Planet_Name;
 
 		//anzahl aktualisieren
 
@@ -754,9 +757,10 @@ function set_bauschleife_ship_fertig($spieler_id, $planet_id) {
 
 				if ($fertiggestellte > 1) { $insert_name = $Ship["Name_Plural"]; } else { $insert_name = $Ship["Name"]; }
 
-				$news_typ = "ERFOLG_SYSTEM";
+				//$news_typ = "ERFOLG_SYSTEM";
 				$news_text = "Es wurden $fertiggestellte $insert_name fertiggestellt";
-				set_news($spieler_id, $planet_id, $news_typ, $news_text);
+				set_message(0, "System", $spieler_id, $username, $_planetName.': '.$news_text, "",  1);
+				//set_news($spieler_id, $planet_id, $news_typ, $news_text);
 
 			} else {
 				die("Fehler in der fertigstellung: " . mysqli_error($link));
@@ -805,11 +809,12 @@ function set_defense_construction_loop_finished ($player_id, $planet_id) {		// e
 
 		// get stationed defense
 		$column = 'Deff_Typ_' . $row_construction_loop->defense_id;
-		$query = "SELECT `$column` FROM `planet` WHERE `Spieler_ID` = '$player_id' AND `Planet_ID` = $planet_id";
+		$query = "SELECT `$column`, `Planet_Name` FROM `planet` WHERE `Spieler_ID` = '$player_id' AND `Planet_ID` = $planet_id";
 		$result = mysqli_query($link, $query) or sql_error(mysqli_error($link));
 
 		$row_planet = mysqli_fetch_object($result);
 		$defense_now = $row_planet->$column;
+		$_planetName = $row_planet->Planet_Name;
 
 		// calculate new value for stationed defense
 		$defense = get_defense($row_construction_loop->defense_id);
@@ -830,9 +835,10 @@ function set_defense_construction_loop_finished ($player_id, $planet_id) {		// e
 		// set news
 		$news_typ = lng_echo ('success system', no_file, echo_off);
 		if ($quantity > 1) { $news_text = lng_echo ('contruction loop finished plural', no_file, echo_off, array('defense_name' => $defense['name plural'] , 'quantity' => $quantity));}
-			else { $news_text = lng_echo ('contruction loop finished', no_file, echo_off, array('defense_name' => $defense['name'] , 'quantity' => $quantity));}
+		else { $news_text = lng_echo ('contruction loop finished', no_file, echo_off, array('defense_name' => $defense['name'] , 'quantity' => $quantity));}
 
-		set_news($player_id, $planet_id, $news_typ, $news_text);
+		set_message(0, "System", $player_id, $username, $_planetName.': '.$news_text, "",  1);
+		//set_news($player_id, $planet_id, $news_typ, $news_text);
 
 		// delete construction loop
 		$query = "DELETE FROM `construction_loops_defense` WHERE `id` = " . $row_construction_loop->id;
@@ -2239,35 +2245,38 @@ function check_auth($spieler_id, $session_id) {
 		return "nein";
 	}
 }
+///////////////////////////////////////////////////
+// Rücksprach ob set_news gelöscht werden kann !?
+///////////////////////////////////////////////////
 
-function set_news($spieler_id, $planet_id, $typ, $text) {
-	require 'inc/connect_galaxy_1.php';
-	$time_now = time();
-	$abfrage = "INSERT INTO `message`(
-	`Spieler_ID`,
-	`Planet_ID`,
-	`typ`,
-	`text`,
-	`gelesen`,
-	`erstellt`) VALUES (
-	'$spieler_id',
-	'$planet_id',
-	'$typ',
-	'$text',
-	FALSE,
-	$time_now
-	)";
+// function set_news($spieler_id, $planet_id, $typ, $text) {
+// 	require 'inc/connect_galaxy_1.php';
+// 	$time_now = time();
+// 	$abfrage = "INSERT INTO `message`(
+// 	`Spieler_ID`,
+// 	`Planet_ID`,
+// 	`typ`,
+// 	`text`,
+// 	`gelesen`,
+// 	`erstellt`) VALUES (
+// 	'$spieler_id',
+// 	'$planet_id',
+// 	'$typ',
+// 	'$text',
+// 	FALSE,
+// 	$time_now
+// 	)";
 
-	$query = $abfrage or die("Error in the consult.." . mysqli_error("Fehler im Nachrichtensystem #1 ".$link));
+// 	$query = $abfrage or die("Error in the consult.." . mysqli_error("Fehler im Nachrichtensystem #1 ".$link));
 
-	if (mysqli_query($link, $query)) {
+// 	if (mysqli_query($link, $query)) {
 
-	} else {
-		die("Fehler im Nachrichtensystem " . mysqli_error($link));
-	}
+// 	} else {
+// 		die("Fehler im Nachrichtensystem " . mysqli_error($link));
+// 	}
 
 
-}
+// }
 
 
 function get_spieler_name($spieler_id) {

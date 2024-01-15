@@ -111,6 +111,7 @@ input, textarea {font-family: verdana, sans-serif; font-size: 100%;}
 .fleetdetail { padding:4px; border-top: #3a6784 1px solid; text-align: left; padding-left: 1em;}
 
 .tbchell { padding:4px; background-color: rgba(0,34,60, 0.55); border-top: #00223c 1px solid; border-right: #00223c 1px solid; text-align: left; padding-left: 1em;}
+.tbchell_with_right_border { padding:4px; background-color: rgba(0,34,60, 0.55); border-top: #00223c 1px solid; border-right: #3a6784 1px solid; text-align: left; padding-left: 1em; padding-right: 1em;}
 .tbchell_ohne_left_border { padding: 0px; border-left: #00223c 0px solid;  }
 .tbchell_ohne_right_border { padding: 0px; border-right: #00223c 0px solid;  }
 .tbchell_ohne_left_padding { padding: 4px; }
@@ -290,7 +291,7 @@ a.kontakte {
 
 /* for messages ES 10.01.2024 */
 
-.messagesGrid 		      {display:grid; grid-template-columns: 50px 15% auto 20% 20% 70px;}
+.messagesGrid 		      {display:grid; grid-template-columns: 59px 15% auto 20% 20% 70px;}
 .sendMessagesRecipient 	{grid-column: 1 / span 2;}
 .sendMessagesSubject 	  {grid-column: 3 / span 3;}
 .sendMessagesSendBtn 	  {grid-column: 6;}
