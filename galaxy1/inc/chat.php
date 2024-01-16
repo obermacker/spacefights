@@ -20,7 +20,7 @@ if ($_POST){
                 $db->prepare($sql)->execute([$spieler_id, get_spieler_name($spieler_id), $str, $chat_color]);
 
             } catch (PDOException $e) {
-                $pdo_error = $e->getMessage();              
+                catchExeption ($e);              
             }
         }
     }

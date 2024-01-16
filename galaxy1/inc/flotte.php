@@ -2,74 +2,69 @@
 //Flotte starten
 
 if(isset($_POST["action-flotte-starten"])) {
-	//var_dump($_POST);
-	//$out = str_replace('.', '', $_POST);
-	//$out = str_replace(',', '', $out);
-	//$out = str_replace('-', '', $out);
-	
+
+	$out = $_POST;
+
 	$flotte_kann_abheben = true;
 	
-	if(!isset($out["x"])) { $flotte_kann_abheben = false; }
-	if(!isset($out["y"])) { $flotte_kann_abheben = false; }
-	if(!isset($out["z"])) { $flotte_kann_abheben = false; }
-
-	if(!isset($out["mission"])) { $flotte_kann_abheben = false; }
+	switch (true) {
+		case !isset($out["x"]):
+		case !isset($out["y"]):
+		case !isset($out["z"]):
+		case !isset($out["mission"]):
+		case !isset($out["schiff_anzahl"]):
+		case !isset($out["mitnehmen"]):
+		case !isset($out["abholen"]):
+		case !is_array($out["schiff_anzahl"]):
+		case !is_array($out["mitnehmen"]):
+		case !is_array($out["abholen"]):
+			$flotte_kann_abheben = false;
+			break;
+	}
 	
-	if(!isset($out["schiff_anzahl"])) { $flotte_kann_abheben = false; }
-	if(!isset($out["mitnehmen"])) { $flotte_kann_abheben = false; }
-	if(!isset($out["abholen"])) { $flotte_kann_abheben = false; }
-
 	if($flotte_kann_abheben == true) {
 
-		if(!is_array($out["schiff_anzahl"])) { $flotte_kann_abheben = false; }
-		if(!is_array($out["mitnehmen"])) { $flotte_kann_abheben = false; }
-		if(!is_array($out["abholen"])) { $flotte_kann_abheben = false; }
-		
-		if($flotte_kann_abheben == true) {
-						
-			for($i = 0; $i<2; $i++) {
-				if($i == 0) { $check = $out["x"]; $max = 50;  $min = 1;  } 
-				if($i == 1) { $check = $out["y"]; $max = 50;  $min = 1;  }
-				if($i == 2) { $check = $out["z"]; $max = 12;  $min = 1;  }
-				
-				if($check == '') { $flotte_kann_abheben = false; }
-				if(intval($check) < $min ) { $flotte_kann_abheben = false; }
-				if(intval($check) > $max ) { $flotte_kann_abheben = false; }				
-			}
+		for($i = 0; $i<2; $i++) {
+			if($i == 0) { $check = $out["x"]; $max = 50;  $min = 1;  } 
+			if($i == 1) { $check = $out["y"]; $max = 50;  $min = 1;  }
+			if($i == 2) { $check = $out["z"]; $max = 12;  $min = 1;  }
+			
+			if($check == '') { $flotte_kann_abheben = false; }
+			if(intval($check) < $min ) { $flotte_kann_abheben = false; }
+			if(intval($check) > $max ) { $flotte_kann_abheben = false; }				
+		}
 
-			if($flotte_kann_abheben == true) {
-				$flotte_schiffe = array();
-				$i = 0;
-				foreach ($out["schiff_anzahl"] as $key => $value) {
-					if($value > 0) {
-						$flotte_schiffe[$i]["Schiff_ID"] = intval($key);
-						$flotte_schiffe[$i]["Anzahl"] = intval($value);
-						$i++;
-					}					
-				}
-				
-			switch (intval($out["mission"])) {
-				case 1: $mission_str = "erkunden"; break;
-				case 2: $mission_str = "Stationierung"; break;
-				case 3: $mission_str = "Transport"; break;
-				case 4: $mission_str = "Sicherungsflug"; break;
-				case 5: $mission_str = "Spionage"; break;
-				case 6: $mission_str = "Angriff";  break;
-				case 7: // Kolonisierung 				
-					$flotte_kann_abheben = check_flotte_modul_vorhanden($flotte_schiffe, "colonization");					
-					break;
+		if($flotte_kann_abheben == true) {
+			$flotte_schiffe = array();
+			$i = 0;
+			foreach ($out["schiff_anzahl"] as $key => $value) {
+				$value = str_replace(array('.','-',','),'', $value);
+				if($value > 0) {
+					$flotte_schiffe[$i]["Schiff_ID"] = intval($key);
+					$flotte_schiffe[$i]["Anzahl"] = intval($value);
+					$i++;
+				}					
 			}
-				
-				
-				if($i > 0 AND $flotte_kann_abheben == true) {
-					$mission_start = flotte_senden($spieler_id, $planet_id, $flotte_schiffe, $out["x"], $out["y"], $out["z"], $out["mission"], $out["flugzeit"], $out["mitnehmen"], $out["abholen"]);
-					echo $mission_start;						
-				}
+			
+		switch (intval($out["mission"])) {
+			case 1: $mission_str = "erkunden"; break;
+			case 2: $mission_str = "Stationierung"; break;
+			case 3: $mission_str = "Transport"; break;
+			case 4: $mission_str = "Sicherungsflug"; break;
+			case 5: $mission_str = "Spionage"; break;
+			case 6: $mission_str = "Angriff";  break;
+			case 7: // Kolonisierung 				
+				$flotte_kann_abheben = check_flotte_modul_vorhanden($flotte_schiffe, "colonization");					
+				break;
+		}
+			
+			
+			if($i > 0 AND $flotte_kann_abheben == true) {
+				$mission_start = flotte_senden($spieler_id, $planet_id, $flotte_schiffe, $out["x"], $out["y"], $out["z"], $out["mission"], $out["flugzeit"], $out["mitnehmen"], $out["abholen"]);
+				echo $mission_start;						
 			}
-		}		
-	}
-	//var_dump($flotte_kann_abheben);
-	//var_dump($out);	
+		}
+	}		
 }
 
 //ENDE: Flotte starten

@@ -91,7 +91,7 @@ if($_messages['noMessages']) {
 					$_playerImageFile = "img/chatbot_50x50.png"; 
 				} else {
 					$_playerImage = get_player_image($_item->senderID);
-					if($_playerImage != '') {$_playerImageFile = 'img/spieler/'.$_playerImage;}
+					if($_playerImage != '') {$_playerImageFile = 'img/playerImages/'.$_playerImage;}
 				}
 			?>
 			<div class="messagesImage tbchell tbchell_ohne_left_padding"><img src="<?= $_playerImageFile ?>" style="vertical-align: middle;" width=50 height=50></div>
