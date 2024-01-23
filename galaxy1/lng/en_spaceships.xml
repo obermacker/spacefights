@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<language_strings> <!-- ENGLISH by ES  Sep 2024 -->
+	<!-- strings heading -->
+	<string id="spaceship type" text="Spaceship Type" />
+	<string id="construction time" text="Construction time" />
+	<string id="quantity" text="Quantity" />
+	<string id="required resoures" text="Required resoures" />
+	
+	<!-- strings table -->
+	<string id="max hold planet reached" text="Maximum number of {namePlural} already stationed on the planet !" />
+	<string id="max hold galaxy reached" text="Maximum number of {namePlural} in the Galaxy already reached !" />
+	<string id="attack strength" text="Attack strength: " />
+	<string id="defense strength" text="Defense strength: " />
+	<string id="max speed" text="Max speed: " />
+	<string id="loading capacity" text="Loading capacity: " />
+	<string id="max range" text="Max range: " />
+	<string id="normal construction time" text="Construction time: " />
+	<string id="accelerated construction time" text="Accelerated (Construction time / Level spaceship yard): " />
+
+	<!-- strings footer -->
+	<string id="total building time / costs" text="Total building time/costs" />
+	<string id="build" text="build" />
+	
+	<string id="please build spaceship yard" text="Please build a spaceship yard first !" />
+</language_strings>

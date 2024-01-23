@@ -276,15 +276,6 @@ function get_liste_planeten_im_system($px, $py, $spieler_id) {
 
 }
 
-function get_ship($ship_id) {
-
-	$row_ship = get_config_ships($ship_id);
-
-	$row_ship["Bauzeit"] = $row_ship["Bauzeit"];
-
-	return $row_ship;
-
-}
 function get_defense_count (){
 	return get_config_defense(0)['defense count'];
 }
@@ -326,10 +317,10 @@ function set_construction_loop_structure($_loopData){
 				.$_ds::constructionLoopUntil.			' = \''.$_loopData->constructionLoopUntil.'\', '
 				.$_ds::constructionLoopStructureID.		' = \''.$_loopData->constructionLoopStructureID.'\', '
 				.$_ds::constructionLoopStructureName.	' = \''.$_loopData->constructionLoopStructureName.'\', '
-				.$_ds::planetResourcesIron.				' = \''.$_loopData->planetResourcesIron.'\', '
-				.$_ds::planetResourcesSilicon.			' = \''.$_loopData->planetResourcesSilicon.'\', '
-				.$_ds::planetResourcesWater.			' = \''.$_loopData->planetResourcesWater.'\', '
-				.$_ds::planetResourcesEnergy.			' = \''.$_loopData->planetResourcesEnergy.'\' '
+				.$_ds::resourcesAvailable[iron].				' = \''.$_loopData->planetResourcesIron.'\', '
+				.$_ds::resourcesAvailable[silicon].			' = \''.$_loopData->planetResourcesSilicon.'\', '
+				.$_ds::resourcesAvailable[water].			' = \''.$_loopData->planetResourcesWater.'\', '
+				.$_ds::resourcesAvailable[energy].			' = \''.$_loopData->planetResourcesEnergy.'\' '
 				.'WHERE	'.$_ds::playerID.' = \''.$_loopData->playerID.'\' '
 					.'AND '.$_ds::planetID.' = \''.$_loopData->planetID.'\'';
 
@@ -673,14 +664,14 @@ function set_bauschleife_ship_fertig($spieler_id, $planet_id) {
 
 			//Punkte berechnen
 
-			$Ship = get_ship($row->Typ);
+			$Ship = spaceships::$shipID[$row->Typ];
 
 			$punkte = get_punkte($spieler_id, $planet_id);
 			//$punkte = $punkte + ((($Ship["Kosten_Eisen"] + $Ship["Kosten_Silizium"] + $Ship["Kosten_Wasser"]) * $anzahl) / 1000);
 
 			//Bots berechnen
 
-			$bots_anzahl = $row_planet->Stationiert_Bot + ($Ship["Bots"] * $anzahl);
+			$bots_anzahl = $row_planet->Stationiert_Bot + ($Ship->requiredBots * $anzahl);
 
 			$abfrage_planet_update = "UPDATE `planet` SET  `$tabelle` = $schiffe_soll
 			, `punkte` = " . "0" . ", `Stationiert_Bot` = $bots_anzahl WHERE `Spieler_ID` = '$spieler_id' AND `Planet_ID` = $planet_id";
@@ -688,7 +679,7 @@ function set_bauschleife_ship_fertig($spieler_id, $planet_id) {
 
 			if (mysqli_query($link, $query)) {
 
-				if ($anzahl > 1) { $insert_name = $Ship["Name_Plural"]; } else { $insert_name = $Ship["Name"]; }
+				if ($anzahl > 1) { $insert_name = $Ship->namePlural; } else { $insert_name = $Ship->name; }
 
 				//$news_typ = "ERFOLG_SYSTEM";
 				$news_text = "Es wurden $anzahl $insert_name fertiggestellt";
@@ -723,7 +714,7 @@ function set_bauschleife_ship_fertig($spieler_id, $planet_id) {
 		//schauen wie viele vom Typ sind stationiert
 
 		$tabelle = "Schiff_Typ_" . $row->Typ;
-		$Ship = get_ship($row->Typ);
+		$Ship = spaceships::$shipID[$row->Typ];
 		$abfrage_planet = "SELECT `$tabelle`, `Stationiert_Bot`, `Planet_Name` FROM `planet` WHERE `Spieler_ID` = '$spieler_id' AND `Planet_ID` = $planet_id";
 		$query = $abfrage_planet  or die("Error in the consult.." . mysqli_error("Error in set_bauschleife_ship_fertig ".$link));
 		$result = mysqli_query($link, $query) or sql_fehler(mysqli_error($link) , __FILE__ ,  __LINE__ );
@@ -747,7 +738,7 @@ function set_bauschleife_ship_fertig($spieler_id, $planet_id) {
 
 			//Bots berechnen
 
-			$bots_anzahl = $row_planet->Stationiert_Bot + ($Ship["Bots"] * $fertiggestellte);
+			$bots_anzahl = $row_planet->Stationiert_Bot + ($Ship->requiredBots * $fertiggestellte);
 
 			$abfrage_planet_update = "UPDATE `planet` SET  `$tabelle` = $schiffe_soll
 			, `punkte` = " . "0" . ", `Stationiert_Bot` = $bots_anzahl WHERE `Spieler_ID` = '$spieler_id' AND `Planet_ID` = $planet_id";
@@ -755,7 +746,7 @@ function set_bauschleife_ship_fertig($spieler_id, $planet_id) {
 
 			if (mysqli_query($link, $query)) {
 
-				if ($fertiggestellte > 1) { $insert_name = $Ship["Name_Plural"]; } else { $insert_name = $Ship["Name"]; }
+				if ($fertiggestellte > 1) { $insert_name = $Ship->namePlural; } else { $insert_name = $Ship->name; }
 
 				//$news_typ = "ERFOLG_SYSTEM";
 				$news_text = "Es wurden $fertiggestellte $insert_name fertiggestellt";
@@ -1100,14 +1091,14 @@ function set_bauschleife_ship_abbruch($spieler_id, $planet_id, $schleife_id) {
 
 		if (!empty($row)) {
 
-		$Ship = get_ship($row->Typ);
+		$Ship = spaceships::$shipID[$row->Typ];
 		$anzahl = $row->Anzahl;
 
-		$eisen_ruck = ($Ship["Kosten_Eisen"] * $anzahl) / 3 * 2;
-		$silizium_ruck = ($Ship["Kosten_Silizium"] * $anzahl) / 3 * 2;
-		$wasser_ruck = ($Ship["Kosten_Wasser"] * $anzahl) / 3 * 2;
-		$karma_ruck = ($Ship["Kosten_Karma"] * $anzahl) / 3 * 2;
-		$bots_ruck = $Ship["Bots"] * $anzahl;
+		$eisen_ruck = ($Ship->requiredIron * $anzahl) / 3 * 2;
+		$silizium_ruck = ($Ship->requiredSilicon * $anzahl) / 3 * 2;
+		$wasser_ruck = ($Ship->requiredWater * $anzahl) / 3 * 2;
+		$karma_ruck = ($Ship->requiredKarma * $anzahl) / 3 * 2;
+		$bots_ruck = $Ship->requiredBots * $anzahl;
 
 		// update ress & bots auf dem Planeten
 
@@ -1448,17 +1439,16 @@ function get_gebäude_nächste_stufe($spieler_id, $planet_id, $gebäude_id, $spe
 
 }
 
-function get_tech_level_player ($player_id) {			// ex-function: get_tech_stufe_spieler
-
+	
+function get_tech_level_player ($_playerID) {
 	require 'inc/connect_galaxy_1.php';
-	$link->set_charset("utf8");
 
-	$query = "SELECT `Tech_1`, `Tech_2`, `Tech_3`, `Tech_4`, `Tech_5`, `Tech_6`, `Tech_7`, `Tech_8`, `Tech_9`, `Tech_10`, `Tech_11`, `Tech_12`, `Tech_Schleife_ID` FROM `spieler` WHERE `Spieler_ID` = '$player_id'";
-	$result = mysqli_query($link, $query) or sql_error(mysqli_error($link));
+	$_query = 'SELECT '.vsprintf('%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s',datasetPlayer::techLevelType).','.datasetPlayer::researchLoopID
+				.' FROM '.datasetPlayer::table.' WHERE '.datasetPlayer::playerID.' = \''.$_playerID.'\'';
+	$_result = new datasetPlayer;
+	$_result::loadRow(mysqli_fetch_object(our_sql_query($link,$_query,must_have_results,max_one_result)));
 
-	$tech_level_player = json_decode(json_encode(mysqli_fetch_object($result)), true);
-
-	return $tech_level_player;
+	return $_result;
 }
 
 
@@ -1714,51 +1704,31 @@ function get_Handelsposten_Inhalt($spieler_id, $planet_id) {
 
 }
 
-function get_Schiffe_stationiert($spieler_id, $planet_id) {
 
+function get_ships_stationed($_playerID, $_planetID) {
 	require 'inc/connect_galaxy_1.php';
-	$link->set_charset("utf8");
-	$abfrage = "SELECT `Schiff_Typ_1`, `Schiff_Typ_2`, `Schiff_Typ_3`, `Schiff_Typ_4`, `Schiff_Typ_5`, `Schiff_Typ_6`, `Schiff_Typ_7`, `Schiff_Typ_8`, `Schiff_Typ_9`, `Schiff_Typ_10`, `Schiff_Typ_11` FROM `planet` WHERE `Spieler_ID` = '$spieler_id' AND `Planet_ID` = $planet_id";
+	
+	$_query = 'SELECT '.vsprintf('%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s',datasetPlanet::stationedShipsType).' FROM '.datasetPlanet::table.
+				' WHERE '.datasetPlanet::playerID.' = \''.$_playerID.'\' AND '.datasetPlanet::planetID.' = \''.$_planetID.'\'';
+	datasetPlanet::loadRow(mysqli_fetch_object(our_sql_query($link,$_query,must_have_results,max_one_result)));
 
-	$query = $abfrage or die("Error in the consult.." . mysqli_error("Error: get_Schiffe_stationiert #1 ".$link));
-	$result = mysqli_query($link, $query) or sql_fehler(mysqli_error($link) , __FILE__ ,  __LINE__ );
-
-
-	$row = mysqli_fetch_object($result);
-
-	 for($i = 1; $i <= 11; $i++) {
-
-		$row_schiffe = get_ship($i, $spieler_id);
-
-		$tabelle = "Schiff_Typ_".$i;
-
-		$anzahl = $row->$tabelle;
-
-		$anzahl = number_format($anzahl, 0, '.', '.');
-
-		if ($row->$tabelle > 0) {
-			if ($row->$tabelle == 1) {
-				$schiffe[$i]["Name"] = $row_schiffe["Name"];
-				$schiffe[$i]["Anzahl"] = $anzahl;
-				$schiffe[$i]["ID"] = $i;
-			} else {
-				$schiffe[$i]["Name"] = $row_schiffe["Name_Plural"];
-				$schiffe[$i]["Anzahl"] = $anzahl;
-				$schiffe[$i]["ID"] = $i;
+	foreach (datasetPlanet::$stationedShipsType as $_shipID => $_numberOfShips) {
+		if ($_numberOfShips > 0) {
+			if (!isset($_stationedShips)) {$_count = 0;} else {$_count = count($_stationedShips);}
+			$_stationedShips[$_count] = new stdclass ; 
+			$_stationedShips[$_count]->numberOfShips = number_format($_numberOfShips, 0, '.', '.');
+			$_stationedShips[$_count]->shipID = $_shipID;
+			if ($_numberOfShips == 1) {
+				$_stationedShips[$_count]->name = spaceships::$shipID[$_shipID]->name;
+			} else if ($_numberOfShips > 1) {
+				$_stationedShips[$_count]->name = spaceships::$shipID[$_shipID]->namePlural;
 			}
-
 		}
-
 	}
 
-
-	if (isset($schiffe)) { return $schiffe; }
-
-
-
-
-
+	if (isset($_stationedShips)) { return $_stationedShips; }
 }
+
 
 function get_stationed_defense ($player_id, $planet_id) {		// ex-function: get_Deff_stationiert
 
@@ -2663,14 +2633,12 @@ function flotte_senden($spieler_id, $planet_id, $flotte, $ziel_x, $ziel_y, $ziel
 			if($ressource["Bot"] < $ress_mitnehmen["3"]) { $ress_mitnehmen["3"] = $ressource["Bots"]; }
 			$ress_mitnehmen["3"] = 0;
 
-			$tech_spieler = get_tech_level_player($spieler_id); //Antrieb & Kappa
+			$tech_spieler = get_tech_stufe_spieler($spieler_id); //Antrieb & Kappa
 
 			//Kappa prüfen
 			$kapazität = 0;
-
 			foreach ($flotte as $item => $value) {
-				$kapazität_schiff = get_Ship($flotte[$item]["Schiff_ID"]);
-				$kapazität = $kapazität + ($flotte[$item]["Anzahl"] * ($kapazität_schiff["Kapazitaet"] * ( 10 * $tech_spieler["Tech_5"]) / 100 + $kapazität_schiff["Kapazitaet"]));
+				$kapazität += $flotte[$item]["Anzahl"] * (spaceships::$shipID[$item]->loadingCapacity * ( 10 * $tech_spieler["Tech_5"]) / 100 + spaceships::$shipID[$item]->loadingCapacity);
 			}
 
 			if($kapazität < $ress_mitnehmen["0"] + $ress_mitnehmen["1"] + $ress_mitnehmen["2"]) {
@@ -2689,14 +2657,10 @@ function flotte_senden($spieler_id, $planet_id, $flotte, $ziel_x, $ziel_y, $ziel
 
 			//langsamstes Schiff suchen für Geschwindigkeit
 			$langsamstes_schiff = 10000000;
-
 			foreach ($flotte as $item => $value) {
-				$geschwindigkeit_schiff = get_Ship($flotte[$item]["Schiff_ID"]);
-				if($langsamstes_schiff > $geschwindigkeit_schiff["Geschwindigkeit"]) { $langsamstes_schiff = $geschwindigkeit_schiff["Geschwindigkeit"]; }
-			}
-
-
-
+				if($langsamstes_schiff > spaceships::$shipID[$flotte[$item]["Schiff_ID"]]->maxSpeed)
+					{$langsamstes_schiff = spaceships::$shipID[$flotte[$item]["Schiff_ID"]]->maxSpeed; }
+			}	
 
 			if($systemflug_im_system == 1) {
 				$distanz_berechnen = 10440000 + 360000 * $distanz;
@@ -2757,7 +2721,7 @@ function check_flotte_modul_vorhanden($flotte_schiffe, $modul) {
 	$gefunden = false;
 	foreach ($flotte_schiffe AS $Key => $value) {
 		if($value["Anzahl"] > 0) {
-			$schiff = get_ship($value["Schiff_ID"]);
+			$schiff = get_config_spaceship($value["Schiff_ID"]);
 			$a = strpos($schiff["Modul"], $modul);
 			if(strpos($schiff["Modul"], $modul) !== false ) { $gefunden = true; };
 		}
@@ -2835,32 +2799,40 @@ function flotte_slots_frei($spieler_id) {
 
 }
 
-function get_addiere_schiffe_stationiert($spieler_id, $ship_id) {
+function get_all_ships_stationed($_playerID) {
 	require 'inc/connect_galaxy_1.php';
-	$sql = "SELECT SUM(`Schiff_Typ_" . $ship_id . "`) as summe FROM `planet` WHERE `Spieler_ID` = '" . $spieler_id . "'";
-	$query = $sql or die("Error in the consult.." . mysqli_error("Error: #0002302 ".$link));
+	
+	$_query = 'SELECT '.vsprintf('IFNULL(sum(%s),0) as "1",IFNULL(sum(%s),0) as "2",IFNULL(sum(%s),0) as "3",IFNULL(sum(%s),0) as "4"
+				,IFNULL(sum(%s),0) as "5",IFNULL(sum(%s),0) as "6",IFNULL(sum(%s),0) as "7",IFNULL(sum(%s),0) as "8"
+				,IFNULL(sum(%s),0) as "9",IFNULL(sum(%s),0) as "10",IFNULL(sum(%s),0) as "11",IFNULL(sum(%s),0) as "12"'
+				,datasetPlanet::stationedShipsType).' FROM '.datasetPlanet::table.' WHERE '.datasetPlanet::playerID.' = \''.$_playerID.'\'';
 
-	$result = mysqli_query($link, $query) or sql_fehler(mysqli_error($link) , __FILE__ ,  __LINE__ );
-	$row = mysqli_fetch_object($result);
-	return $row->summe;
+	return mysqli_fetch_object(our_sql_query($link,$_query,must_have_results,max_one_result));
 }
 
-function get_addiere_schiffe_luft($spieler_id, $ship_id) {
+
+function get_all_ships_in_the_air($_playerID) {
 	require 'inc/connect_galaxy_1.php';
-	$sql = "SELECT SUM(`Schiff_Typ_" . $ship_id . "`) as summe FROM `flotten` WHERE `Spieler_ID` = '" . $spieler_id . "'";
-	$query = $sql or die("Error in the consult.." . mysqli_error("Error: #0002302 ".$link));
 
-	$result = mysqli_query($link, $query) or sql_fehler(mysqli_error($link) , __FILE__ ,  __LINE__ );
+	$_query = 'SELECT '.vsprintf('IFNULL(sum(%s),0) as "1",IFNULL(sum(%s),0) as "2",IFNULL(sum(%s),0) as "3",IFNULL(sum(%s),0) as "4"
+				,IFNULL(sum(%s),0) as "5",IFNULL(sum(%s),0) as "6",IFNULL(sum(%s),0) as "7",IFNULL(sum(%s),0) as "8"
+				,IFNULL(sum(%s),0) as "9",IFNULL(sum(%s),0) as "10",IFNULL(sum(%s),0) as "11",IFNULL(sum(%s),0) as "12"'
+				,datasetFleets::ShipsInFleetType).' FROM '.datasetFleets::table.' WHERE '.datasetFleets::ownerPlayerID.' = \''.$_playerID.'\'';
 
-	$row = mysqli_fetch_object($result);
-	if(isset($row->summe)) {
-		return $row->summe;
-	} else {
-		return 0;
+	return mysqli_fetch_object(our_sql_query($link,$_query,must_have_results,max_one_result));
+}
+
+
+function get_all_ships_in_galaxy($_playerID) {
+	$_allShips = get_all_ships_stationed($_playerID);
+	$_air = get_all_ships_in_the_air($_playerID);
+
+	foreach ($_air as $_ID => $_ships){
+		$_allShips->$_ID += $_ships;
 	}
 
+	return $_allShips;
 }
-
 
 function get_total_stationed_defense_in_galaxy ($player_id, $defense_id) { 			// ex-function:  get_addiere_deff_stationiert
 	require 'inc/connect_galaxy_1.php';
@@ -3126,7 +3098,7 @@ function mission_kolonisieren($flotte_abarbeiten, $spieler_id, $username) {
 	$z2 = $flotte_abarbeiten["z2"];
 	$Ankunft = $flotte_abarbeiten["Ankunft"];
 
-	$tech_spieler = get_tech_level_player($spieler_id); //Kolotech: Tech_10
+	$tech_spieler = get_tech_stufe_spieler($spieler_id); //Kolotech: Tech_10
 	$anzahl_planeten = get_number_of_planets($spieler_id, 1);
 	if($tech_spieler["Tech_10"] <= $anzahl_planeten - 1) { return false; }
 	if (check_koordinaten_besetzt($x2, $y2, $z2) == false) { //Schauen ob der Planet besetzt ist
@@ -3204,8 +3176,7 @@ function get_zähle_bots($flotte_abarbeiten) {
 	for($i = 1; $i <= 12; $i++) {
 		$anzahl = $flotte_abarbeiten["Schiff_Typ_" . $i];
 		if($anzahl > 0) {
-			$ship = get_ship($i);
-			$bots = $ship["Bots"] * $anzahl;
+			$bots = spaceships::$shipID[$i]->requiredBots * $anzahl;
 		}
 	}
 	return $bots;
@@ -3508,7 +3479,8 @@ function lng_echo ($id, $open_txt_file = false, $echo_on = true, $var_array = nu
 	}
 
 	if (!$error_reading_file) {
-		while (strpos($string, '{') !== false) {
+		$error = false;
+		while (strpos($string, '{') !== false && !$error) {
 			$pos1 = strpos($string, '{');
 			$pos2 = strpos($string, '}');
 			if ($pos2 === false) {								// check only {  without } and delete lonley {
@@ -3529,13 +3501,18 @@ function lng_echo ($id, $open_txt_file = false, $echo_on = true, $var_array = nu
 				if ($formatted_output !== false && (strpos ($value,'Notice:') === false)) {
 					//if (is_numeric($value)) {$value = lng_format_number ($value, $format);}
 				} else if (strpos ($value,'<b>Notice:</b>') !== false) {
+					$error = true;
 					if ($open_txt_file) {
 						$value .= ' in language file: <b>' . $lng_defaults['id'] . '_' . $id . '.txt</b><<<';
 					} else {
 						$value .= ' in language file: <b>' . $lng_defaults['id'] . '_' . $function_called_from_file . '.xml </b> string-id: <b>' . $id . '</b><<<';
 					}
+				} 
+				if ($error) {
+					$string = $value;
+				} else {
+					$string = substr($string, 0, $pos1).$value.substr($string, $pos2+1, strlen($string)-$pos2-1);
 				}
-				$string = substr($string, 0, $pos1).$value.substr($string, $pos2+1, strlen($string)-$pos2-1);
 			}
 		}
 	}
@@ -3547,6 +3524,7 @@ function get_value_of_variable ($variable, $var_array) {		// check for black / w
 	// written by ES  Sep 2016
 
 	if (!isset($var_array)) {$var_array = $GLOBALS;};
+	if (is_object($var_array)) {$var_array = (array)$var_array;}
 
 	$value = false;
 	$variable_blocked = true;
@@ -3635,10 +3613,11 @@ function lng_number_format ($number, $format = 'n') {
 	if (isset($format)) { 			// if only one letter set default , respectively set format for single placeholder
 		if (strlen($format) == 1) {
 			switch ($format) {
-				case 'd' : 	$format = $lng_defaults['date_format']; 			break;
-				case 't'	:	$format = $lng_defaults['time_format']; 			break;
-				case 'c'	:	$format = $lng_defaults['countdown_format']; 	break;
-				case 'n'	:	$format = $lng_defaults['number_format']; 		break;
+				case 'd'	: 	$format = $lng_defaults['date_format']; break;
+				case 't'	:	$format = $lng_defaults['time_format']; break;
+				case 'c'	:	$format = $lng_defaults['countdown_format']; break;
+				case 'C'	:	$format = $lng_defaults['enhanced_countdown_format']; break;
+				case 'n'	:	$format = $lng_defaults['number_format']; break;
 			}
 		}
 	}

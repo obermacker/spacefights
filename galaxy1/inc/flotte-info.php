@@ -30,8 +30,11 @@ if(isset($_GET["id"])) {
 			echo "<li>Schiffe:<ul>";
 			for ($i = 1; $i<=12; $i++) {
 				if ($balken["Schiff_Typ_" . $i] > 0) {
-					$schiff_detail = get_ship($i);
-					echo "<li>" . $balken["Schiff_Typ_" . $i] . "x " . $schiff_detail["Name"];   
+					if ($balken["Schiff_Typ_" . $i] == 1) {
+						echo "<li>" . $balken["Schiff_Typ_" . $i] . "x " . spaceships::$shipID[$i]->name;
+					} else {
+						echo "<li>" . $balken["Schiff_Typ_" . $i] . "x " . spaceships::$shipID[$i]->namePlural;   
+					}
 				}
 			}
 			echo "</li></ul>";
