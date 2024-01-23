@@ -178,3 +178,46 @@ function slideAndCalculate(id) {
 	}
  }
 
+
+ /************ Hide & Show by ES 2024 ***************/
+
+ function displayNone(name, par) {
+	var elemente = document.getElementsByName(name);
+	for(var i=0; i<elemente.length; i++) {
+		elemente[i].style.display=par;
+	}
+}	
+
+ 
+function toggleDetails(name) {
+	var eButton = document.getElementsByName(name+'Button');
+	 
+	if (eButton[0].className.match('detailsNotShown')) {
+		displayNone(name,'');
+	} else {	
+		setTimeout('displayNone("'+name+'","none")',300);
+	}
+	setTimeout('toggleDetailsPart2("'+name+'")',10);
+}
+	 
+
+function toggleDetailsPart2(name) {
+	var elemente = document.getElementsByName(name);
+	var eButton = document.getElementsByName(name+"Button");
+	 
+	if (eButton[0].className.match('detailsNotShown')) {
+		eButton[0].className = eButton[0].className.replace('detailsNotShown','detailsAreShown');
+		eButton[0].innerHTML = "▼";
+	} else {
+		eButton[0].className = eButton[0].className.replace('detailsAreShown','detailsNotShown');
+		eButton[0].innerHTML = "▶";
+	}
+ 
+	for(var i=0; i<elemente.length; i++) {
+		if (elemente[i].className.match('detailsHidden')) {
+			elemente[i].className=elemente[i].className.replace('detailsHidden','detailsShown');
+		} else {
+			elemente[i].className=elemente[i].className.replace('detailsShown','detailsHidden');	
+		}
+	}
+}

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<language_strings> <!-- ENGLISH by ES  Sep 2024 -->
+	<string id="light fighter name" text="light fighter" />
+	<string id="light fighter name plural" text="light fighters" />
+	<string id="light fighter description" text="description" />
+	
+	<string id="heavy fighter name" text="heavy fighter" />
+	<string id="heavy fighter name plural" text="heavy fighters" />
+	<string id="heavy fighter description" text="description" />
+	
+	<string id="star cruiser name" text="star cruiser" />
+	<string id="star cruiser name plural" text="star cruisers" />
+	<string id="star cruiser description" text="description" />
+	
+	<string id="star destroyer name" text="star destroyer" />
+	<string id="star destroyer name plural" text="star destroyers" />
+	<string id="star destroyer description" text="description" />
+	
+	<string id="small transport ship name" text="small transport ship" />
+	<string id="small transport ship name plural" text="small transport ships" />
+	<string id="small transport ship description" text="description" />
+	
+	<string id="large transport ship name" text="large transport ship" />
+	<string id="large transport ship name plural" text="large transport ships" />
+	<string id="large transport ship description" text="description" />
+	
+	<string id="reconnaissance probe name" text="reconnaissance probe" />
+	<string id="reconnaissance probe name plural" text="reconnaissance probes" />
+	<string id="reconnaissance probe description" text="description" />
+	
+	<string id="spy probe name" text="spy probe" />
+	<string id="spy probe name plural" text="spy probes" />
+	<string id="spy probe description" text="description" />
+
+	<string id="colonization ship name" text="colonization ship" />
+	<string id="colonization ship name plural" text="colonization ships" />
+	<string id="colonization ship description" text="description" />
+
+	<string id="salvage ship name" text="salvage ship" />
+	<string id="salvage ship name plural" text="salvage ships" />
+	<string id="salvage ship description" text="description" />
+
+	<string id="shuttle name" text="shuttle" />
+	<string id="shuttle name plural" text="shuttles" />
+	<string id="shuttle description" text="description" />
+		
+	<string id="dimension tide name" text="dimension tide" />
+	<string id="dimension tide name plural" text="dimension tides" />
+	<string id="dimension tide description" text="Satellite that fires a temporary black hole." />
+</language_strings>

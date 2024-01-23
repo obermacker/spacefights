@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<language_strings> <!-- GERMAN by ES  Sep 2024 -->
+	<string id="light fighter name" text="leichter Jäger" />
+	<string id="light fighter name plural" text="leichte Jäger" />
+	<string id="light fighter description" text="Ein Jäger ohne Übergewicht." />
+	
+	<string id="heavy fighter name" text="schwerer Jäger" />
+	<string id="heavy fighter name plural" text="schwere Jäger" />
+	<string id="heavy fighter description" text="Ein Jäger mit Übergewicht." />
+	
+	<string id="star cruiser name" text="Sternenkreuzer" />
+	<string id="star cruiser name plural" text="Sternenkreuzer" />
+	<string id="star cruiser description" text="Ein Kreuzer der zwischen den Sternen kreuzt." />
+	
+	<string id="star destroyer name" text="Zerstörer" />
+	<string id="star destroyer name plural" text="Zerstörer" />
+	<string id="star destroyer description" text="Ein Zerstörer der zerstört." />
+	
+	<string id="small transport ship name" text="kleiner Transporter" />
+	<string id="small transport ship name plural" text="kleine Transporter" />
+	<string id="small transport ship description" text="Ein kleiner Transporter." />
+	
+	<string id="large transport ship name" text="großer Transporter" />
+	<string id="large transport ship name plural" text="große Transporter" />
+	<string id="large transport ship description" text="Ein großer Transporter." />
+	
+	<string id="reconnaissance probe name" text="Aufklärungssonde" />
+	<string id="reconnaissance probe name plural" text="Aufklärungssonden" />
+	<string id="reconnaissance probe description" text="Eine Aufklärungssonde." />
+	
+	<string id="spy probe name" text="Spionagesonde" />
+	<string id="spy probe name plural" text="Spionagesonden" />
+	<string id="spy probe description" text="Eine Spionagesonde." />
+
+	<string id="colonization ship name" text="Kolonisierungsschiff" />
+	<string id="colonization ship name plural" text="Kolonisierungsschiffe" />
+	<string id="colonization ship description" text="Ein Kolonisierungsschiff." />
+
+	<string id="salvage ship name" text="Bergungsschiff" />
+	<string id="salvage ship name plural" text="Bergungsschiffe" />
+	<string id="salvage ship description" text="Ein Bergungsschiff." />
+
+	<string id="shuttle name" text="Shuttle" />
+	<string id="shuttle name plural" text="Shuttle" />
+	<string id="shuttle description" text="Ein Shuttle." />
+		
+	<string id="dimension tide name" text="Dimension Tide" />
+	<string id="dimension tide name plural" text="Dimension Tides" />
+	<string id="dimension tide description" text="Ein Satellit der ein temporäres schwarzes Loch erschaffen kann." />
+</language_strings>

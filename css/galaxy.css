@@ -88,7 +88,7 @@ input, textarea {font-family: verdana, sans-serif; font-size: 100%;}
  
 
 .planetbar  { border: 1px dashed  #3a6784; text-align: center; background-color: rgba(0,34,60, 0.55);   }
-.übersicht { border: 1px solid #3a6784; text-align: left; background-color: rgba(0,34,60, 0.55);   }
+.übersicht, .overview { border: 1px solid #3a6784; text-align: left; background-color: rgba(0,34,60, 0.55);   }
 .übersicht_randlos { border: 0px solid #694649; }
 .tbb { background-color: #000000; }
 
@@ -112,8 +112,8 @@ input, textarea {font-family: verdana, sans-serif; font-size: 100%;}
 
 .tbchell { padding:4px; background-color: rgba(0,34,60, 0.55); border-top: #00223c 1px solid; border-right: #00223c 1px solid; text-align: left; padding-left: 1em;}
 .tbchell_with_right_border { padding:4px; background-color: rgba(0,34,60, 0.55); border-top: #00223c 1px solid; border-right: #3a6784 1px solid; text-align: left; padding-left: 1em; padding-right: 1em;}
-.tbchell_ohne_left_border { padding: 0px; border-left: #00223c 0px solid;  }
-.tbchell_ohne_right_border { padding: 0px; border-right: #00223c 0px solid;  }
+.tbchell_ohne_left_border, .tbchellLeftBorderOff{ padding: 0px; border-left: #00223c 0px solid;  }
+.tbchell_ohne_right_border, .tbchellRightBorderOff{ padding: 0px; border-right: #00223c 0px solid;  }
 .tbchell_ohne_left_padding { padding: 4px; }
 .tbchellk { border-right: #3a6784 1px solid;}
 .tbchell_rechts { text-align: right; padding-right: 1em; }
@@ -289,8 +289,7 @@ a.kontakte {
 }
 
 
-/* for messages ES 10.01.2024 */
-
+/* for GRID messages ES 10.01.2024 */
 .messagesGrid 		      {display:grid; grid-template-columns: 59px 15% auto 20% 20% 70px;}
 .sendMessagesRecipient 	{grid-column: 1 / span 2;}
 .sendMessagesSubject 	  {grid-column: 3 / span 3;}
@@ -304,6 +303,36 @@ a.kontakte {
 
 .wordBreak {word-break:break-all; word-wrap:break-word;}
 
+
+/* for ConstructionGUI2 GRID Design ES 23.01.2024 */
+.GUI2GridContainer {display:grid; grid-template-columns: 28px 14em 10em 1.5em auto 11em;}
+.GUI2HeadConstruction {grid-column: 1 / span 2;}
+.GUI2HeadQuantity {grid-column: 3 / span 2;}
+.GUI2HeadResoures {grid-column: 5;}
+.GUI2HeadBuildTime {grid-column: 6; text-align: right;}
+
+.GUI2DescriptionShortDetails {grid-column: 1; padding-top: 1em; padding-bottom: 1em;}
+.GUI2DescriptionShortConstruction {grid-column: 2; padding-top: 1em; padding-bottom: 1em;}
+.GUI2DescriptionShortSlider {grid-column: 3; padding: 1em 0.3em 1em 0; text-align: right;}
+.GUI2DescriptionShortQuantity {grid-column: 4; padding-top: 1em; padding-bottom: 1em; text-align: right;}
+.GUI2DescriptionShortResoures {grid-column: 5; text-align:right; padding: 0.2em 0 0 0;}
+.GUI2DescriptionShortBuildTime {grid-column: 6; text-align: right; padding-top: 1em; padding-bottom: 1em; padding-left: 0;}
+.GUI2DescriptionShortMaxHold {grid-column: 3 / span 4; padding-top: 1em; padding-bottom: 1em;}
+
+.GUI2DescriptionLong{grid-column: 1 / span 6;}
+.GUI2DescriptionContainer {display:grid; grid-template-columns: 216px auto;	margin: 0 4px 1em 4px; padding:0;}
+.GUI2DescriptionLongPicture {grid-column: 1;} 
+.GUI2DescriptionLongText {grid-column: 2; margin: 0.7em;} 
+.GUI2DescriptionLongTextOnly {grid-column: 1 / span 2; margin: 0.7em;}
+
+.GUI2FooterConstruction {grid-column: 1 / span 2; padding-top: 1em; padding-bottom: 0.9em;}
+.GUI2FooterConstructionTime {grid-column: 3 / span 2; padding-top: 1em; text-align: right;}
+.GUI2FooterResoures {grid-column: 5;text-align:right; padding: 0.2em 0 0 0;}
+.GUI2FooterBuildButton {grid-column: 6; padding: 1em 0 0 0; text-align: right;}
+.GUI2FooterBuildYard{grid-column: 1 / span 6; padding-top: 1em; padding-bottom: 1em;}
+
+.constructionGUI2 .picture {height:21.5em;  display: block;  margin: 0.7em;}
+	
 /* by ES 22.06.2016*/
 .pBar {width: 0%; position: absolute; top: 0px; height: 100%; z-index: 5; background-color: /*#004578*/#00cc00; transition: background-color 3s linear 0s;}
 .pBarG {Background-color: /*#4178a2*/ #008800;}
@@ -315,9 +344,9 @@ a.kontakte {
 .detailsAusgeblendet { transform: scale(0); opacity: 0; visibility: collapse; transition: all 0.5s cubic-bezier(.6,-0.28,.74,.05);}
 .detailsEingeblendet { transform: scale(1); opacity: 1; visibility: visible; transition: all 0.5s cubic-bezier(.18,.89,.32,1.28);}*/
 	
-	.detailsAusgeblendet { opacity: 0; /*visibility: collapse;*/ transform: scale(0) translateX(-50%);transition: all 0.3s ease-in;
+	.detailsAusgeblendet, .detailsHidden { opacity: 0; /*visibility: collapse;*/ transform: scale(0) translateX(-50%);transition: all 0.3s ease-in;
 					-webkit-transform: scale(0) translateX(-50%); -webkit-transition: all 0.3s ease-in;}
-	.detailsEingeblendet { 
+	.detailsEingeblendet, .detailsShown { 
 		opacity: 1; /*visibility: visible;*/ transform: scale(1) translateX(0%); transition: all 0.3s ease-out;
 					-webkit-transform: scale(1) translateX(0%); -webkit-transition: all 0.3s ease-out;}
 
@@ -327,8 +356,8 @@ a.kontakte {
 
 .bauGUI  .imBau, .constructionGUI2 .imBau {font-weight: bold;}
 
-.bauGUI .passive, .constructionGUI2 .passive {color: rgba(255,255,255,0.75);}
-.bauGUI .passive.notEnoughRes, .constructionGUI2 .passive.notEnoughRes {color: rgba(255,0,0,0.75);}
+.bauGUI .passive, .constructionGUI2 .passive {color: rgba(255,255,255,0.55);}
+.bauGUI .passive.notEnoughRes, .constructionGUI2 .passive.notEnoughRes {color: rgba(255,0,0,0.8);}
 .bauGUI .passive img, .constructionGUI2 .passive img {opacity:0.75;}
 
 .bauGUI .bildDetails, .constructionGUI2 .bildDetails {height:21.5em;  display: block;  margin: 1em auto;}
@@ -409,6 +438,7 @@ a.kontakte {
 .constructionGUI2 input[type=range]:focus::-ms-fill-lower {background: #50555C;}
 .constructionGUI2 input[type=range]:focus::-ms-fill-upper {background: #50555C;}
 
+.constructionGUI2 .slider input {background-color: #001a30;}
 .constructionGUI2 .slider {width:8em; vertical-align: middle;}
 .constructionGUI2 .inputField {text-align:center; vertical-align:middle; width:1.5em; background-color:#50555C; border: none;  border-radius: 1px;}
 

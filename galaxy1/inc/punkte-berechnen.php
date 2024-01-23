@@ -128,32 +128,31 @@ echo "<td>Sili</td>";
 echo "<td>Wasser</td>";
 echo "<td>1000stel Punkte</td></tr>";
 echo "<th colspan=4>Schiffe stationiert</th>";
-for($ship_id = 1; $ship_id <= 11; $ship_id++) {
-	$schiffe_anzahl = get_addiere_schiffe_stationiert($spieler_id, $ship_id);
-	$schiff = get_ship($ship_id);
-	$ress = $schiff['Kosten_Eisen'] + $schiff['Kosten_Silizium'] + $schiff['Kosten_Wasser'];
+$schiffe = get_all_ships_stationed($playerID);
+foreach ($schiffe as $ship_id => $schiffe_anzahl){
+	$ress = spaceships::$shipID[$ship_id]->requiredIron + spaceships::$shipID[$ship_id]->requiredSilicon + spaceships::$shipID[$ship_id]->requiredWater;
 	$punkte_neu["Flotte"] = $punkte_neu["Flotte"] + ($ress * $schiffe_anzahl);
 	echo "<tr>";
 	echo "<td>" . $schiffe_anzahl . "</td>";
-	echo "<td>" . $schiff["Name"] . "</td>";
-	echo "<td>" . round($schiff["Kosten_Eisen"]) . "</td>";
-	echo "<td>" . round($schiff["Kosten_Silizium"]) . "</td>";
-	echo "<td>" . round($schiff["Kosten_Wasser"]) . "</td>";
+	echo "<td>" . spaceships::$shipID[$ship_id]->name . "</td>";
+	echo "<td>" . round(spaceships::$shipID[$ship_id]->requiredIron) . "</td>";
+	echo "<td>" . round(spaceships::$shipID[$ship_id]->requiredSilicon) . "</td>";
+	echo "<td>" . round(spaceships::$shipID[$ship_id]->requiredWater) . "</td>";
 	echo "<td>" . $punkte_neu["Flotte"] . "</td>";
 	echo "</tr>";
 }
+
 echo "<th colspan=4>Schiffe unterwegs</th>";
-for($ship_id = 1; $ship_id <= 11; $ship_id++) {
-	$schiffe_anzahl = get_addiere_schiffe_luft($spieler_id, $ship_id);
-	$schiff = get_ship($ship_id);
-	$ress = $schiff['Kosten_Eisen'] + $schiff['Kosten_Silizium'] + $schiff['Kosten_Wasser'];
+$schiffe = get_all_ships_in_the_air($playerID);
+foreach ($schiffe as $ship_id => $schiffe_anzahl){
+	$ress = spaceships::$shipID[$ship_id]->requiredIron + spaceships::$shipID[$ship_id]->requiredSilicon + spaceships::$shipID[$ship_id]->requiredWater;
 	$punkte_neu["Flotte"] = $punkte_neu["Flotte"] + ($ress * $schiffe_anzahl);
 	echo "<tr>";
 	echo "<td>" . $schiffe_anzahl . "</td>";
-	echo "<td>" . $schiff["Name"] . "</td>";
-	echo "<td>" . round($schiff["Kosten_Eisen"]) . "</td>";
-	echo "<td>" . round($schiff["Kosten_Silizium"]) . "</td>";
-	echo "<td>" . round($schiff["Kosten_Wasser"]) . "</td>";
+	echo "<td>" . spaceships::$shipID[$ship_id]->name . "</td>";
+	echo "<td>" . round(spaceships::$shipID[$ship_id]->requiredIron) . "</td>";
+	echo "<td>" . round(spaceships::$shipID[$ship_id]->requiredSilicon) . "</td>";
+	echo "<td>" . round(spaceships::$shipID[$ship_id]->requiredWater) . "</td>";
 	echo "<td>" . $punkte_neu["Flotte"] . "</td>";
 	echo "</tr>";
 }

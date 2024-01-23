@@ -8,11 +8,20 @@ error_reporting(E_ALL);
 session_start();
 require (dirname(__FILE__) . '/inc/define_vars_classes.php');
 require (dirname(__FILE__) . '/inc/func_galaxy.php');
+require (dirname(__FILE__) . '/inc/func_compatibility.php');
 require (dirname(__FILE__) . '/inc/conf_structure.php');
 require (dirname(__FILE__) . '/inc/conf_tech.php');
-include (dirname(__FILE__) . '/inc/conf_ship.php');
 include (dirname(__FILE__) . '/inc/conf_defense.php');
 include (dirname(__FILE__) . '/inc/debug.php');
+
+//  need settings !
+if (!isset($_GET['lng'])) {$lng_defaults = get_language_defaults('de'); } else { $lng_defaults = get_language_defaults($_GET['lng']);}
+if (!isset($lng_defaults['id'])) {$lng_defaults = get_language_defaults('en');}
+$load_pictures = true; 				   // for future versions:  must be set in preferences  to load / not load images
+// seetings END
+
+// because for translations, include must be after language settings
+include (dirname(__FILE__) . '/inc/conf_spaceships.php');
 
 $playerID = ''; $sessionID = ''; $playerName = '';
 
@@ -34,12 +43,6 @@ if (isset($_SESSION['username'])) {$playerName = $_SESSION['username'];} else {$
 
 // for transitional period / compatiblity old vars
 $spieler_id = $playerID; $session_id = $sessionID; $username = $playerName;
-
-//  need settings !
-if (!isset($_GET['lng'])) {$lng_defaults = get_language_defaults('de'); } else { $lng_defaults = get_language_defaults($_GET['lng']);}
-if (!isset($lng_defaults['id'])) {$lng_defaults = get_language_defaults('en');}
-$load_pictures = true; 				   // for future versions:  must be set in preferences  to load / not load images
-// seetings END
 
 if(!isset($_POST["s"])){ 
 	if(!isset($_GET["s"])){ $select = "index";} else { $select = $_GET["s"]; }
@@ -119,7 +122,7 @@ switch ($select) {
 		$bar_planet_info = true;
 		$cache = true;
 		break;
-	case "Raumschiffe":
+	case "spaceships":
 		$nav_page_title = "display: none;";
 		$nav_startseite = "display: none;";
 		$nav_bar_planet = "";
@@ -485,74 +488,144 @@ echo '<span  id="globalJsVariables" select="' . $select . '" />';
 	
 //--- Schiffe einreihen
 
+	if (!isset($planetID)) {$planetID = $planet_id;} // temporary de - en
+	
+	if(isset($_POST['action_built_spaceships'])) {
 
-	if(isset($_POST["action-schiffe-bauen"])) {
-	
-		if (is_numeric($_POST["action-schiffe-bauen"])) {
-	
-	
-			$kann_gebaut_werden = true;
-	
+		$ressource = get_ressource($playerID, $planetID);
+		
+		// -------------- only for the time , if all variables are translated !!! ------------------ //
+				$_resources = german_res_to_english_res ($ressource);
+		// -------------- only for the time , if all variables are translated !!! ------------------ //
+		
+		$_levelSpaceshipYard = get_structure_level($playerID, $planetID, 7);
+		$_techLevel = get_tech_level_player($playerID);
+		$_stationedShips = get_ships_stationed($playerID, $planetID); 
+		$_allShips = get_all_ships_in_galaxy($playerID);	
+
+		foreach ($_POST as $_ID => $_quantity) {
+			if (str_contains($_ID, 'quantity') && $_quantity > 0) {
+				$_ID = str_replace('quantity','',$_ID);
+				$_canBeBuilt = true;
 			
-				$ship_id = $_POST["action-schiffe-bauen"];
-				$ressource = get_ressource($spieler_id, $planet_id);
-				$Ship = get_ship($_POST["action-schiffe-bauen"]);
-				$anzahl = usereingabe_cleaner ($_POST["vanzahl" . $_POST["action-schiffe-bauen"]]);
-				$raumschiffwerft_stufe =get_structure_level($spieler_id, $planet_id, 7);
-
-				if($anzahl <= 0 OR empty($anzahl) OR !is_numeric($anzahl)) { $kann_gebaut_werden = false; }
-				if($Ship["Stufe_Werft"] > $raumschiffwerft_stufe) { $kann_gebaut_werden = false; }
-				
-				$tech_stufe = get_tech_level_player($spieler_id);
-				
-				for($t = 1; $t <= 12; $t++) {
-					if ($tech_stufe["Tech_" . $t] < $Ship["Tech_" . $t]) {
-						$kann_gebaut_werden = false;
-					}
+				if($_quantity <= 0 OR empty($_quantity) OR !is_numeric($_quantity)) { $_canBeBuilt = false; }
+	
+				// check whether enough research has been carried out in all areas
+				$_techCheck = true; 
+				foreach (spaceships::$shipID[$_ID]->requiredTechLevelType as $_t => $_value) {
+					if ($_techLevel::$techLevelType[$_t] < spaceships::$shipID[$_ID]->requiredTechLevelType[$_t]) {
+						$_techCheck = false; 				}
 				}
-						
-					$schiff_in_Besitz = get_schiffe_in_Besitz($spieler_id, $planet_id, $Ship["Schiff_ID"]);
-					$max = false;
 				
-					if($Ship["Max_Hold_Planet"] != -1) {
-				
-						if($schiff_in_Besitz["Planet"] + $anzahl > $Ship["Max_Hold_Planet"]) { $max = true; }
-				
+				if(spaceships::$shipID[$_ID]->requiredLevelSpaceshipYard <= $_levelSpaceshipYard && $_techCheck == true) {
+					// check maximum number of posible constructions is reached
+					$_maxQuantity = false;  $_maxGalaxy = false;
+					if(spaceships::$shipID[$_ID]->maxHoldPlanet != -1) { 
+						if($_stationedShips[$_ID] >= spaceships::$shipID[$_ID]->maxHoldPlanet) {
+							$_maxQuantity = true; 
+						}
+					}
+					if(spaceships::$shipID[$_ID]->maxHold != -1) { 
+						if($_allShips[$_ID] >= spaceships::$shipID[$_ID]->maxHold) { 
+							$_maxQuantity = true;  $_maxGalaxy = true; 
+						}			
 					}
 				
-					if($Ship["Max_Hold"] != -1) {
-							
-						if($schiff_in_Besitz["Galaxy"] + $anzahl > $Ship["Max_Hold"]) { $max = true; }
-							
+					if($_resources['iron'] < spaceships::$shipID[$_ID]->requiredIron * $_quantity) {$_canBeBuilt = false; }
+					if($_resources['silicon'] < spaceships::$shipID[$_ID]->requiredSilicon * $_quantity) {$_canBeBuilt = false; }
+					if($_resources['water'] < spaceships::$shipID[$_ID]->requiredWater * $_quantity) {$_canBeBuilt = false; }
+					if($_resources['bots'] < spaceships::$shipID[$_ID]->requiredBots * $_quantity) {$_canBeBuilt = false; }
+					if($_resources['karma'] < spaceships::$shipID[$_ID]->requiredKarma * $_quantity) {$_canBeBuilt = false; }
+
+					if ($_canBeBuilt) {
+						//set_defense_construction_loop($spieler_id, $planet_id, $_quantity, $defense);					
+						$_constructionTime = spaceships::$shipID[$_ID]->constructionTime / $_levelSpaceshipYard;
+						set_bauschleife_ship($spieler_id, $planet_id, $_ID, spaceships::$shipID[$_ID]->name, $_quantity, $_constructionTime
+						, $_resources['iron'], $_resources['silicon'], $_resources['water'], $_resources['bots'], $_resources['karma']
+						, spaceships::$shipID[$_ID]->requiredIron, spaceships::$shipID[$_ID]->requiredSilicon, spaceships::$shipID[$_ID]->requiredWater
+						, spaceships::$shipID[$_ID]->requiredBots, spaceships::$shipID[$_ID]->requiredKarma);					
+					} else if ($_quantity <> 0) {
+						lngecho("spaceship can not be built !"); 	//ToDo: no error messaging
 					}
 
-				if($max == true) { $kann_gebaut_werden = false; }
-				if($ressource["Eisen"] < ($Ship["Kosten_Eisen"] * $anzahl)) { $kann_gebaut_werden = false; }
-				if($ressource["Silizium"] < ($Ship["Kosten_Silizium"] * $anzahl)) { $kann_gebaut_werden = false; }
-				if($ressource["Wasser"] < ($Ship["Kosten_Wasser"] * $anzahl)) { $kann_gebaut_werden = false; }
-				if($ressource["Karma"] < ($Ship["Kosten_Karma"] * $anzahl)) { $kann_gebaut_werden = false; }
-				if($ressource["Bot"] < ($Ship["Bots"] * $anzahl)) { $kann_gebaut_werden = false; }
-
-				if ($kann_gebaut_werden == true) {
+		// 		if ($kann_gebaut_werden == true) {
 					
-					$bauzeit = $Ship['Bauzeit'] = $Ship['Bauzeit'] / (1 * $raumschiffwerft_stufe);
+		// 			
 	
-					set_bauschleife_ship($spieler_id, $planet_id, $ship_id, $Ship["Name"], $anzahl, $bauzeit, $ressource["Eisen"], $ressource["Silizium"], $ressource["Wasser"], $ressource["Bot"], $ressource["Karma"], $Ship["Kosten_Eisen"], $Ship["Kosten_Silizium"], $Ship["Kosten_Wasser"], $Ship["Bots"], $Ship["Kosten_Karma"]);					
+		// 			
 						
-				} else {
+		// 		} else {
 	
-					echo(""); //ToDo: Fehlermeldung einbauen
-	
-				}
-			
+		// 			echo(""); //ToDo: Fehlermeldung einbauen
+
+
+			}
 		}
 	}
+}
+		// exit;
+		// 	$kann_gebaut_werden = true;
+	
+			
+		// 		$ship_id = $_POST["action_built_spaceships"];
+		// 		$ressource = get_ressource($spieler_id, $planet_id);
+		// 		$Ship = get_config_spaceship($_POST["action_built_spaceships"]);
+		// 		$anzahl = usereingabe_cleaner ($_POST["inputField" . $_POST["action_built_spaceships"]]);
+		// 		$raumschiffwerft_stufe =get_structure_level($spieler_id, $planet_id, 7);
+
+		// 		if($anzahl <= 0 OR empty($anzahl) OR !is_numeric($anzahl)) { $kann_gebaut_werden = false; }
+		// 		if($Ship["Stufe_Werft"] > $raumschiffwerft_stufe) { $kann_gebaut_werden = false; }
+				
+		// 		$tech_stufe = get_tech_stufe_spieler($spieler_id);
+				
+		// 		for($t = 1; $t <= 12; $t++) {
+		// 			if ($tech_stufe["Tech_" . $t] < $Ship["Tech_" . $t]) {
+		// 				$kann_gebaut_werden = false;
+		// 			}
+		// 		}
+						
+		// 			$schiff_in_Besitz = get_schiffe_in_Besitz($spieler_id, $planet_id, $Ship["Schiff_ID"]);
+		// 			$max = false;
+				
+		// 			if($Ship["Max_Hold_Planet"] != -1) {
+				
+		// 				if($schiff_in_Besitz["Planet"] + $anzahl > $Ship["Max_Hold_Planet"]) { $max = true; }
+				
+		// 			}
+				
+		// 			if($Ship["Max_Hold"] != -1) {
+							
+		// 				if($schiff_in_Besitz["Galaxy"] + $anzahl > $Ship["Max_Hold"]) { $max = true; }
+							
+		// 			}
+
+		// 		if($max == true) { $kann_gebaut_werden = false; }
+		// 		if($ressource["Eisen"] < ($Ship["Kosten_Eisen"] * $anzahl)) { $kann_gebaut_werden = false; }
+		// 		if($ressource["Silizium"] < ($Ship["Kosten_Silizium"] * $anzahl)) { $kann_gebaut_werden = false; }
+		// 		if($ressource["Wasser"] < ($Ship["Kosten_Wasser"] * $anzahl)) { $kann_gebaut_werden = false; }
+		// 		if($ressource["Karma"] < ($Ship["Kosten_Karma"] * $anzahl)) { $kann_gebaut_werden = false; }
+		// 		if($ressource["Bot"] < ($Ship["Bots"] * $anzahl)) { $kann_gebaut_werden = false; }
+
+		// 		if ($kann_gebaut_werden == true) {
+					
+		// 			$bauzeit = $Ship['Bauzeit'] = $Ship['Bauzeit'] / (1 * $raumschiffwerft_stufe);
+	
+		// 			set_bauschleife_ship($spieler_id, $planet_id, $ship_id, $Ship["Name"], $anzahl, $bauzeit, $ressource["Eisen"], $ressource["Silizium"], $ressource["Wasser"], $ressource["Bot"], $ressource["Karma"], $Ship["Kosten_Eisen"], $Ship["Kosten_Silizium"], $Ship["Kosten_Wasser"], $Ship["Bots"], $Ship["Kosten_Karma"]);					
+						
+		// 		} else {
+	
+		// 			echo(""); //ToDo: Fehlermeldung einbauen
+	
+		// 		}
+			
+		
+	
 	
 
 //--- ENDE: Schiffe einreihen
 
 
-//--- defense queuing
+//--- defense building queuing
 
 	if(isset($_POST["action_built_defense"])) {
 
@@ -578,7 +651,7 @@ echo '<span  id="globalJsVariables" select="' . $select . '" />';
 	
 				$existing_defense = get_existing_defense($spieler_id, $planet_id, $defense_id);
 	
-				$tech_level = get_tech_level_player($spieler_id);
+				$tech_level = get_tech_stufe_spieler($spieler_id);
 				
 				for($t = 1; $t <= $techCount; $t++) {
 					if ($tech_level["Tech_" . $t] < $defense['required tech level typ ' . $t]) {
@@ -611,7 +684,7 @@ echo '<span  id="globalJsVariables" select="' . $select . '" />';
 	}
 	
 
-//--- END: defense queuing
+//--- END: defense building queuing
 
 
 // Robots produzieren
@@ -660,7 +733,7 @@ switch ($select) {
 	case "Forschung":
 		$spalte_rechts = 0;
 		break;
-	case "Raumschiffe":
+	case "spaceships":
 		$spalte_rechts = 1;
 		break;
 	case "Flotte-Info":
@@ -710,7 +783,7 @@ switch ($select) {
 				 <tr><td><a class="navi" href="index.php?s=Rohstoffe">Rohstoffe</a></td></tr>
 				 <tr><td><hr></td></tr>
 				 <tr><td><a class="navi" href="index.php?s=Gebaeude">Gebäude</a></td></tr>
-				 <tr><td><a class="navi" href="index.php?s=Raumschiffe">Raumschiffe</a></td></tr>
+				 <tr><td><a class="navi" href="index.php?s=spaceships">Raumschiffe</a></td></tr>
 				 <tr><td><a class="navi" href="index.php?s=defense">Verteidigung</a></td></tr>
 				 <tr><td><a class="navi" href="index.php?s=Forschung">Forschung</a></td></tr>
 				 <tr><td><hr></td></tr>
@@ -834,8 +907,8 @@ switch ($select) {
 	case "Forschung":
 		require 'inc/forschung.php';
 		break;
-	case "Raumschiffe":
-		require 'inc/raumschiffe.php';
+	case "spaceships":
+		require 'inc/spaceships.php';
 		break;
 	case "Flotte-Info":
 		require 'inc/flotte-info.php';
@@ -872,10 +945,6 @@ switch ($select) {
 
 ?>
 <!-- ENDE: Content -->
-<?php 
-
-//var_dump(get_tech_level_player($spieler_id)); 
-?>
 </td>
 <?php if ($spalte_rechts == 1) { ?>
 <td width="180" valign="top" rowspan=2>
@@ -888,7 +957,7 @@ switch ($select)
 	case "Nachrichten":
 		require 'inc/recipients.php'; 
 		break;
-	case "Raumschiffe":
+	case "spaceships":
 		require 'inc/bauschleife.php'; 
 		break;
 	case "defense":

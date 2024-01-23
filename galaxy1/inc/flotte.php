@@ -244,7 +244,7 @@ if(isset($_GET["x"]) AND isset($_GET["y"]) AND isset($_GET["z"])) {
 	<input id="DistanzB" type="" placeholder="Diszanz Excel"><br>
 </form>
 	<?php 
-	$tech_spieler = get_tech_level_player($spieler_id);
+	$tech_spieler = get_tech_stufe_spieler($spieler_id);
 	$i = 0;
 	$js_schiffe_id = array();
 	$js_schiffe_anzahl = array();
@@ -254,13 +254,14 @@ if(isset($_GET["x"]) AND isset($_GET["y"]) AND isset($_GET["z"])) {
 	foreach($schiffe as $key => $value) {		
 		$anzahl = $schiffe[$key]["Anzahl"];
 		$id = $schiffe[$key]["ID"];
-		$schiff_detail = get_config_ships($id);
 		
 		$js_schiffe_id[] = $id; 
 		$js_schiffe_anzahl[] = $anzahl;		
 		
-		$js_schiffe_Kapazität[] =  $schiff_detail["Kapazitaet"] * (10 * $tech_spieler["Tech_5"]) / 100 + $schiff_detail["Kapazitaet"];
-		$js_schiffe_Geschwindigkeit[] = $schiff_detail["Geschwindigkeit"];		
+		$js_schiffe_Kapazität[] =  spaceships::$shipID[$id]->loadingCapacity * (10 * $tech_spieler["Tech_5"]) / 100 + spaceships::$shipID[$id]->loadingCapacity;
+		$js_schiffe_Geschwindigkeit[] = spaceships::$shipID[$id]->maxSpeed;		
+		
+		//$schiff_detail = (array) spaceships::$shipID[$id];
 		//echo "<input id='schiff_id[$i]' placeholder='schiff_id[$i]' value='" . $id . "'>";
 		//echo "<input id='schiff_geschwindigkeit[$i]' placeholder='schiff_geschwindigkeit[$i]' value='" . $schiff_detail["Geschwindigkeit"] . "'><br>";
 		//echo "<input id='schiff_kapazitaet[$i]' placeholder='schiff_kapazitaet[$i]' value='" . $schiff_detail["Kapazitaet"] . "'><br>";
