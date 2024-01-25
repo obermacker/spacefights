@@ -16,7 +16,6 @@ if(isset($_GET["x"]) AND isset($_GET["y"])) {
 		$flotte[0]["Anzahl"] = 1;
 		$mission = array("erkunden");
 		$erkunden_start = flotte_senden($spieler_id, $planet_id, $flotte, $px, $py, 12, $mission, 100, 0, 0);
-		//var_dump($erkunden_start);
 	}
 	
 } else {
@@ -41,19 +40,9 @@ if( $y_start < 1) {$y_start = 1; }
 $y_ende = $y_start + 12;
 if($y_ende > 50) { $y_ende = 50; $y_start = $y_ende - 12; }
 	
-$erkundet = get_erkundete_systeme($spieler_id, $x_start, $y_start, $x_ende, $y_ende);
+$erkundeteSysteme = get_explored_systems($spieler_id, $x_start, $y_start, $x_ende, $y_ende);
 
-$wurde_erkundet = false;
-if($erkundet["error"] == false) {
-	foreach($erkundet as $key => $value) {
-	
-		if(isset($erkundet[$key]["X"])) {
-			if($erkundet[$key]["X"] == $px AND $erkundet[$key]["Y"] == $py) {
-				$wurde_erkundet = true;
-			}
-		}
-	}
-}
+$wurde_erkundet = false; foreach($erkundeteSysteme as $key => $value) {if($value->x == $px && $value->y == $py) {$wurde_erkundet = true; break;}}
 
 $liste_planeten  = get_liste_planeten_im_system($px, $py, $spieler_id);
 
@@ -168,24 +157,24 @@ if($wurde_erkundet == false) {
 				for($x = $x_start; $x <= $x_ende; $x++) {
 				 	if($y == $y_ende) {
 				 		if($x == $x_ende) {
-				 			$map[$x][$y] = "<td class='tbchell_minimap tbchell_minimap_ohne_unten tbchell_minimap_ohne_rechts' title='" . ($x) . ":" . ($y) . "'><a href=''><img src='img/star.png'></a></td>";
+				 			$map[$x][$y] = "<td class='tbchell_minimap tbchell_minimap_ohne_unten tbchell_minimap_ohne_rechts' title='" . ($x) . ":" . ($y) . "'><a href=''>&nbsp;&nbsp;&nbsp;</a></td>";
 				 		} else {
-				 			$map[$x][$y] = "<td class='tbchell_minimap tbchell_minimap_ohne_unten' title='" . ($x) . ":" . ($y) . "'><a href='index.php?s=Sonnensystem&x=$x&y=$y'><img src='img/star.png'></a></td>";
+				 			$map[$x][$y] = "<td class='tbchell_minimap tbchell_minimap_ohne_unten' title='" . ($x) . ":" . ($y) . "'><a href='index.php?s=Sonnensystem&x=$x&y=$y'>&nbsp;&nbsp;&nbsp;</a></td>";
 				 		}
 				 			
 				 	} else {
 				 		
 				 		if($x == $x_ende) {
-				 			$map[$x][$y] = "<td class='tbchell_minimap tbchell_minimap_ohne_rechts' title='" . ($x) . ":" . ($y) . "'><a href='index.php?s=Sonnensystem&x=$x&y=$y'><img src='img/star.png'></a></td>";
+				 			$map[$x][$y] = "<td class='tbchell_minimap tbchell_minimap_ohne_rechts' title='" . ($x) . ":" . ($y) . "'><a href='index.php?s=Sonnensystem&x=$x&y=$y'>&nbsp;&nbsp;&nbsp;</a></td>";
 				 		} else {
-				 			$map[$x][$y] = "<td class='tbchell_minimap' title='" . ($x) . ":" . ($y) . "'><a href='index.php?s=Sonnensystem&x=$x&y=$y'><img src='img/star.png'></a></td>";
+				 			$map[$x][$y] = "<td class='tbchell_minimap' title='" . ($x) . ":" . ($y) . "'><a href='index.php?s=Sonnensystem&x=$x&y=$y'>&nbsp;&nbsp;&nbsp;</a></td>";
 				 		}
 				 			
 					
 					}	
 
 					if($x == $px AND $y == $py) { 
-						$map[$x][$y] = "<td class='tbtb_minimap_selected' title='" . ($x) . ":" . ($y) . "'><a href='index.php?s=Sonnensystem&x=$x&y=$y'><img src='img/star.png'></a></td>";
+						$map[$x][$y] = "<td class='tbtb_minimap_selected' title='" . ($x) . ":" . ($y) . "'><a href='index.php?s=Sonnensystem&x=$x&y=$y'>&nbsp;&nbsp;&nbsp;</a></td>";
 					}
 					
 					$map[$x][$y] = str_replace("td", "td onClick=\"location.href='index.php?s=Sonnensystem&x=$x&y=$y'\"", $map[$x][$y]);
@@ -193,51 +182,25 @@ if($wurde_erkundet == false) {
 				}				
 			}
 			
+			foreach ($erkundeteSysteme as $key => $value){
+				switch (true) {	
+					case $value->ownSystem == 'true' : 
+						$map[$value->x][$value->y] = str_replace("&nbsp;&nbsp;&nbsp;", "<img src='img/star_orange.png'>", $map[$value->x][$value->y]); break;
+					case $value->foreignSystem  == 'true' : 
+						$map[$value->x][$value->y] = str_replace("&nbsp;&nbsp;&nbsp;", "<img src='img/star_blau.png'>", $map[$value->x][$value->y]); break;
+					case $value->freeSystem == 'true'  : 
+						$map[$value->x][$value->y] = str_replace("&nbsp;&nbsp;&nbsp;", "<img src='img/star_weiss.png'>", $map[$value->x][$value->y]); break;
+				}
+			}
+	
 			for($y = $y_start - 1; $y <= $y_ende; $y++) {
 				echo "<tr>";
 				for($x = $x_start - 1; $x <= $x_ende; $x++) {
-					
-					$wurde_erkundet = false;
-					if($erkundet["error"] == false) {
-						foreach($erkundet as $key => $value) {
-							if(isset($erkundet[$key]["X"])) {
-								if($erkundet[$key]["X"] == $x AND $erkundet[$key]["Y"] == $y) {
-									
-									$wurde_erkundet = true;
-									
-								}
-							}
-						}
-					}
-					 
-					
-					if($wurde_erkundet == true ) {						
-						
-						$liste_planeten  = get_liste_planeten_im_system($x, $y, $spieler_id);
-						
-						if ($liste_planeten["vorhanden"] == true) {
-							if($liste_planeten["eigenes_system"] == true) {
-								$map[$x][$y] = str_replace("star", "star_orange", $map[$x][$y]);
-							} else {
-								$map[$x][$y] = str_replace("star", "star_blau", $map[$x][$y]);
-							}
-						} else {
-							
-							$map[$x][$y] = str_replace("star", "star_weiss", $map[$x][$y]);
-						}
-						
-					} else {
-						$map[$x][$y] = str_replace("<img src='img/star.png'>", "<a href='index.php?s=Sonnensystem&x=$x&y=$y'>&nbsp;&nbsp;&nbsp;</a>", $map[$x][$y]);
-					}
-					
 					echo $map[$x][$y]; 
 				}
 				echo "</tr>";				
 			}
-				
-			
 			?>
-		
 		
 		</table>
 		
@@ -251,16 +214,18 @@ if($wurde_erkundet == false) {
 				<td class="tbtb tbtb_minimap">Minikarte</td>
 			</tr>
 			<tr>
-				<td class="tbchell_minimap tbchell_minimap_ohne_unten tbchell_minimap_ohne_rechts"><img height="100" alt="Dynamically generated map" src="minimap.php<?php echo "?x1=$x_start&y1=$y_start&x2=$x_ende&y2=$y_ende"?>" width="100" usemap="#minimap">
+				<td class="tbchell_minimap tbchell_minimap_ohne_unten tbchell_minimap_ohne_rechts"><img height="300" alt="" src="minimap.php<?php echo "?x1=$x_start&y1=$y_start&x2=$x_ende&y2=$y_ende"?>" width="300" usemap="#minimap">
 				<map name="minimap">
 <?php 
 
-for($shape_y=0; $shape_y < 100; $shape_y+=25) {
-	for($shape_x= 0; $shape_x < 100; $shape_x+=25) {
+$_step = 10; $_max = 300; $_maxPlanets = 50;
+for($shape_y=0; $shape_y < $_max; $shape_y+=$_step) {
+	for($shape_x= 0; $shape_x < $_max; $shape_x+=$_step) {
 		
 		//echo "<area shape='rect' coords='$shape_x, $shape_y, " . $shape_x + 12.5 . "," . $shape_y + 12.5 . "' href='index.php?s=Sonnensystem&x=5&y=5'>";
 		
-		echo "<area shape='rect' coords='" . $shape_x . "," . $shape_y . "," . ($shape_x + 25) . "," . ($shape_y + 25) . "' href='index.php?s=Sonnensystem&x=" . intval(($shape_x + 13) / 2) . "&y=" . intval(($shape_y + 13) / 2) . "'>\r";
+		echo "<area shape='rect' coords='" . $shape_x  . "," . $shape_y  . "," . ($shape_x + $_step) . "," . ($shape_y + $_step) . 
+			"' href='index.php?s=Sonnensystem&x=" . intval(($shape_x + $_step ) / ($_max / $_maxPlanets)) . "&y=" . intval(($shape_y + $_step) / ($_max / $_maxPlanets)) . "'>\r";
 	}
 }
 ?>

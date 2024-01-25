@@ -32,15 +32,16 @@ function create_image($spieler_id, $x1, $x2, $y1, $y2)
 {
 
 
-	$Systeme = get_eigene_systeme($spieler_id);
+	$Systeme = get_explored_systems($spieler_id, 1, 1, 50, 50);
 	$bild = imagecreatetruecolor(100, 100);
 	imagecolorallocate($bild, 0, 0, 0);
 	
 	$orange = imagecolorallocate($bild, 255, 144, 0);
 	$rot_hell = imagecolorallocate($bild, 73, 25, 25);
-	$rot_dunkel = imagecolorallocate($bild, 41, 9, 9);
+	$rot_dunkel = imagecolorallocate($bild, 21, 5, 5);
 	$grau = imagecolorallocate($bild, 25, 25, 25);
-	
+	$hellgrau = imagecolorallocate($bild, 95, 95, 95);
+	$rot = imagecolorallocate($bild, 240, 50, 50);
 	
 	//imagerectangle($bild, 1, 1, 99, 99, $grau);
 	
@@ -52,15 +53,16 @@ function create_image($spieler_id, $x1, $x2, $y1, $y2)
 	//imagesetpixel ($bild,($x1 + (($x2 - $x1) / 2)) * 2, ($y1 + (($y2 - $y1) / 2)) * 2, $orange);
 	
 	foreach($Systeme as $key => $value) {
-		
-		$x = $Systeme["X"];
-		$y = $Systeme["Y"];
+		switch (true) {
+			case $value->ownSystem == 'true' : 
+				$color = $orange; break;
+			case $value->foreignSystem  == 'true' : 
+				$color = $rot; break;
+			case $value->freeSystem == 'true'  : 
+				$color = $hellgrau; break;
+		}
 
-		imagesetpixel ($bild, 2 * $x  - 1, 2 * $y - 1, $orange);
-		
-		
-		
-		
+		imagesetpixel ($bild, 2 * $value->x - 1, 2 * $value->y - 1, $color);
 	}
 	
  
