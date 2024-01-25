@@ -2502,6 +2502,35 @@ function set_robots_galaxy_db($spieler_id, $bots_vorhanden_planet, $planet_zuwac
 
 }
 
+
+function get_explored_systems($_playerID, $_x1, $_y1, $_x2, $_y2) {
+	require 'inc/connect_galaxy_1.php';
+
+	$_query = '
+		select Spieler_ID, x, y, Entdeckt, locked, case when ownSystem > 0 then \'true\' else \'false\' end as ownSystem, 
+		case when foreignSystem > 0 then \'true\' else \'false\' end as foreignSystem, case when freeSystem > 0 then \'true\' else \'false\' end as freeSystem 
+		from (select s.Spieler_ID, s.x, s.y, s.Entdeckt, locked
+				,sum(case when p.Spieler_ID collate latin1_german2_ci = s.Spieler_ID then 1 else 0 end) as ownSystem 
+				,sum(case when p.Spieler_ID is not null and p.Spieler_ID collate LATIN1_GERMAN2_CI <> s.Spieler_ID then 1 else 0 end) as foreignSystem
+				,sum(case when p.Spieler_ID is null then 1 else 0 end) as freeSystem
+			  from sonnensystem s
+			  left join planet p on p.x = s.x and p.y = s.y
+			  where Entdeckt >= now() - interval 14 day and s.Spieler_ID = \''.$_playerID.'\' 
+			  group by s.x, s.y
+			 )tbl
+		where x >= \''.$_x1.'\' and y >= \''.$_y1.'\' and x <= \''.$_x2.'\' and y <= \''.$_y2.'\'
+		'; 
+	
+	$_exploredSystems = array();
+	$_result = our_sql_query($link,$_query);
+	
+	while ($_obj = mysqli_fetch_object($_result)){
+		array_push($_exploredSystems,$_obj);
+	}
+	return $_exploredSystems;
+}
+
+
 function get_erkundete_systeme($spieler_id, $x1, $y1, $x2, $y2) {
 	//INSERT INTO `galaxy1`.`sonnensystem` (`ID`, `Spieler_ID`, `X`, `Y`, `Entdeckt`, `locked`) VALUES (NULL, '571f0c61b59c602d44604ab830375186', '30', '28', CURRENT_TIMESTAMP, '1');
 	require 'inc/connect_galaxy_1.php';
