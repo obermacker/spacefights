@@ -329,7 +329,7 @@ function set_construction_loop_structure($_loopData){
 	// send Message to User //
 	$_message = lng_echo ('contruction loop structure started', no_file, echo_off
 							,array('structure_name' => $_loopData->constructionLoopStructureName , 'loop_until' => format_timestamp($_loopData->constructionLoopUntil)));
-	set_message(0, "System", $_loopData->playerID, $_loopData->playerName, $_message, "" ,1);
+	set_message(0, "System", $_loopData->playerID, $_loopData->playerName, "set_construction_loop_structure", $_message, 0, 1, 0);
 }
 
 
@@ -358,12 +358,11 @@ function set_bauschleife_tech($spieler_id, $planet_id, $tech_id, $tech_name, $ba
 		if (mysqli_query($link, $query)) {
 
 			$text =  $tech_name . " wird geforscht. Forschung geplant bis " . get_timestamp_in_was_lesbares($bauzeit);
-			set_message(0, "System", $spieler_id, $username, $text, "",  1);
+			set_message(0, "System", $spieler_id, $username, "set_bauschleife_tech", $text, 0, 1, 0);
 
 			} else {
 				die("Fehler in der Bauschleife: " . mysqli_error($link));
 			}
-
 
 	} else {
 		die("Fehler in der Bauschleife: " . mysqli_error($link));
@@ -683,7 +682,7 @@ function set_bauschleife_ship_fertig($spieler_id, $planet_id) {
 
 				//$news_typ = "ERFOLG_SYSTEM";
 				$news_text = "Es wurden $anzahl $insert_name fertiggestellt";
-				set_message(0, "System", $spieler_id, $username, $_planetName.': '.$news_text, "",  1);
+				set_message(0, "System", $spieler_id, $username, "set_bauschleife_ship_fertig", $_planetName.': '.$news_text, 0, 1, 0);
 				// set_news($spieler_id, $planet_id, $news_typ, $news_text);
 			} else {
 				die("Fehler in der fertigstellung: " . mysqli_error($link));
@@ -750,7 +749,7 @@ function set_bauschleife_ship_fertig($spieler_id, $planet_id) {
 
 				//$news_typ = "ERFOLG_SYSTEM";
 				$news_text = "Es wurden $fertiggestellte $insert_name fertiggestellt";
-				set_message(0, "System", $spieler_id, $username, $_planetName.': '.$news_text, "",  1);
+				set_message(0, "System", $spieler_id, $username, "set_bauschleife_ship_fertig (teil)", $_planetName.': '.$news_text, "",  1);
 				//set_news($spieler_id, $planet_id, $news_typ, $news_text);
 
 			} else {
@@ -828,7 +827,7 @@ function set_defense_construction_loop_finished ($player_id, $planet_id) {		// e
 		if ($quantity > 1) { $news_text = lng_echo ('contruction loop finished plural', no_file, echo_off, array('defense_name' => $defense['name plural'] , 'quantity' => $quantity));}
 		else { $news_text = lng_echo ('contruction loop finished', no_file, echo_off, array('defense_name' => $defense['name'] , 'quantity' => $quantity));}
 
-		set_message(0, "System", $player_id, $username, $_planetName.': '.$news_text, "",  1);
+		set_message(0, "System", $player_id, $username, "set_defense_construction_loop_finished", $_planetName.': '.$news_text, 0, 1, 0);
 		//set_news($player_id, $planet_id, $news_typ, $news_text);
 
 		// delete construction loop
@@ -945,7 +944,7 @@ function set_bauschleife_struckture_fertig($spieler_id, $planet_id, $gebäude_id
 	if (mysqli_query($link, $query)) {
 
 		$text =  $Gebäude["Name"] . " ist jetzt fertiggestellt";
-		set_message(0, "System", $spieler_id, $username, $text, "", 1);
+		set_message(0, "System", $spieler_id, $username, "set_bauschleife_struckture_fertig", $text, 0, 1, 0);
 
 
 	} else {
@@ -983,7 +982,7 @@ function set_bauschleife_tech_fertig($spieler_id, $planet_id, $tech_id, $usernam
 
 	if (mysqli_query($link, $query)) {
 		$text =  $Tech["Name"] . " wurde erforscht.";
-		set_message(0, "System", $spieler_id, $username, $text, "", 1);
+		set_message(0, "System", $spieler_id, $username, "set_bauschleife_tech_fertig", $text, 0, 1, 0);
 	} else {
 		die("$abfrage Fehler in der fertigstellung: " . mysqli_error($link));
 	}
@@ -1024,7 +1023,7 @@ function set_bauschleife_structure_abbruch($spieler_id, $planet_id, $gebäude_id
 
 	if (mysqli_query($link, $query)) {
 		$text =  $Gebäude["Name"] . " wurde abgebrochen. Ressourcen wurden gutgeschrieben (Eisen: " . $Gebäude["Kosten_Eisen"] . " Silizium: " . $Gebäude["Kosten_Silizium"] . " Wasser: " . $Gebäude["Kosten_Wasser"] . " Energie: " . $Gebäude["Kosten_Energie"] . ")";
-		set_message(0, "System", $spieler_id, $username, $text, "", 1);
+		set_message(0, "System", $spieler_id, $username, "set_bauschleife_structure_abbruch" , $text, 0, 1, 0);
 	} else {
 		die("Fehler in der fertigstellung: " . mysqli_error($link));
 	}
@@ -1066,7 +1065,7 @@ function set_bauschleife_tech_abbruch($spieler_id, $planet_id, $tech_id, $userna
 			if (mysqli_query($link, $query)) {
 
 				$text =  $Tech["Name"] . " wurde abgebrochen. Ressourcen wurden gutgeschrieben (Eisen: " . $Tech["Kosten_Eisen"] . " Silizium: " . $Tech["Kosten_Silizium"] . " Wasser: " . $Tech["Kosten_Wasser"] . ")";
-				set_message(0, "System", $spieler_id, $username, $text, "", 1);
+				set_message(0, "System", $spieler_id, $username, "set_bauschleife_tech_abbruch", $text, 0, 1, 0);
 
 			} else {
 				die("Fehler im Abbruch: " . mysqli_error($link));
@@ -2315,18 +2314,17 @@ function get_messages($_senderID, $_recipientID, $_playerName) {
 }
 
 
-function set_message($fromId, $fromName, $toId, $toName, $subject, $text="", $chatbot=0, $logbook=0, $time=0) {
-	require 'inc/connect_galaxy_1.php';
+function set_message($fromId, $fromName, $toId, $toName, $subject, $text="", $chatbot=0, $logbook=0, $time=0) {	
+	require 'inc/connect_pdo_galaxy_1.php';
 	if($time == 0) { $time = time(); }
+	$sql = "INSERT INTO `nachrichten`(`Zeit`, `Absender_ID`, `Absender_Name`, `Empfaenger_ID`, `Empfaenger_Name`, `Betreff`, `Text`,`Logbuch`,`Chatbot`) VALUES (?,?,?,?,?,?,?,?,?)";
+	#echo $time . ";" . $fromId  . ";" .  $fromName  . ";" .  $toId  . ";" .  $toName  . ";" .  $subject  . ";" .  $text  . "<-;" .  $logbook  . ";" .  $chatbot;
+	try {
+		$db->prepare($sql)->execute([$time, $fromId, $fromName, $toId, $toName, $subject, $text, $logbook, $chatbot]);
 
-	$fromName = mysqli_real_escape_string($link, $fromName);
-	$toName = mysqli_real_escape_string($link, $toName);
-	$text = mysqli_real_escape_string($link, $text);
-
-	$query = "INSERT INTO `nachrichten`(`Zeit`, `Absender_ID`, `Absender_Name`, `Empfaenger_ID`, `Empfaenger_Name`,  `Betreff`, `Text`,`Logbuch`,`Chatbot`) VALUES ($time, '$fromId', '$fromName', '$toId', '$toName', '$subject', '$text', '$logbook', $chatbot)";
-	dVar ($query);
-	mysqli_query($link, $query) or sql_error(mysqli_error($link));
-
+	} catch (PDOException $e) {
+		catchExeption ($e);              
+	}
 }
 
 define("MAXIMALE_ROBOTS_GESAMT_PLANET", 3000);
@@ -2507,19 +2505,19 @@ function get_explored_systems($_playerID, $_x1, $_y1, $_x2, $_y2) {
 	require 'inc/connect_galaxy_1.php';
 
 	$_query = '
-		select Spieler_ID, x, y, Entdeckt, locked, case when ownSystem > 0 then \'true\' else \'false\' end as ownSystem, 
-		case when foreignSystem > 0 then \'true\' else \'false\' end as foreignSystem, case when freeSystem > 0 then \'true\' else \'false\' end as freeSystem 
-		from (select s.Spieler_ID, s.x, s.y, s.Entdeckt, locked
-				,sum(case when p.Spieler_ID collate latin1_german2_ci = s.Spieler_ID then 1 else 0 end) as ownSystem 
-				,sum(case when p.Spieler_ID is not null and p.Spieler_ID collate LATIN1_GERMAN2_CI <> s.Spieler_ID then 1 else 0 end) as foreignSystem
-				,sum(case when p.Spieler_ID is null then 1 else 0 end) as freeSystem
-			  from sonnensystem s
-			  left join planet p on p.x = s.x and p.y = s.y
-			  where Entdeckt >= now() - interval 14 day and s.Spieler_ID = \''.$_playerID.'\' 
-			  group by s.x, s.y
-			 )tbl
-		where x >= \''.$_x1.'\' and y >= \''.$_y1.'\' and x <= \''.$_x2.'\' and y <= \''.$_y2.'\'
-		'; 
+    select Spieler_ID, x, y, case when ownSystem > 0 then \'true\' else \'false\' end as ownSystem, 
+    case when foreignSystem > 0 then \'true\' else \'false\' end as foreignSystem, case when freeSystem > 0 then \'true\' else \'false\' end as freeSystem 
+    from (select s.Spieler_ID, s.x, s.y
+        ,sum(case when p.Spieler_ID collate latin1_german2_ci = s.Spieler_ID then 1 else 0 end) as ownSystem 
+        ,sum(case when p.Spieler_ID is not null and p.Spieler_ID collate LATIN1_GERMAN2_CI <> s.Spieler_ID then 1 else 0 end) as foreignSystem
+        ,sum(case when p.Spieler_ID is null then 1 else 0 end) as freeSystem
+        from sonnensystem s
+        left join planet p on p.x = s.x and p.y = s.y
+        WHERE (case when Entdeckt < now() - interval 14 day then LOCKED != 0 else true end) and s.Spieler_ID = \''.$_playerID.'\' 
+        group by s.x, s.y, s.Spieler_ID
+       )tbl
+    where x >= \''.$_x1.'\' and y >= \''.$_y1.'\' and x <= \''.$_x2.'\' and y <= \''.$_y2.'\'
+    ';
 	
 	$_exploredSystems = array();
 	$_result = our_sql_query($link,$_query);
@@ -2667,7 +2665,8 @@ function flotte_senden($spieler_id, $planet_id, $flotte, $ziel_x, $ziel_y, $ziel
 			//Kappa prüfen
 			$kapazität = 0;
 			foreach ($flotte as $item => $value) {
-				$kapazität += $flotte[$item]["Anzahl"] * (spaceships::$shipID[$item]->loadingCapacity * ( 10 * $tech_spieler["Tech_5"]) / 100 + spaceships::$shipID[$item]->loadingCapacity);
+				$kapazität += $flotte[$item]["Anzahl"] * (spaceships::$shipID[$flotte[$item]["Schiff_ID"]]->loadingCapacity * ( 10 * $tech_spieler["Tech_5"]) / 100 + spaceships::$shipID[$flotte[$item]["Schiff_ID"]]->loadingCapacity);
+				#$kapazität += $flotte[$item]["Anzahl"] * (spaceships::$shipID[$item]->loadingCapacity * ( 10 * $tech_spieler["Tech_5"]) / 100 + spaceships::$shipID[$item]->loadingCapacity);
 			}
 
 			if($kapazität < $ress_mitnehmen["0"] + $ress_mitnehmen["1"] + $ress_mitnehmen["2"]) {
@@ -2725,7 +2724,7 @@ function flotte_senden($spieler_id, $planet_id, $flotte, $ziel_x, $ziel_y, $ziel
 			$sql = "INSERT INTO `flotten` (`ID`, `Ankunft`, `Start`, `Spieler_ID`, `x1`, `y1`, `z1`, `x2`, `y2`, `z2`, `Ziel_Spieler_ID`, `Start_Planet_ID`, `Ziel_Planet_ID`, `Startplanet_Name`, `Zielplanet_Name`, `Besitzer_Spieler_Name`, `Ziel_Spieler_Name`, `Mission`, `Kapazitaet`, `Ausladen_Eisen`, `Ausladen_Silizium`, `Ausladen_Wasser`, `Einladen_Eisen`, `Einladen_Silizium`, `Einladen_Wasser` $tabelle_schiffe_id)
 					VALUES (NULL, '$ankunft', '" . $startzeit . "', '$spieler_id', '" . $koordinaten["X"] . "', '" . $koordinaten["Y"] . "', '" . $koordinaten["Z"] . "', '$ziel_x', '$ziel_y', '$ziel_z', '0', '$planet_id', '0', '" . $koordinaten["Planet_Name"] ."', 'unbekanntes System', '" . $_SESSION["username"] . "', '', '$mission_str', $kapazität, " . $ress_mitnehmen["0"] . ", " . $ress_mitnehmen["1"] . ", " . $ress_mitnehmen["2"] . ", " . $ress_abholen["0"] . ", " . $ress_abholen["1"] . ", " . $ress_abholen["2"] . " $tabelle_schiffe_anzahl)";
 			$query = $sql or die("Error in the consult.." . mysqli_error("Error: #0002302 ".$link));
-			//echo $sql;
+			
 			if($result = mysqli_query($link, $query)) {
 
 				//$tempString = ',`Ressource_Eisen`='.$ressource["Eisen"].', `Ressource_Silizium`= '.$ressource["Silizium"].', `Ressource_Wasser`= '.$ressource["Wasser"].', `Ressource_Bot`= '.$ressource["Bot"];
@@ -3007,9 +3006,9 @@ function mission_erkunden($flotte_abarbeiten, $spieler_id) {
 	$y2 = $flotte_abarbeiten["y2"];
 	$Ankunft = $flotte_abarbeiten["Ankunft"];
 
-	$sql = "INSERT INTO `sonnensystem` (`ID`, `Spieler_ID`, `x`, `y`, `Entdeckt`, `locked`) VALUES (NULL, '$spieler_id', '$x2', '$y2', '" . date("Y-m-d\TH:i:s\Z", $Ankunft) . "', '0')";
+	$sql = "INSERT INTO `sonnensystem` (`Spieler_ID`, `x`, `y`, `Entdeckt`, `locked`) VALUES ('$spieler_id', '$x2', '$y2', '" . date("Y-m-d\TH:i:s", $Ankunft) . "', '0')";
 	$query = $sql or die("Error in the consult.." . mysqli_error("Error: #0002302 ".$link));
-
+	
 	if($result = mysqli_query($link, $query)) {
 		return true;
 	} else { return false; }
@@ -3239,7 +3238,7 @@ function mission_rückkehr_set($flotte_abarbeiten, $spieler_id) {
 	$sql = "UPDATE `flotten` SET `Ankunft` = $ankunft, `Start` = $start, `x1` = $x1, `y1` = $y1, `z1` = $z1, `x2` = $x2, `y2` = $y2, `z2` = $z2, `Mission` = '$mission', `Ziel_Spieler_ID` = '$Ziel_Spieler_ID', `Start_Planet_ID` = '$Start_Planet_ID', `Ziel_Planet_ID` = '$Ziel_Planet_ID', `Startplanet_Name` = '$Startplanet_Name', `Zielplanet_Name` = '$Zielplanet_Name' WHERE `ID` = " . $flotte_abarbeiten["ID"];
 
 	$query = $sql or die("Error in the consult.." . mysqli_error("Error: #mission_rückkehr ".$link));
-
+	
 	if($result = mysqli_query($link, $query)) {
 		return true;
 	} else {
@@ -3316,18 +3315,18 @@ function mission_rückkehr_auflösen($fa, $spieler_id) {
 	$Ausladen_Silizium = $fa["Ausladen_Silizium"];
 	$Ausladen_Wasser = $fa["Ausladen_Wasser"];
 
-	$Schiff_Typ_1 = $fa["Schiff_Typ_1"];
-	$Schiff_Typ_2 = $fa["Schiff_Typ_2"];
-	$Schiff_Typ_3 = $fa["Schiff_Typ_3"];
-	$Schiff_Typ_4 = $fa["Schiff_Typ_4"];
-	$Schiff_Typ_5 = $fa["Schiff_Typ_5"];
-	$Schiff_Typ_6 = $fa["Schiff_Typ_6"];
-	$Schiff_Typ_7 = $fa["Schiff_Typ_7"];
-	$Schiff_Typ_8 = $fa["Schiff_Typ_8"];
-	$Schiff_Typ_9 = $fa["Schiff_Typ_9"];
-	$Schiff_Typ_10 = $fa["Schiff_Typ_10"];
-	$Schiff_Typ_11 = $fa["Schiff_Typ_11"];
-	$Schiff_Typ_12 = $fa["Schiff_Typ_12"];
+	$Schiff_Typ_1 = $fa["Schiff_Typ_1"] + 0;
+	$Schiff_Typ_2 = $fa["Schiff_Typ_2"] + 0;
+	$Schiff_Typ_3 = $fa["Schiff_Typ_3"] + 0;
+	$Schiff_Typ_4 = $fa["Schiff_Typ_4"] + 0;
+	$Schiff_Typ_5 = $fa["Schiff_Typ_5"] + 0;
+	$Schiff_Typ_6 = $fa["Schiff_Typ_6"] + 0;
+	$Schiff_Typ_7 = $fa["Schiff_Typ_7"] + 0;
+	$Schiff_Typ_8 = $fa["Schiff_Typ_8"] + 0;
+	$Schiff_Typ_9 = $fa["Schiff_Typ_9"] + 0;
+	$Schiff_Typ_10 = $fa["Schiff_Typ_10"] + 0;
+	$Schiff_Typ_11 = $fa["Schiff_Typ_11"] + 0;
+	$Schiff_Typ_12 = $fa["Schiff_Typ_12"] + 0;
 
 	$sql ="UPDATE `planet` SET
 	`Ressource_Eisen` = `Ressource_Eisen` + $Ausladen_Eisen,
@@ -3346,6 +3345,7 @@ function mission_rückkehr_auflösen($fa, $spieler_id) {
 	`Schiff_Typ_11` = `Schiff_Typ_11` + $Schiff_Typ_11 WHERE `Spieler_ID` = '$spieler_id' AND `Planet_ID` = $Ziel_Planet_ID";
 
 	$query = $sql or die("Error in the consult.." . mysqli_error("Error: #0002302 ".$link));
+	//var_dump($query);
 
 	if($result = mysqli_query($link, $query)) {
 

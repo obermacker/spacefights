@@ -203,13 +203,13 @@ echo '<span  id="globalJsVariables" select="' . $select . '" />';
 	while($flotte_abarbeiten = get_flotte_in_der_luft($spieler_id, time(), true)) {			
 		if($flotte_abarbeiten != "leer") {
 			
-			//var_dump($flotte_abarbeiten);
-			foreach($flotte_abarbeiten as $key => $value) {
-				
+			#var_dump($flotte_abarbeiten);
+			foreach($flotte_abarbeiten as $key => $value) {				
 				switch ($flotte_abarbeiten[$key]["Mission"]) {
 					
 					case "erkunden": 
-						if(mission_erkunden($flotte_abarbeiten[$key], $spieler_id) == true) {
+						
+						if(mission_erkunden($flotte_abarbeiten[$key], $spieler_id) == true) {							
 							if(mission_rückkehr_set($flotte_abarbeiten[$key], $spieler_id) == false) {
 								echo "Fehler mission_rückkehr index.php Zeile 154";
 								echo "Wenn das hier jemand liest, sagt mal bitte bescheid.";
