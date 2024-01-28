@@ -2,7 +2,6 @@
 -- version 4.9.7deb1
 -- https://www.phpmyadmin.net/
 --
--- Host: wp334.webpack.hosteurope.de
 -- Erstellungszeit: 28. Jan 2024 um 23:09
 -- Server-Version: 8.0.35-27
 -- PHP-Version: 7.4.29
@@ -19,10 +18,10 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Datenbank: `db12333748-galaxy1`
+-- Datenbank: `galaxy1`
 --
-CREATE DATABASE IF NOT EXISTS `db12333748-galaxy1` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
-USE `db12333748-galaxy1`;
+CREATE DATABASE IF NOT EXISTS `galaxy1` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
+USE `galaxy1`;
 
 -- --------------------------------------------------------
 
