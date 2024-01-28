@@ -1,13 +1,14 @@
 -- phpMyAdmin SQL Dump
--- version 5.2.0
+-- version 4.9.7deb1
 -- https://www.phpmyadmin.net/
 --
--- Host: localhost:3306
--- Generation Time: Dec 05, 2023 at 07:15 PM
--- Server version: 8.0.30
--- PHP Version: 8.2.13
+-- Host: wp334.webpack.hosteurope.de
+-- Erstellungszeit: 28. Jan 2024 um 23:10
+-- Server-Version: 8.0.35-27
+-- PHP-Version: 7.4.29
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+SET AUTOCOMMIT = 0;
 START TRANSACTION;
 SET time_zone = "+00:00";
 
@@ -18,15 +19,15 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `spieler`
+-- Datenbank: `db12333748-spieler`
 --
-CREATE DATABASE IF NOT EXISTS `spieler` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
-USE `spieler`;
+CREATE DATABASE IF NOT EXISTS `db12333748-spieler` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
+USE `db12333748-spieler`;
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `spieler`
+-- Tabellenstruktur für Tabelle `spieler`
 --
 
 CREATE TABLE `spieler` (
@@ -44,26 +45,27 @@ CREATE TABLE `spieler` (
   `name_gala_1` varchar(30) NOT NULL,
   `aktiv_gala_1` int NOT NULL,
   `letzter_Planet` int NOT NULL,
-  `max_Planeten` int NOT NULL
+  `max_Planeten` int NOT NULL,
+  `chat_color` varchar(6) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL DEFAULT 'FFFFFF'
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
--- Indexes for dumped tables
+-- Indizes der exportierten Tabellen
 --
 
 --
--- Indexes for table `spieler`
+-- Indizes für die Tabelle `spieler`
 --
 ALTER TABLE `spieler`
   ADD PRIMARY KEY (`ID`),
   ADD UNIQUE KEY `spieler_ID` (`spieler_ID`);
 
 --
--- AUTO_INCREMENT for dumped tables
+-- AUTO_INCREMENT für exportierte Tabellen
 --
 
 --
--- AUTO_INCREMENT for table `spieler`
+-- AUTO_INCREMENT für Tabelle `spieler`
 --
 ALTER TABLE `spieler`
   MODIFY `ID` int NOT NULL AUTO_INCREMENT;
