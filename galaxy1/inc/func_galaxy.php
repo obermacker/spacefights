@@ -329,7 +329,7 @@ function set_construction_loop_structure($_loopData){
 	// send Message to User //
 	$_message = lng_echo ('contruction loop structure started', no_file, echo_off
 							,array('structure_name' => $_loopData->constructionLoopStructureName , 'loop_until' => format_timestamp($_loopData->constructionLoopUntil)));
-	set_message(0, "System", $_loopData->playerID, $_loopData->playerName, "set_construction_loop_structure", $_message, 0, 1, 0);
+	set_message(0, "System", $_loopData->playerID, $_loopData->playerName, "set_construction_loop_structure", $_message, 0, 1, 0);	
 }
 
 
@@ -2317,10 +2317,27 @@ function get_messages($_senderID, $_recipientID, $_playerName) {
 function set_message($fromId, $fromName, $toId, $toName, $subject, $text="", $chatbot=0, $logbook=0, $time=0) {	
 	require 'inc/connect_pdo_galaxy_1.php';
 	if($time == 0) { $time = time(); }
-	$sql = "INSERT INTO `nachrichten`(`Zeit`, `Absender_ID`, `Absender_Name`, `Empfaenger_ID`, `Empfaenger_Name`, `Betreff`, `Text`,`Logbuch`,`Chatbot`) VALUES (?,?,?,?,?,?,?,?,?)";
-	#echo $time . ";" . $fromId  . ";" .  $fromName  . ";" .  $toId  . ";" .  $toName  . ";" .  $subject  . ";" .  $text  . "<-;" .  $logbook  . ";" .  $chatbot;
+	$sql = "INSERT INTO `msg_galaxy_communication`(`Zeit`, `Absender_ID`, `Absender_Name`, `Empfaenger_ID`, `Empfaenger_Name`, `Betreff`, `Text`,`Logbuch`,`Chatbot`, `read`) VALUES (?,?,?,?,?,?,?,?,?, ?)";
+	
 	try {
-		$db->prepare($sql)->execute([$time, $fromId, $fromName, $toId, $toName, $subject, $text, $logbook, $chatbot]);
+		$db->prepare($sql)->execute([$time, $fromId, $fromName, $toId, $toName, $subject, $text, $logbook, $chatbot, 0]);
+
+	} catch (PDOException $e) {
+		catchExeption ($e);              
+	}
+}
+
+function set_msg_report($spieler_id, $planet_id, $text, $time) {
+	//Cache to show local planetary events to the player (e.g. finished building loops).
+	//
+	//Entries should be deleted after viewing.
+	//
+
+	require 'inc/connect_pdo_galaxy_1.php';
+	if($time == 0) { $time = time(); }
+	$sql = "INSERT INTO `msg_report`(`Player_ID`, `Planet_ID`, `Text`, `Read`, `MessageTime`) VALUES (?,?,?,?,?,?)";	
+	try {
+		$db->prepare($sql)->execute([$spieler_id, $planet_id, $text, 0, $time]);
 
 	} catch (PDOException $e) {
 		catchExeption ($e);              
@@ -3390,7 +3407,7 @@ function get_planet_id_by_koordinaten($spieler_id, $x, $y, $p) {
 
 }
 
-function get_timestamp_in_was_sinnvolles($value) {
+function get_timestamp_in_was_sinnvolles($value) {	
 	$secs = number_format($value, 0, '', '');
 	$dtF = new DateTime("@0");
 	$dtT = new DateTime("@$secs");

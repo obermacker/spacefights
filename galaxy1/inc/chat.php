@@ -15,7 +15,7 @@ if ($_POST){
 
             require 'inc/connect_pdo_galaxy_1.php';
 
-            $sql = "INSERT INTO `chat`(`PlayerId`, `MessageFromPlayerName`, `MessageText`, `chat_color`) VALUES (?,?,?,?)";
+            $sql = "INSERT INTO `msg_chat`(`PlayerId`, `MessageFromPlayerName`, `MessageText`, `chat_color`) VALUES (?,?,?,?)";
             try {
                 $db->prepare($sql)->execute([$spieler_id, get_spieler_name($spieler_id), $str, $chat_color]);
 

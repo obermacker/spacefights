@@ -1,13 +1,13 @@
 -- phpMyAdmin SQL Dump
--- version 4.9.7deb1
+-- version 5.2.0
 -- https://www.phpmyadmin.net/
 --
--- Erstellungszeit: 28. Jan 2024 um 23:09
--- Server-Version: 8.0.35-27
--- PHP-Version: 7.4.29
+-- Host: localhost:3306
+-- Generation Time: Jan 31, 2024 at 09:12 PM
+-- Server version: 8.0.30
+-- PHP Version: 8.2.13
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-SET AUTOCOMMIT = 0;
 START TRANSACTION;
 SET time_zone = "+00:00";
 
@@ -18,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Datenbank: `galaxy1`
+-- Database: `galaxy1`
 --
 CREATE DATABASE IF NOT EXISTS `galaxy1` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
 USE `galaxy1`;
@@ -26,7 +26,7 @@ USE `galaxy1`;
 -- --------------------------------------------------------
 
 --
--- Tabellenstruktur für Tabelle `bauschleifeflotte`
+-- Table structure for table `bauschleifeflotte`
 --
 
 CREATE TABLE `bauschleifeflotte` (
@@ -48,22 +48,7 @@ CREATE TABLE `bauschleifeflotte` (
 -- --------------------------------------------------------
 
 --
--- Tabellenstruktur für Tabelle `chat`
---
-
-CREATE TABLE `chat` (
-  `ID` int NOT NULL,
-  `PlayerId` varchar(58) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
-  `MessageFromPlayerName` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
-  `MessageText` varchar(550) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
-  `MessageTime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `chat_color` varchar(6) NOT NULL DEFAULT 'FFFFFF'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
--- --------------------------------------------------------
-
---
--- Tabellenstruktur für Tabelle `construction_loops_defense`
+-- Table structure for table `construction_loops_defense`
 --
 
 CREATE TABLE `construction_loops_defense` (
@@ -86,7 +71,7 @@ CREATE TABLE `construction_loops_defense` (
 -- --------------------------------------------------------
 
 --
--- Tabellenstruktur für Tabelle `flotten`
+-- Table structure for table `flotten`
 --
 
 CREATE TABLE `flotten` (
@@ -103,8 +88,8 @@ CREATE TABLE `flotten` (
   `Ziel_Spieler_ID` varchar(58) NOT NULL,
   `Start_Planet_ID` int NOT NULL,
   `Ziel_Planet_ID` int NOT NULL,
-  `Startplanet_Name` varchar(200) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
-  `Zielplanet_Name` varchar(200) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
+  `Startplanet_Name` varchar(20) NOT NULL,
+  `Zielplanet_Name` varchar(20) NOT NULL,
   `Besitzer_Spieler_Name` varchar(18) NOT NULL,
   `Ziel_Spieler_Name` varchar(18) NOT NULL,
   `Mission` varchar(58) NOT NULL,
@@ -115,24 +100,24 @@ CREATE TABLE `flotten` (
   `Einladen_Eisen` bigint NOT NULL,
   `Einladen_Silizium` bigint NOT NULL,
   `Einladen_Wasser` bigint NOT NULL,
-  `Schiff_Typ_1` int DEFAULT NULL,
-  `Schiff_Typ_2` int DEFAULT NULL,
-  `Schiff_Typ_3` int DEFAULT NULL,
-  `Schiff_Typ_4` int DEFAULT NULL,
-  `Schiff_Typ_5` int DEFAULT NULL,
-  `Schiff_Typ_6` int DEFAULT NULL,
-  `Schiff_Typ_7` int DEFAULT NULL,
-  `Schiff_Typ_8` int DEFAULT NULL,
-  `Schiff_Typ_9` int DEFAULT NULL,
-  `Schiff_Typ_10` int DEFAULT NULL,
-  `Schiff_Typ_11` int DEFAULT NULL,
-  `Schiff_Typ_12` int DEFAULT NULL
+  `Schiff_Typ_1` int NOT NULL,
+  `Schiff_Typ_2` int NOT NULL,
+  `Schiff_Typ_3` int NOT NULL,
+  `Schiff_Typ_4` int NOT NULL,
+  `Schiff_Typ_5` int NOT NULL,
+  `Schiff_Typ_6` int NOT NULL,
+  `Schiff_Typ_7` int NOT NULL,
+  `Schiff_Typ_8` int NOT NULL,
+  `Schiff_Typ_9` int NOT NULL,
+  `Schiff_Typ_10` int NOT NULL,
+  `Schiff_Typ_11` int NOT NULL,
+  `Schiff_Typ_12` int NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
 
 --
--- Tabellenstruktur für Tabelle `handelsangebot`
+-- Table structure for table `handelsangebot`
 --
 
 CREATE TABLE `handelsangebot` (
@@ -155,7 +140,7 @@ CREATE TABLE `handelsangebot` (
 -- --------------------------------------------------------
 
 --
--- Tabellenstruktur für Tabelle `login`
+-- Table structure for table `login`
 --
 
 CREATE TABLE `login` (
@@ -169,42 +154,56 @@ CREATE TABLE `login` (
 -- --------------------------------------------------------
 
 --
--- Tabellenstruktur für Tabelle `message`
+-- Table structure for table `msg_chat`
 --
 
-CREATE TABLE `message` (
-  `Spieler_ID` varchar(58) NOT NULL,
-  `Planet_ID` int NOT NULL,
-  `typ` varchar(58) NOT NULL,
-  `text` text NOT NULL,
-  `gelesen` tinyint(1) NOT NULL,
-  `erstellt` bigint NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+CREATE TABLE `msg_chat` (
+  `ID` int NOT NULL,
+  `PlayerId` varchar(58) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `MessageFromPlayerName` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `MessageText` varchar(550) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `chat_color` varchar(6) NOT NULL DEFAULT 'FFFFFF',
+  `MessageTime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
 
 --
--- Tabellenstruktur für Tabelle `nachrichten`
+-- Table structure for table `msg_galaxy_communication`
 --
 
-CREATE TABLE `nachrichten` (
+CREATE TABLE `msg_galaxy_communication` (
   `ID` int NOT NULL,
   `Zeit` int NOT NULL,
   `Absender_ID` varchar(58) CHARACTER SET latin1 COLLATE latin1_german2_ci NOT NULL,
   `Absender_Name` varchar(20) CHARACTER SET latin1 COLLATE latin1_german2_ci NOT NULL,
   `Empfaenger_ID` varchar(58) CHARACTER SET latin1 COLLATE latin1_german2_ci NOT NULL,
   `Empfaenger_Name` varchar(20) CHARACTER SET latin1 COLLATE latin1_german2_ci NOT NULL,
-  `Gelesen` int NOT NULL DEFAULT '0',
+  `read` int NOT NULL,
   `Betreff` varchar(80) CHARACTER SET latin1 COLLATE latin1_german2_ci NOT NULL,
   `Text` text CHARACTER SET latin1 COLLATE latin1_german2_ci NOT NULL,
-  `Logbuch` tinyint(1) NOT NULL,
+  `Logbuch` int NOT NULL,
   `Chatbot` tinyint NOT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_german2_ci;
 
 -- --------------------------------------------------------
 
 --
--- Tabellenstruktur für Tabelle `planet`
+-- Table structure for table `msg_report`
+--
+
+CREATE TABLE `msg_report` (
+  `Player_ID` varchar(58) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
+  `Planet_ID` int NOT NULL,
+  `Text` text CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
+  `Read` tinyint(1) NOT NULL,
+  `MessageTime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `planet`
 --
 
 CREATE TABLE `planet` (
@@ -216,70 +215,70 @@ CREATE TABLE `planet` (
   `y` int NOT NULL,
   `z` int NOT NULL,
   `Planet_ID` int NOT NULL,
-  `Ressource_Eisen` decimal(20,2) NOT NULL,
-  `Ressource_Silizium` decimal(20,2) NOT NULL,
-  `Ressource_Wasser` decimal(20,2) NOT NULL,
-  `Ressource_Bot` decimal(20,6) NOT NULL,
-  `Stationiert_Bot` decimal(20,6) NOT NULL,
-  `Stufe_Gebaeude_1` int NOT NULL,
-  `Stufe_Gebaeude_2` int NOT NULL,
-  `Stufe_Gebaeude_3` int NOT NULL,
-  `Stufe_Gebaeude_4` int NOT NULL,
-  `Stufe_Gebaeude_5` int NOT NULL,
-  `Stufe_Gebaeude_6` int NOT NULL,
-  `Stufe_Gebaeude_7` int NOT NULL,
-  `Stufe_Gebaeude_8` int NOT NULL,
-  `Stufe_Gebaeude_9` int NOT NULL,
-  `Stufe_Gebaeude_10` int NOT NULL,
-  `Stufe_Gebaeude_11` int NOT NULL,
+  `Ressource_Eisen` decimal(20,2) DEFAULT '0.00',
+  `Ressource_Silizium` decimal(20,2) DEFAULT '0.00',
+  `Ressource_Wasser` decimal(20,2) NOT NULL DEFAULT '0.00',
+  `Ressource_Bot` decimal(20,6) NOT NULL DEFAULT '0.000000',
+  `Stationiert_Bot` decimal(20,6) NOT NULL DEFAULT '0.000000',
+  `Stufe_Gebaeude_1` int DEFAULT '0',
+  `Stufe_Gebaeude_2` int NOT NULL DEFAULT '0',
+  `Stufe_Gebaeude_3` int NOT NULL DEFAULT '0',
+  `Stufe_Gebaeude_4` int NOT NULL DEFAULT '0',
+  `Stufe_Gebaeude_5` int NOT NULL DEFAULT '0',
+  `Stufe_Gebaeude_6` int DEFAULT '0',
+  `Stufe_Gebaeude_7` int NOT NULL DEFAULT '0',
+  `Stufe_Gebaeude_8` int NOT NULL DEFAULT '0',
+  `Stufe_Gebaeude_9` int NOT NULL DEFAULT '0',
+  `Stufe_Gebaeude_10` int NOT NULL DEFAULT '0',
+  `Stufe_Gebaeude_11` int NOT NULL DEFAULT '0',
   `Grund_Prod_Eisen` int NOT NULL DEFAULT '20',
   `Grund_Prod_Silizium` int NOT NULL DEFAULT '10',
   `Grund_Prod_Wasser` int NOT NULL DEFAULT '5',
-  `Prod_Eisen` int NOT NULL,
-  `Prod_Silizium` int NOT NULL,
-  `Prod_Wasser` int NOT NULL,
-  `Produktion_Zeit` int NOT NULL,
-  `Ressource_Energie` int NOT NULL,
-  `Ressource_Karma` int NOT NULL,
-  `Bauschleife_Gebaeude_ID` int NOT NULL,
-  `Bauschleife_Gebaeude_Start` int NOT NULL,
-  `Bauschleife_Gebaeude_Bis` int NOT NULL,
-  `Bauschleife_Gebaeude_Name` varchar(22) NOT NULL,
-  `Bunker_Kapa` bigint NOT NULL,
-  `Bunker_Eisen` bigint NOT NULL,
-  `Bunker_Silizium` bigint NOT NULL,
-  `Bunker_Wasser` bigint NOT NULL,
-  `Bauschleife_Flotte_ID` int NOT NULL,
-  `Schiff_Typ_1` int DEFAULT NULL,
-  `Schiff_Typ_2` int DEFAULT NULL,
-  `Schiff_Typ_3` int DEFAULT NULL,
-  `Schiff_Typ_4` int DEFAULT NULL,
-  `Schiff_Typ_5` int DEFAULT NULL,
-  `Schiff_Typ_6` int DEFAULT NULL,
-  `Schiff_Typ_7` int DEFAULT NULL,
-  `Schiff_Typ_8` int DEFAULT NULL,
-  `Schiff_Typ_9` int DEFAULT NULL,
-  `Schiff_Typ_10` int DEFAULT NULL,
-  `Schiff_Typ_11` int DEFAULT NULL,
-  `Schiff_Typ_12` int DEFAULT NULL,
-  `Deff_Typ_1` int NOT NULL,
-  `Deff_Typ_2` int NOT NULL,
-  `Deff_Typ_3` int NOT NULL,
-  `Deff_Typ_4` int NOT NULL,
-  `Deff_Typ_5` int NOT NULL,
-  `Deff_Typ_6` int NOT NULL,
-  `Handel_Kapa` bigint NOT NULL,
-  `Handel_Eisen` bigint NOT NULL,
-  `Handel_Silizium` bigint NOT NULL,
-  `Handel_Wasser` bigint NOT NULL,
-  `punkte` decimal(11,5) NOT NULL,
-  `Gesamt_Bot` int NOT NULL
+  `Prod_Eisen` int NOT NULL DEFAULT '0',
+  `Prod_Silizium` int NOT NULL DEFAULT '0',
+  `Prod_Wasser` int NOT NULL DEFAULT '0',
+  `Produktion_Zeit` int NOT NULL DEFAULT '0',
+  `Ressource_Energie` int NOT NULL DEFAULT '0',
+  `Ressource_Karma` int NOT NULL DEFAULT '0',
+  `Bauschleife_Gebaeude_ID` int NOT NULL DEFAULT '0',
+  `Bauschleife_Gebaeude_Start` int NOT NULL DEFAULT '0',
+  `Bauschleife_Gebaeude_Bis` int NOT NULL DEFAULT '0',
+  `Bauschleife_Gebaeude_Name` varchar(22) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL DEFAULT '0',
+  `Bunker_Kapa` bigint NOT NULL DEFAULT '0',
+  `Bunker_Eisen` bigint NOT NULL DEFAULT '0',
+  `Bunker_Silizium` bigint NOT NULL DEFAULT '0',
+  `Bunker_Wasser` bigint NOT NULL DEFAULT '0',
+  `Bauschleife_Flotte_ID` int NOT NULL DEFAULT '0',
+  `Schiff_Typ_1` int NOT NULL DEFAULT '0',
+  `Schiff_Typ_2` int NOT NULL DEFAULT '0',
+  `Schiff_Typ_3` int NOT NULL DEFAULT '0',
+  `Schiff_Typ_4` int NOT NULL DEFAULT '0',
+  `Schiff_Typ_5` int NOT NULL DEFAULT '0',
+  `Schiff_Typ_6` int NOT NULL DEFAULT '0',
+  `Schiff_Typ_7` int NOT NULL DEFAULT '0',
+  `Schiff_Typ_8` int NOT NULL DEFAULT '0',
+  `Schiff_Typ_9` int NOT NULL DEFAULT '0',
+  `Schiff_Typ_10` int NOT NULL DEFAULT '0',
+  `Schiff_Typ_11` int NOT NULL DEFAULT '0',
+  `Schiff_Typ_12` int NOT NULL DEFAULT '0',
+  `Deff_Typ_1` int NOT NULL DEFAULT '0',
+  `Deff_Typ_2` int NOT NULL DEFAULT '0',
+  `Deff_Typ_3` int NOT NULL DEFAULT '0',
+  `Deff_Typ_4` int NOT NULL DEFAULT '0',
+  `Deff_Typ_5` int NOT NULL DEFAULT '0',
+  `Deff_Typ_6` int NOT NULL DEFAULT '0',
+  `Handel_Kapa` bigint NOT NULL DEFAULT '0',
+  `Handel_Eisen` bigint NOT NULL DEFAULT '0',
+  `Handel_Silizium` bigint NOT NULL DEFAULT '0',
+  `Handel_Wasser` bigint NOT NULL DEFAULT '0',
+  `punkte` decimal(11,5) NOT NULL DEFAULT '0.00000',
+  `Gesamt_Bot` int NOT NULL DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
 
 --
--- Tabellenstruktur für Tabelle `sonnensystem`
+-- Table structure for table `sonnensystem`
 --
 
 CREATE TABLE `sonnensystem` (
@@ -294,7 +293,7 @@ CREATE TABLE `sonnensystem` (
 -- --------------------------------------------------------
 
 --
--- Tabellenstruktur für Tabelle `spieler`
+-- Table structure for table `spieler`
 --
 
 CREATE TABLE `spieler` (
@@ -331,129 +330,129 @@ CREATE TABLE `spieler` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
--- Indizes der exportierten Tabellen
+-- Indexes for dumped tables
 --
 
 --
--- Indizes für die Tabelle `bauschleifeflotte`
+-- Indexes for table `bauschleifeflotte`
 --
 ALTER TABLE `bauschleifeflotte`
   ADD PRIMARY KEY (`ID`);
 
 --
--- Indizes für die Tabelle `chat`
---
-ALTER TABLE `chat`
-  ADD PRIMARY KEY (`ID`);
-
---
--- Indizes für die Tabelle `construction_loops_defense`
+-- Indexes for table `construction_loops_defense`
 --
 ALTER TABLE `construction_loops_defense`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indizes für die Tabelle `flotten`
+-- Indexes for table `flotten`
 --
 ALTER TABLE `flotten`
   ADD PRIMARY KEY (`ID`);
 
 --
--- Indizes für die Tabelle `handelsangebot`
+-- Indexes for table `handelsangebot`
 --
 ALTER TABLE `handelsangebot`
   ADD PRIMARY KEY (`ID`);
 
 --
--- Indizes für die Tabelle `login`
+-- Indexes for table `login`
 --
 ALTER TABLE `login`
   ADD PRIMARY KEY (`ID`);
 
 --
--- Indizes für die Tabelle `nachrichten`
+-- Indexes for table `msg_chat`
 --
-ALTER TABLE `nachrichten`
+ALTER TABLE `msg_chat`
   ADD PRIMARY KEY (`ID`);
 
 --
--- Indizes für die Tabelle `planet`
+-- Indexes for table `msg_galaxy_communication`
+--
+ALTER TABLE `msg_galaxy_communication`
+  ADD PRIMARY KEY (`ID`);
+
+--
+-- Indexes for table `planet`
 --
 ALTER TABLE `planet`
   ADD PRIMARY KEY (`ID`);
 
 --
--- Indizes für die Tabelle `sonnensystem`
+-- Indexes for table `sonnensystem`
 --
 ALTER TABLE `sonnensystem`
   ADD PRIMARY KEY (`ID`);
 
 --
--- Indizes für die Tabelle `spieler`
+-- Indexes for table `spieler`
 --
 ALTER TABLE `spieler`
   ADD PRIMARY KEY (`ID`);
 
 --
--- AUTO_INCREMENT für exportierte Tabellen
+-- AUTO_INCREMENT for dumped tables
 --
 
 --
--- AUTO_INCREMENT für Tabelle `bauschleifeflotte`
+-- AUTO_INCREMENT for table `bauschleifeflotte`
 --
 ALTER TABLE `bauschleifeflotte`
   MODIFY `ID` int NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT für Tabelle `chat`
---
-ALTER TABLE `chat`
-  MODIFY `ID` int NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT für Tabelle `construction_loops_defense`
+-- AUTO_INCREMENT for table `construction_loops_defense`
 --
 ALTER TABLE `construction_loops_defense`
   MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT für Tabelle `flotten`
+-- AUTO_INCREMENT for table `flotten`
 --
 ALTER TABLE `flotten`
   MODIFY `ID` int NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT für Tabelle `handelsangebot`
+-- AUTO_INCREMENT for table `handelsangebot`
 --
 ALTER TABLE `handelsangebot`
   MODIFY `ID` int NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT für Tabelle `login`
+-- AUTO_INCREMENT for table `login`
 --
 ALTER TABLE `login`
   MODIFY `ID` int NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT für Tabelle `nachrichten`
+-- AUTO_INCREMENT for table `msg_chat`
 --
-ALTER TABLE `nachrichten`
+ALTER TABLE `msg_chat`
   MODIFY `ID` int NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT für Tabelle `planet`
+-- AUTO_INCREMENT for table `msg_galaxy_communication`
+--
+ALTER TABLE `msg_galaxy_communication`
+  MODIFY `ID` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `planet`
 --
 ALTER TABLE `planet`
   MODIFY `ID` int NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT für Tabelle `sonnensystem`
+-- AUTO_INCREMENT for table `sonnensystem`
 --
 ALTER TABLE `sonnensystem`
   MODIFY `ID` int NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT für Tabelle `spieler`
+-- AUTO_INCREMENT for table `spieler`
 --
 ALTER TABLE `spieler`
   MODIFY `ID` int NOT NULL AUTO_INCREMENT;
