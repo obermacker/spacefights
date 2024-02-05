@@ -35,10 +35,47 @@ if($balken != "leer") {
 		</tr>
 	<?php
 	$countown_balken = 0;
-	foreach($balken as $key => $value) {
-		
+	foreach($balken as $key => $value) {		
 		switch($balken[$key]["Mission"]) {
 
+					case "Angriff": 
+
+						$flotten_timer[] = $balken[$key]["Ankunft"];
+						
+						if($balken[$key]["Spieler_ID"] != $spieler_id) {
+						?>
+							<tr>
+								<td class="tbcr tbcr_oben">
+									<span id="balken<?php echo $key; ?>"><script type="text/javascript">countdown(<?php echo $balken[$key]["Ankunft"] - time(); ?>, "balken<?php echo $key; ?>");</script></span>
+								</td>
+								<td class="tbcr tbcr_oben"><?php echo $balken[$key]["Besitzer_Spieler_Name"]; ?></td>
+								<td class="tbcr tbcr_oben">
+									<?php echo "" . sprintf('%02d', $balken[$key]["x1"]) . ":" . sprintf('%02d', $balken[$key]["y1"]) . ":" . sprintf('%02d', $balken[$key]["z1"]) . ""; ?>
+								</td>
+								<td class="tbcr tbcr_oben">
+									<?php echo "" . sprintf('%02d', $balken[$key]["x2"]) . ":" . sprintf('%02d', $balken[$key]["y2"]) . ":" . sprintf('%02d', $balken[$key]["z2"])  . ""; ?>
+								</td>
+								<td class="tbcr tbcr_oben tbcrOhneRandRechts"><a href="index.php?s=Flotte-Info&id=<?php echo $balken[$key]["ID"]; ?>"><?php echo $balken[$key]["Mission"]; ?></a></td>
+							</tr>
+						<?php
+						} else {
+							?><tr>
+							<td class="tbc tbc_oben">
+								<span id="balken<?php echo $key; ?>"><script type="text/javascript">countdown(<?php echo $balken[$key]["Ankunft"] - time(); ?>, "balken<?php echo $key; ?>");</script></span>
+							</td>
+							<td class="tbc tbc_oben"><?php echo $balken[$key]["Besitzer_Spieler_Name"]; ?></td>
+							<td class="tbc tbc_oben">
+								<?php echo "" . sprintf('%02d', $balken[$key]["x1"]) . ":" . sprintf('%02d', $balken[$key]["y1"]) . ":" . sprintf('%02d', $balken[$key]["z1"]) . ""; ?>
+							</td>
+							<td class="tbc tbc_oben">
+								<?php echo "" . sprintf('%02d', $balken[$key]["x2"]) . ":" . sprintf('%02d', $balken[$key]["y2"]) . ":" . sprintf('%02d', $balken[$key]["z2"])  . ""; ?>
+							</td>
+							<td class="tbc tbc_oben tbcOhneRandRechts"><a href="index.php?s=Flotte-Info&id=<?php echo $balken[$key]["ID"]; ?>"><?php echo $balken[$key]["Mission"]; ?></a></td>
+						</tr><?php
+						}
+
+					
+						break;
 					default:
 					$flotten_timer[] = $balken[$key]["Ankunft"];
 					?>

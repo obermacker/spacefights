@@ -1,5 +1,4 @@
 <?php 
-
 if(isset($_GET["x"]) AND isset($_GET["y"])) {
 	$px = abs(intval($_GET["x"], 10));
 	$py = abs(intval($_GET["y"], 10));	
@@ -16,6 +15,7 @@ if(isset($_GET["x"]) AND isset($_GET["y"])) {
 		$flotte[0]["Anzahl"] = 1;
 		$mission = array("erkunden");
 		$erkunden_start = flotte_senden($spieler_id, $planet_id, $flotte, $px, $py, 12, $mission, 100, 0, 0);
+		
 	}
 	
 } else {

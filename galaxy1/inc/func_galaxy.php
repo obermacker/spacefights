@@ -2616,6 +2616,35 @@ function get_robots_galaxy_array($spieler_id, $bots_vorhanden_planet) {
 	return($robots_in_der_galaxy);
 }
 
+function get_target_player_and_planet($px, $py, $pz)
+{
+    require 'inc/connect_galaxy_1.php';
+    $link->set_charset("utf8");
+
+    $abfrage = "SELECT `Spieler_ID`, `Spieler_Name`, `Planet_Name`, `Planet_ID` FROM `planet` WHERE `x` = $px AND `y` = $py AND `z` = $pz";
+    $query = $abfrage or die("Error in the consult.." . mysqli_error("Error: get_liste_planeten_im_system #1 " . $link));
+
+    if ($result = mysqli_query($link, $query)) {
+
+        while ($row = mysqli_fetch_object($result)) {
+
+            $System["Spieler_ID"] = $row->Spieler_ID;
+            $System["Spieler_Name"] = $row->Spieler_Name;
+            $System["Planet_Name"] = $row->Planet_Name;
+            $System["Planet_ID"] = $row->Planet_ID;
+        }
+    } else {
+
+        $System["Spieler_ID"] = - 1;
+        $System["Spieler_Name"] = "unbekannt";
+        $System["Planet_Name"] = "unbekannt";
+        $System["Planet_ID"] = 0;
+    }
+
+    return $System;
+}
+
+
 function flotte_senden($spieler_id, $planet_id, $flotte, $ziel_x, $ziel_y, $ziel_z, $mission, $speed, $ress_mitnehmen, $ress_abholen) {
 	require 'inc/connect_galaxy_1.php';
 
@@ -2625,6 +2654,8 @@ function flotte_senden($spieler_id, $planet_id, $flotte, $ziel_x, $ziel_y, $ziel
 
 	if($ziel_x < 1 || $ziel_y < 1 || $ziel_z < 1) { return "ungültige koordinaten"; }
 	if($ziel_x > 50 || $ziel_y > 50 || $ziel_z > 12) { return "ungültige koordinaten"; }
+
+	$target = get_target_player_and_planet($ziel_x, $ziel_y, $ziel_z);
 
 	if(flotte_vorhanden ($spieler_id, $planet_id, $flotte) == "raus damit!") {
 		if(flotte_slots_frei($spieler_id) == "einer geht noch!") {
@@ -2738,10 +2769,12 @@ function flotte_senden($spieler_id, $planet_id, $flotte, $ziel_x, $ziel_y, $ziel
 				$tabelle_schiffe_update_planet[] = "`Schiff_Typ_" . $flotte[$item]["Schiff_ID"] . "` = `Schiff_Typ_" . $flotte[$item]["Schiff_ID"] . "` - " . $flotte[$item]["Anzahl"];
 			}
 
-			$sql = "INSERT INTO `flotten` (`ID`, `Ankunft`, `Start`, `Spieler_ID`, `x1`, `y1`, `z1`, `x2`, `y2`, `z2`, `Ziel_Spieler_ID`, `Start_Planet_ID`, `Ziel_Planet_ID`, `Startplanet_Name`, `Zielplanet_Name`, `Besitzer_Spieler_Name`, `Ziel_Spieler_Name`, `Mission`, `Kapazitaet`, `Ausladen_Eisen`, `Ausladen_Silizium`, `Ausladen_Wasser`, `Einladen_Eisen`, `Einladen_Silizium`, `Einladen_Wasser` $tabelle_schiffe_id)
-					VALUES (NULL, '$ankunft', '" . $startzeit . "', '$spieler_id', '" . $koordinaten["X"] . "', '" . $koordinaten["Y"] . "', '" . $koordinaten["Z"] . "', '$ziel_x', '$ziel_y', '$ziel_z', '0', '$planet_id', '0', '" . $koordinaten["Planet_Name"] ."', 'unbekanntes System', '" . $_SESSION["username"] . "', '', '$mission_str', $kapazität, " . $ress_mitnehmen["0"] . ", " . $ress_mitnehmen["1"] . ", " . $ress_mitnehmen["2"] . ", " . $ress_abholen["0"] . ", " . $ress_abholen["1"] . ", " . $ress_abholen["2"] . " $tabelle_schiffe_anzahl)";
-			$query = $sql or die("Error in the consult.." . mysqli_error("Error: #0002302 ".$link));
-			
+			#$sql = "INSERT INTO `flotten` (`ID`, `Ankunft`, `Start`, `Spieler_ID`, `x1`, `y1`, `z1`, `x2`, `y2`, `z2`, `Ziel_Spieler_ID`, `Start_Planet_ID`, `Ziel_Planet_ID`, `Startplanet_Name`, `Zielplanet_Name`, `Besitzer_Spieler_Name`, `Ziel_Spieler_Name`, `Mission`, `Kapazitaet`, `Ausladen_Eisen`, `Ausladen_Silizium`, `Ausladen_Wasser`, `Einladen_Eisen`, `Einladen_Silizium`, `Einladen_Wasser` $tabelle_schiffe_id)
+			#		VALUES (NULL, '$ankunft', '" . $startzeit . "', '$spieler_id', '" . $koordinaten["X"] . "', '" . $koordinaten["Y"] . "', '" . $koordinaten["Z"] . "', '$ziel_x', '$ziel_y', '$ziel_z', '0', '$planet_id', '0', '" . $koordinaten["Planet_Name"] ."', 'unbekanntes System', '" . $_SESSION["username"] . "', '', '$mission_str', $kapazität, " . $ress_mitnehmen["0"] . ", " . $ress_mitnehmen["1"] . ", " . $ress_mitnehmen["2"] . ", " . $ress_abholen["0"] . ", " . $ress_abholen["1"] . ", " . $ress_abholen["2"] . " $tabelle_schiffe_anzahl)";
+			$sql = "INSERT INTO `flotten` (`ID`, `Ankunft`, `Start`, `Spieler_ID`, `x1`, `y1`, `z1`, `x2`, `y2`, `z2`, `Ziel_Spieler_ID`, `Start_Planet_ID`, `Ziel_Planet_ID`, `Startplanet_Name`, `Zielplanet_Name`, `Besitzer_Spieler_Name`, `Ziel_Spieler_Name`, `Mission`, `Kapazitaet`, `Ausladen_Eisen`, `Ausladen_Silizium`, `Ausladen_Wasser`, `Einladen_Eisen`, `Einladen_Silizium`, `Einladen_Wasser` $tabelle_schiffe_id) 
+			VALUES (NULL, '$ankunft', '" . $startzeit . "', '$spieler_id', '" . $koordinaten["X"] . "', '" . $koordinaten["Y"] . "', '" . $koordinaten["Z"] . "', '$ziel_x', '$ziel_y', '$ziel_z', '" . $target["Spieler_ID"] . "', '$planet_id', '" . $target["Planet_ID"] . "', '" . $koordinaten["Planet_Name"] . "', '" . $target["Planet_Name"] . "', '" . $_SESSION["username"] . "', '', '$mission_str', $kapazität, " . $ress_mitnehmen["0"] . ", " . $ress_mitnehmen["1"] . ", " . $ress_mitnehmen["2"] . ", " . $ress_abholen["0"] . ", " . $ress_abholen["1"] . ", " . $ress_abholen["2"] . " $tabelle_schiffe_anzahl)";
+
+			$query = $sql or die("Error in the consult.." . mysqli_error("Error: #0002302 ".$link));			
 			if($result = mysqli_query($link, $query)) {
 
 				//$tempString = ',`Ressource_Eisen`='.$ressource["Eisen"].', `Ressource_Silizium`= '.$ressource["Silizium"].', `Ressource_Wasser`= '.$ressource["Wasser"].', `Ressource_Bot`= '.$ressource["Bot"];
@@ -2898,62 +2931,143 @@ function korrigiere_punkte($spieler_id, $punkte_structur,  $punkte_flotte, $punk
 	}
 }
 
-function get_flotte_in_der_luft($spieler_id, $zeit, $abarbeiten = false) {
-	require 'inc/connect_galaxy_1.php';
+function get_flotte_in_der_luft($spieler_id, $zeit, $abarbeiten = false)
+{
+    require 'inc/connect_galaxy_1.php';
 
-	if($abarbeiten == false) { $sql = "SELECT `ID`, `Ankunft`, `Start`, `Spieler_ID`, `x1`, `y1`, `z1`, `x2`, `y2`, `z2`, `Ziel_Spieler_ID`, `Start_Planet_ID`, `Ziel_Planet_ID`, `Startplanet_Name`, `Zielplanet_Name`, `Besitzer_Spieler_Name`, `Ziel_Spieler_Name`, `Mission`, `Kapazitaet`, `Ausladen_Eisen`, `Ausladen_Silizium`, `Ausladen_Wasser`, `Einladen_Eisen`, `Einladen_Silizium`, `Einladen_Wasser`, `Schiff_Typ_1`, `Schiff_Typ_2`, `Schiff_Typ_3`, `Schiff_Typ_4`, `Schiff_Typ_5`, `Schiff_Typ_6`, `Schiff_Typ_7`, `Schiff_Typ_8`, `Schiff_Typ_9`, `Schiff_Typ_10`, `Schiff_Typ_11`, `Schiff_Typ_12` FROM `flotten` WHERE `Spieler_ID` = '$spieler_id' ORDER BY Ankunft ASC"; }
-	if($abarbeiten == true) { $sql = "SELECT `ID`, `Ankunft`, `Start`, `Spieler_ID`, `x1`, `y1`, `z1`, `x2`, `y2`, `z2`, `Ziel_Spieler_ID`, `Start_Planet_ID`, `Ziel_Planet_ID`, `Startplanet_Name`, `Zielplanet_Name`, `Besitzer_Spieler_Name`, `Ziel_Spieler_Name`, `Mission`, `Kapazitaet`, `Ausladen_Eisen`, `Ausladen_Silizium`, `Ausladen_Wasser`, `Einladen_Eisen`, `Einladen_Silizium`, `Einladen_Wasser`, `Schiff_Typ_1`, `Schiff_Typ_2`, `Schiff_Typ_3`, `Schiff_Typ_4`, `Schiff_Typ_5`, `Schiff_Typ_6`, `Schiff_Typ_7`, `Schiff_Typ_8`, `Schiff_Typ_9`, `Schiff_Typ_10`, `Schiff_Typ_11`, `Schiff_Typ_12` FROM `flotten` WHERE `Spieler_ID` = '$spieler_id' AND `Ankunft` <= " . $zeit . " OR  `Ziel_Spieler_ID` = '$spieler_id' AND `Ankunft` <= " . $zeit . "  ORDER BY Ankunft ASC"; }
+    if ($abarbeiten == false) {
+        $sql = "SELECT `ID`, 
+                `Ankunft`, 
+                `Start`, 
+                `Spieler_ID`, 
+                `x1`, 
+                `y1`, 
+                `z1`, 
+                `x2`, 
+                `y2`, 
+                `z2`, 
+                `Ziel_Spieler_ID`, 
+                `Start_Planet_ID`, 
+                `Ziel_Planet_ID`, 
+                `Startplanet_Name`, 
+                `Zielplanet_Name`, 
+                `Besitzer_Spieler_Name`, 
+                `Ziel_Spieler_Name`, 
+                `Mission`, 
+                `Kapazitaet`, 
+                `Ausladen_Eisen`, 
+                `Ausladen_Silizium`,
+                `Ausladen_Wasser`, 
+                `Einladen_Eisen`, 
+                `Einladen_Silizium`, 
+                `Einladen_Wasser`, 
+                `Schiff_Typ_1`, 
+                `Schiff_Typ_2`, 
+                `Schiff_Typ_3`, 
+                `Schiff_Typ_4`, 
+                `Schiff_Typ_5`, 
+                `Schiff_Typ_6`, 
+                `Schiff_Typ_7`, 
+                `Schiff_Typ_8`, 
+                `Schiff_Typ_9`, 
+                `Schiff_Typ_10`, 
+                `Schiff_Typ_11`, 
+                `Schiff_Typ_12` FROM `flotten` WHERE `Spieler_ID` = '$spieler_id' OR `Ziel_Spieler_ID` = '$spieler_id' ORDER BY Ankunft ASC";
+    }
+    if ($abarbeiten == true) {
+        $sql = "SELECT `ID`, 
+                `Ankunft`, 
+                `Start`, 
+                `Spieler_ID`, 
+                `x1`, 
+                `y1`, 
+                `z1`, 
+                `x2`, 
+                `y2`, 
+                `z2`, 
+                `Ziel_Spieler_ID`, 
+                `Start_Planet_ID`, 
+                `Ziel_Planet_ID`, 
+                `Startplanet_Name`, 
+                `Zielplanet_Name`, 
+                `Besitzer_Spieler_Name`, 
+                `Ziel_Spieler_Name`, 
+                `Mission`, 
+                `Kapazitaet`, 
+                `Ausladen_Eisen`, 
+                `Ausladen_Silizium`, 
+                `Ausladen_Wasser`, 
+                `Einladen_Eisen`, 
+                `Einladen_Silizium`, 
+                `Einladen_Wasser`, 
+                `Schiff_Typ_1`, 
+                `Schiff_Typ_2`, 
+                `Schiff_Typ_3`, 
+                `Schiff_Typ_4`, 
+                `Schiff_Typ_5`, 
+                `Schiff_Typ_6`, 
+                `Schiff_Typ_7`, 
+                `Schiff_Typ_8`, 
+                `Schiff_Typ_9`, 
+                `Schiff_Typ_10`, 
+                `Schiff_Typ_11`, 
+                `Schiff_Typ_12` FROM `flotten` 
+                WHERE `Ankunft` <= " . $zeit . " ORDER BY Ankunft ASC";
+    }
 
-	$query = $sql or die("Error in the consult.." . mysqli_error("Error: #0002302 ".$link));
-	$result = mysqli_query($link, $query) or sql_fehler(mysqli_error($link) , __FILE__ ,  __LINE__ );
+    $query = $sql or die("Error in the consult.." . mysqli_error("Error: #0002302 " . $link));
+    $result = mysqli_query($link, $query) or sql_error(mysqli_error($link));
 
-	$i = 0;
-	while($row = mysqli_fetch_object($result)) {
-		$balken[$i]["ID"] = $row->ID;
-		$balken[$i]["Ankunft"] = $row->Ankunft;
-		$balken[$i]["Start"] = $row->Start;
-		$balken[$i]["Spieler_ID"] = $row->Spieler_ID;
-		$balken[$i]["x1"] = $row->x1;
-		$balken[$i]["y1"] = $row->y1;
-		$balken[$i]["z1"] = $row->z1;
-		$balken[$i]["x2"] = $row->x2;
-		$balken[$i]["y2"] = $row->y2;
-		$balken[$i]["z2"] = $row->z2;
-		$balken[$i]["Ziel_Spieler_ID"] = $row->Ziel_Spieler_ID;
-		$balken[$i]["Start_Planet_ID"] = $row->Start_Planet_ID;
-		$balken[$i]["Ziel_Planet_ID"] = $row->Ziel_Planet_ID;
-		$balken[$i]["Startplanet_Name"] = $row->Startplanet_Name;
-		$balken[$i]["Zielplanet_Name"] = $row->Zielplanet_Name;
-		$balken[$i]["Besitzer_Spieler_Name"] = $row->Besitzer_Spieler_Name;
-		$balken[$i]["Ziel_Spieler_Name"] = $row->Ziel_Spieler_Name;
-		$balken[$i]["Mission"] = $row->Mission;
-		$balken[$i]["Kapazitaet"] = $row->Kapazitaet;
-		$balken[$i]["Ausladen_Eisen"] = $row->Ausladen_Eisen;
-		$balken[$i]["Ausladen_Silizium"] = $row->Ausladen_Silizium;
-		$balken[$i]["Ausladen_Wasser"] = $row->Ausladen_Wasser;
-		$balken[$i]["Einladen_Eisen"] = $row->Einladen_Eisen;
-		$balken[$i]["Einladen_Silizium"] = $row->Einladen_Silizium;
-		$balken[$i]["Einladen_Wasser"] = $row->Einladen_Wasser;
-		$balken[$i]["Schiff_Typ_1"] = $row->Schiff_Typ_1;
-		$balken[$i]["Schiff_Typ_2"] = $row->Schiff_Typ_2;
-		$balken[$i]["Schiff_Typ_3"] = $row->Schiff_Typ_3;
-		$balken[$i]["Schiff_Typ_4"] = $row->Schiff_Typ_4;
-		$balken[$i]["Schiff_Typ_5"] = $row->Schiff_Typ_5;
-		$balken[$i]["Schiff_Typ_6"] = $row->Schiff_Typ_6;
-		$balken[$i]["Schiff_Typ_7"] = $row->Schiff_Typ_7;
-		$balken[$i]["Schiff_Typ_8"] = $row->Schiff_Typ_8;
-		$balken[$i]["Schiff_Typ_9"] = $row->Schiff_Typ_9;
-		$balken[$i]["Schiff_Typ_10"] = $row->Schiff_Typ_10;
-		$balken[$i]["Schiff_Typ_11"] = $row->Schiff_Typ_11;
-		$balken[$i]["Schiff_Typ_12"] = $row->Schiff_Typ_12;
+    $i = 0;
+    while ($row = mysqli_fetch_object($result)) {
+        $balken[$i]["ID"] = $row->ID;
+        $balken[$i]["Ankunft"] = $row->Ankunft;
+        $balken[$i]["Start"] = $row->Start;
+        $balken[$i]["Spieler_ID"] = $row->Spieler_ID;
+        $balken[$i]["x1"] = $row->x1;
+        $balken[$i]["y1"] = $row->y1;
+        $balken[$i]["z1"] = $row->z1;
+        $balken[$i]["x2"] = $row->x2;
+        $balken[$i]["y2"] = $row->y2;
+        $balken[$i]["z2"] = $row->z2;
+        $balken[$i]["Ziel_Spieler_ID"] = $row->Ziel_Spieler_ID;
+        $balken[$i]["Start_Planet_ID"] = $row->Start_Planet_ID;
+        $balken[$i]["Ziel_Planet_ID"] = $row->Ziel_Planet_ID;
+        $balken[$i]["Startplanet_Name"] = $row->Startplanet_Name;
+        $balken[$i]["Zielplanet_Name"] = $row->Zielplanet_Name;
+        $balken[$i]["Besitzer_Spieler_Name"] = $row->Besitzer_Spieler_Name;
+        $balken[$i]["Ziel_Spieler_Name"] = $row->Ziel_Spieler_Name;
+        $balken[$i]["Mission"] = $row->Mission;
+        $balken[$i]["Kapazitaet"] = $row->Kapazitaet;
+        $balken[$i]["Ausladen_Eisen"] = $row->Ausladen_Eisen;
+        $balken[$i]["Ausladen_Silizium"] = $row->Ausladen_Silizium;
+        $balken[$i]["Ausladen_Wasser"] = $row->Ausladen_Wasser;
+        $balken[$i]["Einladen_Eisen"] = $row->Einladen_Eisen;
+        $balken[$i]["Einladen_Silizium"] = $row->Einladen_Silizium;
+        $balken[$i]["Einladen_Wasser"] = $row->Einladen_Wasser;
+        $balken[$i]["Schiff_Typ_1"] = $row->Schiff_Typ_1;
+        $balken[$i]["Schiff_Typ_2"] = $row->Schiff_Typ_2;
+        $balken[$i]["Schiff_Typ_3"] = $row->Schiff_Typ_3;
+        $balken[$i]["Schiff_Typ_4"] = $row->Schiff_Typ_4;
+        $balken[$i]["Schiff_Typ_5"] = $row->Schiff_Typ_5;
+        $balken[$i]["Schiff_Typ_6"] = $row->Schiff_Typ_6;
+        $balken[$i]["Schiff_Typ_7"] = $row->Schiff_Typ_7;
+        $balken[$i]["Schiff_Typ_8"] = $row->Schiff_Typ_8;
+        $balken[$i]["Schiff_Typ_9"] = $row->Schiff_Typ_9;
+        $balken[$i]["Schiff_Typ_10"] = $row->Schiff_Typ_10;
+        $balken[$i]["Schiff_Typ_11"] = $row->Schiff_Typ_11;
+        $balken[$i]["Schiff_Typ_12"] = $row->Schiff_Typ_12;
 
-		$i++;
+        $i ++;
+    }
 
-	}
-
-	if(isset($balken)) { return $balken; } else { return "leer"; }
-
+    if (isset($balken)) {
+        return $balken;
+    } else {
+        return "leer";
+    }
 }
+
 
 
 function get_flotte_mit_id($spieler_id, $id) {

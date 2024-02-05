@@ -11,6 +11,7 @@ require (dirname(__FILE__) . '/inc/func_galaxy.php');
 require (dirname(__FILE__) . '/inc/func_compatibility.php');
 require (dirname(__FILE__) . '/inc/conf_structure.php');
 require (dirname(__FILE__) . '/inc/conf_tech.php');
+include (dirname(__FILE__) . '/inc/ks_v002.php');
 include (dirname(__FILE__) . '/inc/conf_defense.php');
 include (dirname(__FILE__) . '/inc/debug.php');
 
@@ -227,13 +228,36 @@ echo '<span  id="globalJsVariables" select="' . $select . '" />';
 							}
 						}
 						break;
-					case "Angriff":
-						if(mission_erkunden($flotte_abarbeiten[$key], $spieler_id) == true) {
-							if(mission_rückkehr_set($flotte_abarbeiten[$key], $spieler_id) == false) {
-								echo "Fehler mission_rückkehr index.php Zeile 164";
-								echo "Wenn das hier jemand liest, sagt mal bitte bescheid.";
-								exit;
+						if (mission_erkunden($flotte_abarbeiten[$key], $flotte_abarbeiten[$key]["Spieler_ID"]) == true) {
+
+							$battle_result = run_combat($flotte_abarbeiten[$key]);
+							var_dump($flotte_abarbeiten);
+							$attacker_ships = array();
+	
+							foreach ($battle_result[1] as $key3 => $value) {
+								$attacker_ships[$value["ID"]] = array(
+									"ID" => $value["ID"],
+									"Count" => $attacker_ships[$value["ID"]]["Count"] + 1,
+									"Name" => $value["Name"]
+								);
 							}
+	
+							foreach ($attacker_ships as $key2 => $value) {
+								echo $flotte_abarbeiten[$key]["Schiff_Typ_" . $value["ID"]];
+								$flotte_abarbeiten[$key]["Schiff_Typ_" . $value["ID"]] = $value["Count"];
+							}
+	
+							echo "<hr>";
+							var_dump($flotte_abarbeiten);
+							// if (mission_rückkehr_set($flotte_abarbeiten[$key], $flotte_abarbeiten[$key]["Spieler_ID"], true) == false) {
+							// echo "Fehler mission_rückkehr index.php Zeile 164";
+							// echo "Wenn das hier jemand liest, sagt mal bitte bescheid.";
+							// exit();
+							// }
+							// $flotte_abarbeiten[$key] aktualisieren
+							// Anschließend auf Rückflug schicken
+							// Gegnerplanet aktuaisieren
+							// Nicht vergessen die Ress zu stehlen
 						}
 						break;
 					case "Kolonisierung":
